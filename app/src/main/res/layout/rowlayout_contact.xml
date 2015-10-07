@@ -6,13 +6,24 @@
     android:id="@+id/rowlayout_contact"
     android:padding="6dip" >
 
-    <TextView
-        android:id="@+id/textView"
+    <CheckBox
+        android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:textColor="#0000ff" />
+        android:focusable="false"
+        android:clickable="false"
+        android:focusableInTouchMode="false" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Contact"
+        android:textColor="#0000ff"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/checkBox" />
 
     <Button
         android:id="@+id/buttonMessage"
@@ -23,10 +34,10 @@
         android:clickable="false"
         android:focusableInTouchMode="false"
         android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/button1" />
+        android:layout_toStartOf="@+id/buttonContact" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/buttonContact"
         android:text="Messages"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
