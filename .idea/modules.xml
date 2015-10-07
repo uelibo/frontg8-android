@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/android.iml" filepath="$PROJECT_DIR$/android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$USER_HOME$/crypt/git/frontg8/android/android.iml" filepath="$USER_HOME$/crypt/git/frontg8/android/android.iml" />
+      <module fileurl="file://$USER_HOME$/crypt/git/frontg8/android/app/app.iml" filepath="$USER_HOME$/crypt/git/frontg8/android/app/app.iml" />
     </modules>
   </component>
 </project>
