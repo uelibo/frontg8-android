@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         contactList.add(new Contact("Ueli"));
         contactList.add(new Contact("Tobi"));
         contactList.add(new Contact("Flix"));
+        contactList.add(new Contact("Paul"));
+        contactList.add(new Contact("Benny"));
 
         dataAdapter = new MyCustomAdapter(this, R.layout.rowlayout_contact, contactList);
         ListView listView = (ListView) findViewById(R.id.listView);
