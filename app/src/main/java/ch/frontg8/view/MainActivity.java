@@ -2,6 +2,7 @@ package ch.frontg8.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,9 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Filter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.app.SearchManager;
 import android.support.v7.widget.SearchView;
@@ -182,5 +186,48 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void myContactButtonHandler(View v)
+    {
+
+        ListView lvItems = (ListView) findViewById(R.id.listView);
+        for (int i=0; i < lvItems.getChildCount(); i++)
+        {
+            lvItems.getChildAt(i).setBackgroundColor(Color.GREEN);
+        }
+
+        RelativeLayout vwParentRow = (RelativeLayout)v.getParent();
+
+        TextView child = (TextView)vwParentRow.getChildAt(1);
+        Button btnChild = (Button)vwParentRow.getChildAt(2);
+        btnChild.setText(child.getText());
+        btnChild.setText("I've been clicked!");
+
+        int c = Color.CYAN;
+
+        vwParentRow.setBackgroundColor(c);
+        vwParentRow.refreshDrawableState();
+    }
+
+    public void myMessageButtonHandler(View v)
+    {
+
+        ListView lvItems = (ListView) findViewById(R.id.listView);
+        for (int i=0; i < lvItems.getChildCount(); i++)
+        {
+            lvItems.getChildAt(i).setBackgroundColor(Color.GREEN);
+        }
+
+        RelativeLayout vwParentRow = (RelativeLayout)v.getParent();
+
+        TextView child = (TextView)vwParentRow.getChildAt(1);
+        Button btnChild = (Button)vwParentRow.getChildAt(3);
+        btnChild.setText(child.getText());
+        btnChild.setText("I've been clicked!");
+
+        int c = Color.CYAN;
+
+        vwParentRow.setBackgroundColor(c);
+        vwParentRow.refreshDrawableState();
+    }
 
 }
