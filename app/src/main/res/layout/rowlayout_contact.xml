@@ -6,8 +6,8 @@
     android:id="@+id/rowlayout_contact"
     android:padding="6dip" >
 
-    <CheckBox
-        android:id="@+id/checkBox"
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -17,13 +17,13 @@
         android:focusableInTouchMode="false" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Contact"
         android:textColor="#0000ff"
         android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/checkBox" />
+        android:layout_toEndOf="@+id/textView" />
 
     <Button
         android:id="@+id/buttonMessage"

@@ -6,6 +6,8 @@
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom"
         android:title="Search"/>
+    <item android:id="@+id/action_newcontact" android:title="@string/action_newcontact"
+        android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>

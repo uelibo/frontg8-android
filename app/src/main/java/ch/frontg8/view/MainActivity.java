@@ -27,6 +27,7 @@ import ch.frontg8.bl.Contact;
 
 public class MainActivity extends AppCompatActivity {
     MyCustomAdapter dataAdapter = null;
+    MainActivity thisActivity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +50,9 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Contact contact = (Contact) parent.getItemAtPosition(position);
-                contact.setSelected(!contact.isSelected());
-                dataAdapter.notifyDataSetChanged();
+                Intent intent = new Intent(thisActivity, MessageActivity.class);
+                startActivity(intent);
+                //dataAdapter.notifyDataSetChanged();
             }
         });
 
@@ -90,6 +92,10 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         // Handle item selection
         switch (id) {
+            case R.id.action_newcontact:
+                Intent intent = new Intent(this, ContactActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.action_settings:
                 //Intent intent3 = new Intent(this, SettingsActivity.class);
                 //startActivity(intent3);
@@ -158,18 +164,19 @@ public class MainActivity extends AppCompatActivity {
             }
 
             TextView textView = (TextView) convertView.findViewById(R.id.textView);
-            CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.checkBox);
+            TextView textView2 = (TextView) convertView.findViewById(R.id.textView2);
 
-            checkBox.setOnClickListener(new View.OnClickListener() {
+            /*
+            textView.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    CheckBox cb = (CheckBox) v;
-                    contact.setSelected(cb.isChecked());
+                    Intent intent = new Intent(thisActivity, MessageActivity.class);
+                    startActivity(intent);
                 }
             });
+            */
 
-            textView.setText(" (" + contact.getCode() + ")");
-            checkBox.setText(contact.getName());
-            checkBox.setChecked(contact.isSelected());
+            textView2.setText(" (" + contact.getCode() + ")");
+            textView.setText(contact.getName());
 
             return convertView;
         }
