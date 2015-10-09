@@ -21,16 +21,15 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import ch.frontg8.R;
-import ch.frontg8.bl.Contact;
 import ch.frontg8.bl.Message;
 
-public class ConversationActivity extends AppCompatActivity {
+public class MessageActivity extends AppCompatActivity {
     MyCustomAdapter dataAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_conversation);
+        setContentView(R.layout.activity_message);
 
         final ArrayList<Message> messageList = new ArrayList<>();
         messageList.add(new Message("Foo"));
@@ -56,7 +55,7 @@ public class ConversationActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_conversation, menu);
+        getMenuInflater().inflate(R.menu.menu_message, menu);
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();

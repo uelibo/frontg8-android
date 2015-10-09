@@ -33,8 +33,8 @@
                 android:value=".view.MainActivity" />
         </activity>
         <activity
-            android:name=".view.ConversationActivity"
-            android:label="@string/title_activity_conversation"
+            android:name=".view.MessageActivity"
+            android:label="@string/title_activity_message"
             android:parentActivityName=".view.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
