@@ -188,46 +188,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void myContactButtonHandler(View v)
     {
-
         ListView lvItems = (ListView) findViewById(R.id.listView);
-        for (int i=0; i < lvItems.getChildCount(); i++)
-        {
-            lvItems.getChildAt(i).setBackgroundColor(Color.GREEN);
-        }
 
         RelativeLayout vwParentRow = (RelativeLayout)v.getParent();
 
-        TextView child = (TextView)vwParentRow.getChildAt(1);
-        Button btnChild = (Button)vwParentRow.getChildAt(2);
-        btnChild.setText(child.getText());
-        btnChild.setText("I've been clicked!");
-
-        int c = Color.CYAN;
-
-        vwParentRow.setBackgroundColor(c);
-        vwParentRow.refreshDrawableState();
+        Intent intent = new Intent(this, ContactActivity.class);
+        startActivity(intent);
     }
 
     public void myMessageButtonHandler(View v)
     {
-
         ListView lvItems = (ListView) findViewById(R.id.listView);
-        for (int i=0; i < lvItems.getChildCount(); i++)
-        {
-            lvItems.getChildAt(i).setBackgroundColor(Color.GREEN);
-        }
 
         RelativeLayout vwParentRow = (RelativeLayout)v.getParent();
 
-        TextView child = (TextView)vwParentRow.getChildAt(1);
-        Button btnChild = (Button)vwParentRow.getChildAt(3);
-        btnChild.setText(child.getText());
-        btnChild.setText("I've been clicked!");
-
-        int c = Color.CYAN;
-
-        vwParentRow.setBackgroundColor(c);
-        vwParentRow.refreshDrawableState();
+        Intent intent = new Intent(this, ConversationActivity.class);
+        startActivity(intent);
     }
 
 }
