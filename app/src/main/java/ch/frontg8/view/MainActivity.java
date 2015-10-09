@@ -1,33 +1,27 @@
 package ch.frontg8.view;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.Filter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.app.SearchManager;
-import android.support.v7.widget.SearchView;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
+import ch.frontg8.view.model.ContactAdapter;
 
 public class MainActivity extends AppCompatActivity {
-    MyCustomAdapter dataAdapter = null;
-    MainActivity thisActivity = this;
+    Context thisActivity = this;
+    ContactAdapter dataAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         contactList.add(new Contact("Paul"));
         contactList.add(new Contact("Benny"));
 
-        dataAdapter = new MyCustomAdapter(this, R.layout.rowlayout_contact, contactList);
+        dataAdapter = new ContactAdapter(this, R.layout.rowlayout_contact, contactList);
         ListView listView = (ListView) findViewById(R.id.listView);
 
         listView.setAdapter(dataAdapter);
@@ -102,83 +96,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private class MyCustomAdapter extends ArrayAdapter<Contact> {
-
-        private final ArrayList<Contact> originalContactList;
-        private final ArrayList<Contact> filteredContactList;
-
-        public MyCustomAdapter(Context context, int textViewResourceId, ArrayList<Contact> contactList) {
-            super(context, textViewResourceId, contactList);
-            this.originalContactList = new ArrayList<Contact>();
-            this.filteredContactList = new ArrayList<Contact>();
-            this.originalContactList.addAll(contactList);
-            this.filteredContactList.addAll(contactList);
-        }
-
-        @Override
-        public Filter getFilter() {
-            return new Filter() {
-
-                @Override
-                protected FilterResults performFiltering(CharSequence constraint) {
-                    FilterResults filterResults = new FilterResults();
-                    filteredContactList.clear();
-
-                    if (constraint != null) {
-                        for (Contact c : originalContactList) {
-                            if (c.getName().toLowerCase(Locale.getDefault()).contains(constraint)) {
-                                filteredContactList.add(c);
-                            }
-                        }
-
-                        filterResults.values = filteredContactList;
-                        filterResults.count = filteredContactList.size();
-                    }
-                    return filterResults;
-                }
-
-                @Override
-                protected void publishResults(CharSequence constraint, FilterResults results) {
-                    clear();
-                    addAll(filteredContactList);
-                    if (results.count > 0) {
-                        notifyDataSetChanged();
-                    } else {
-                        notifyDataSetInvalidated();
-                    }
-                }
-            };
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            final Contact contact = filteredContactList.get(position);
-
-            if (convertView == null) {
-                LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = layoutInflater.inflate(R.layout.rowlayout_contact, null);
-            }
-
-            TextView textView = (TextView) convertView.findViewById(R.id.textView);
-            TextView textView2 = (TextView) convertView.findViewById(R.id.textView2);
-
-            /*
-            textView.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    Intent intent = new Intent(thisActivity, MessageActivity.class);
-                    startActivity(intent);
-                }
-            });
-            */
-
-            textView2.setText(" (" + contact.getCode() + ")");
-            textView.setText(contact.getName());
-
-            return convertView;
         }
     }
 
