@@ -9,9 +9,11 @@ import android.widget.Filter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import ch.frontg8.R;
+import ch.frontg8.bl.Contact;
 import ch.frontg8.bl.Message;
 
 public class MessageAdapter extends ArrayAdapter<Message> {
@@ -26,6 +28,14 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         this.filteredMessageList = new ArrayList<Message>();
         this.originalMessageList.addAll(messageList);
         this.filteredMessageList.addAll(messageList);
+    }
+
+    protected List<Message> getAll() {
+        List<Message> messages = new ArrayList<>(getCount());
+        for (int i = 0; i < getCount(); ++i) {
+            messages.add(getItem(i));
+        }
+        return messages;
     }
 
     @Override

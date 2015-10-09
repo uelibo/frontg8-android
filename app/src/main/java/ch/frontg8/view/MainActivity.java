@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import ch.frontg8.R;
@@ -97,20 +98,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void myContactButtonHandler(View v)
+    public void myContactButtonHandler(AdapterView<?> parent, View v, int position, long id)
     {
         ListView lvItems = (ListView) findViewById(R.id.listView);
-
         RelativeLayout vwParentRow = (RelativeLayout)v.getParent();
 
+        //Contact currentContact = (Contact) parent.getItemAtPosition(position);
+
         Intent intent = new Intent(this, ContactActivity.class);
+        //Contact currentContact = dataAdapter.getAll().get(pos);
+        //intent.putExtra(getString(R.string.editcontact), (Serializable) currentContact;
         startActivity(intent);
     }
 
-    public void myMessageButtonHandler(View v)
+    public void myMessageButtonHandler(AdapterView<?> parent, View v, int position, long id)
     {
         ListView lvItems = (ListView) findViewById(R.id.listView);
-
         RelativeLayout vwParentRow = (RelativeLayout)v.getParent();
 
         Intent intent = new Intent(this, MessageActivity.class);

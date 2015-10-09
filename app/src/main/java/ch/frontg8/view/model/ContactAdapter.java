@@ -9,6 +9,7 @@ import android.widget.Filter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import ch.frontg8.R;
@@ -22,10 +23,18 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
     public ContactAdapter(Context context, int textViewResourceId, ArrayList<Contact> contactList) {
         super(context, textViewResourceId, contactList);
         this.thisActivity = context;
-        this.originalContactList = new ArrayList<Contact>();
-        this.filteredContactList = new ArrayList<Contact>();
+        this.originalContactList = new ArrayList<>();
+        this.filteredContactList = new ArrayList<>();
         this.originalContactList.addAll(contactList);
         this.filteredContactList.addAll(contactList);
+    }
+
+    public List<Contact> getAll() {
+        List<Contact> contacts = new ArrayList<>(getCount());
+        for (int i = 0; i < getCount(); ++i) {
+            contacts.add(getItem(i));
+        }
+        return contacts;
     }
 
     @Override
