@@ -16,7 +16,6 @@ import ch.frontg8.bl.Message;
 
 public class MessageAdapter extends ArrayAdapter<Message> {
     private Context thisActivity;
-
     private final ArrayList<Message> originalMessageList;
     private final ArrayList<Message> filteredMessageList;
 

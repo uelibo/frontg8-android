@@ -20,8 +20,8 @@ import ch.frontg8.bl.Contact;
 import ch.frontg8.view.model.ContactAdapter;
 
 public class MainActivity extends AppCompatActivity {
-    Context thisActivity = this;
-    ContactAdapter dataAdapter = null;
+    private Context thisActivity = this;
+    private ContactAdapter dataAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -18,8 +18,8 @@ import ch.frontg8.bl.Message;
 import ch.frontg8.view.model.MessageAdapter;
 
 public class MessageActivity extends AppCompatActivity {
-    Context thisActivity = this;
-    MessageAdapter dataAdapter = null;
+    private Context thisActivity = this;
+    private MessageAdapter dataAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
