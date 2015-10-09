@@ -93,14 +93,6 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         // Handle item selection
         switch (id) {
-            case R.id.contacts:
-                Intent intent = new Intent(this, ContactActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.conversation:
-                Intent intent2 = new Intent(this, ConversationActivity.class);
-                startActivity(intent2);
-                return true;
             case R.id.action_settings:
                 //Intent intent3 = new Intent(this, SettingsActivity.class);
                 //startActivity(intent3);

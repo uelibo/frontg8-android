@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Frontg8</string>
+    <string name="contactlist">Contact List</string>
+    <string name="editcontact">Edit Contact</string>
+    <string name="messagelist">Message List</string>
     <string name="hello_world">Hello world!</string>
     <string name="hello_contact">Hello contact!</string>
     <string name="hello_conversation">Hello conversation!</string>
