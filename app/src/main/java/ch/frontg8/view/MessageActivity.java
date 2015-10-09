@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -154,18 +153,7 @@ public class MessageActivity extends AppCompatActivity {
             }
 
             TextView textView = (TextView) convertView.findViewById(R.id.textView);
-            CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.checkBox);
-
-            checkBox.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    CheckBox cb = (CheckBox) v;
-                    message.setSelected(cb.isChecked());
-                }
-            });
-
-            textView.setText(" ()");
-            checkBox.setText(message.getMessage());
-            checkBox.setChecked(message.isSelected());
+            textView.setText(message.getMessage());
 
             return convertView;
         }
