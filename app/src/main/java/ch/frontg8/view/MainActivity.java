@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void myContactButtonHandler(AdapterView<?> parent, View v, int position, long id)
+    public void myContactButtonHandler(View v)
     {
         ListView lvItems = (ListView) findViewById(R.id.listView);
         RelativeLayout vwParentRow = (RelativeLayout)v.getParent();
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void myMessageButtonHandler(AdapterView<?> parent, View v, int position, long id)
+    public void myMessageButtonHandler(View v)
     {
         ListView lvItems = (ListView) findViewById(R.id.listView);
         RelativeLayout vwParentRow = (RelativeLayout)v.getParent();
