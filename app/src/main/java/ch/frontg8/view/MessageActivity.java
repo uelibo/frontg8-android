@@ -34,7 +34,7 @@ public class MessageActivity extends AppCompatActivity {
 
         Intent intent=this.getIntent();
         Bundle bundle=intent.getExtras();
-        Contact contact=(Contact)bundle.getSerializable("contact");
+        Contact contact=TestDataHandler.getContactById((String)bundle.getSerializable("contactid"));
 
         TextView tv = (TextView) findViewById(R.id.textView2);
         if (contact != null) {

@@ -9,9 +9,6 @@ import java.security.Security;
 import java.security.spec.ECGenParameterSpec;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
-/**
- * Created by tstauber on 13.10.15.
- */
 public class LibCrypto {
     private static final String BC = BouncyCastleProvider.PROVIDER_NAME;
     static {

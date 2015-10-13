@@ -4,17 +4,21 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Contact implements Serializable {
+    private String contactId;
     private String name;
     private ArrayList<Message> messages = new ArrayList<Message>();
     private boolean selected = false;
 
-    public Contact(String name)
+    public Contact(String contactId, String name)
     {
+        this.contactId = contactId;
         this.name = name;
     }
 
-    public String getName() {
-        return name;
+    public String getName() { return name; }
+
+    public String getContactId() {
+        return contactId;
     }
 
     public boolean isSelected() {

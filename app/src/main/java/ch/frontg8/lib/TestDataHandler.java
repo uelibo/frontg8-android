@@ -6,14 +6,14 @@ import ch.frontg8.bl.Contact;
 import ch.frontg8.bl.Message;
 
 public class TestDataHandler {
+    final private static ArrayList<Contact> contactList = new ArrayList<>();
 
-    public static ArrayList<Contact> getContacts() {
-        final ArrayList<Contact> contactList = new ArrayList<>();
-        contactList.add(new Contact("Ueli"));
-        contactList.add(new Contact("Tobi"));
-        contactList.add(new Contact("Flix"));
-        contactList.add(new Contact("Paul"));
-        contactList.add(new Contact("Benny"));
+    private static void createContacts() {
+        contactList.add(new Contact("c01", "Ueli"));
+        contactList.add(new Contact("c02", "Tobi"));
+        contactList.add(new Contact("c03", "Flix"));
+        contactList.add(new Contact("c04", "Paul"));
+        contactList.add(new Contact("c05", "Benny"));
 
         contactList.get(0).addMessage(new Message("Foo"));
         contactList.get(0).addMessage(new Message("Bar"));
@@ -30,8 +30,22 @@ public class TestDataHandler {
         contactList.get(4).addMessage(new Message("Fooo"));
         contactList.get(4).addMessage(new Message("Foooo"));
         contactList.get(4).addMessage(new Message("Fooooo"));
+    }
 
+    public static ArrayList<Contact> getContacts() {
+        if (contactList.isEmpty()) {
+            createContacts();
+        }
         return contactList;
+    }
+
+    public static Contact getContactById(String id) {
+        for (Contact contact:contactList) {
+            if (contact.getContactId().equals(id)) {
+                return contact;
+            }
+        }
+        return new Contact("c00", "dummy");
     }
 
     public static ArrayList<Message> getMessages() {

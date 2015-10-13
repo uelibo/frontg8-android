@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 Contact contact = (Contact) parent.getItemAtPosition(position);
                 Intent intent = new Intent(thisActivity, MessageActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("contact", contact);
+                bundle.putSerializable("contactid", contact.getContactId());
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
