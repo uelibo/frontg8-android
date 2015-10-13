@@ -3,7 +3,7 @@
   <ListPreference     android:title="Server"
                       android:summary="Choose server to connect to"
                       android:key="serverurl"
-                      android:defaultValue="http://utf3.ch:8080/public"
+                      android:defaultValue="server.frontg8.ch:8080"
                       android:entries="@array/listServer"
                       android:entryValues="@array/listServerValues" />
 </PreferenceScreen>

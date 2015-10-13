@@ -13,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import ch.frontg8.R;
@@ -44,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
                 bundle.putSerializable("contact", contact);
                 intent.putExtras(bundle);
                 startActivity(intent);
-                //dataAdapter.notifyDataSetChanged();
             }
         });
 
