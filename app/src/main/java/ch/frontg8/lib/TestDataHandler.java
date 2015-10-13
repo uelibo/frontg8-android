@@ -14,6 +14,23 @@ public class TestDataHandler {
         contactList.add(new Contact("Flix"));
         contactList.add(new Contact("Paul"));
         contactList.add(new Contact("Benny"));
+
+        contactList.get(0).addMessage(new Message("Foo"));
+        contactList.get(0).addMessage(new Message("Bar"));
+        contactList.get(0).addMessage(new Message("Baz"));
+        contactList.get(1).addMessage(new Message("Ham"));
+        contactList.get(1).addMessage(new Message("Spam"));
+        contactList.get(1).addMessage(new Message("Chicken"));
+        contactList.get(2).addMessage(new Message("Food"));
+        contactList.get(2).addMessage(new Message("Drinks"));
+        contactList.get(2).addMessage(new Message("Napkin"));
+        contactList.get(3).addMessage(new Message("abc"));
+        contactList.get(3).addMessage(new Message("def"));
+        contactList.get(3).addMessage(new Message("ghi"));
+        contactList.get(4).addMessage(new Message("Fooo"));
+        contactList.get(4).addMessage(new Message("Foooo"));
+        contactList.get(4).addMessage(new Message("Fooooo"));
+
         return contactList;
     }
 

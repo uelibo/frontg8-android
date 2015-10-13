@@ -30,6 +30,8 @@ public class MessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
+        final ArrayList<Message> messageList;
+
         Intent intent=this.getIntent();
         Bundle bundle=intent.getExtras();
         Contact contact=(Contact)bundle.getSerializable("contact");
@@ -37,10 +39,11 @@ public class MessageActivity extends AppCompatActivity {
         TextView tv = (TextView) findViewById(R.id.textView2);
         if (contact != null) {
             tv.append(" of " + contact.getName());
+            messageList = contact.getMessages();
+        } else {
+            messageList = TestDataHandler.getMessages();
         }
 
-
-        final ArrayList<Message> messageList = TestDataHandler.getMessages();
         dataAdapter = new MessageAdapter(this, R.layout.rowlayout_message, messageList);
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(dataAdapter);

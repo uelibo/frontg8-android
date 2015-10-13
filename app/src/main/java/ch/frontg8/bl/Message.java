@@ -1,6 +1,8 @@
 package ch.frontg8.bl;
 
-public class Message {
+import java.io.Serializable;
+
+public class Message implements Serializable {
     private String messagetext;
     private boolean selected = false;
 
