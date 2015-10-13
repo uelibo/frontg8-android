@@ -40,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Contact contact = (Contact) parent.getItemAtPosition(position);
                 Intent intent = new Intent(thisActivity, MessageActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("contact", contact);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 //dataAdapter.notifyDataSetChanged();
             }
@@ -98,15 +101,6 @@ public class MainActivity extends AppCompatActivity {
         RelativeLayout vwParentRow = (RelativeLayout)v.getParent();
 
         Intent intent = new Intent(this, ContactActivity.class);
-        startActivity(intent);
-    }
-
-    public void myMessageButtonHandler(View v)
-    {
-        ListView lvItems = (ListView) findViewById(R.id.listView);
-        RelativeLayout vwParentRow = (RelativeLayout)v.getParent();
-
-        Intent intent = new Intent(this, MessageActivity.class);
         startActivity(intent);
     }
 

@@ -1,8 +1,9 @@
 package ch.frontg8.bl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Contact {
+public class Contact implements Serializable {
     private String name;
     private ArrayList<Message> messages = new ArrayList<Message>();
     private boolean selected = false;
