@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Message;
+import ch.frontg8.lib.TestDataHandler;
 import ch.frontg8.view.model.MessageAdapter;
 
 public class MessageActivity extends AppCompatActivity {
@@ -26,26 +27,11 @@ public class MessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
-        final ArrayList<Message> messageList = new ArrayList<>();
-        messageList.add(new Message("Foo"));
-        messageList.add(new Message("Bar"));
-        messageList.add(new Message("Baz"));
-
+        final ArrayList<Message> messageList = TestDataHandler.getMessages();
         dataAdapter = new MessageAdapter(this, R.layout.rowlayout_message, messageList);
         ListView listView = (ListView) findViewById(R.id.listView);
-
         listView.setAdapter(dataAdapter);
         listView.setTextFilterEnabled(true);
-
-        /*
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Message message = (Message) parent.getItemAtPosition(position);
-                dataAdapter.notifyDataSetChanged();
-            }
-        });
-        */
-
     }
 
     @Override
