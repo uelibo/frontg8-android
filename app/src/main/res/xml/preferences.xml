@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  <ListPreference     android:title="Server"
+                      android:summary="Choose server to connect to"
+                      android:key="serverurl"
+                      android:defaultValue="http://utf3.ch:8080/public"
+                      android:entries="@array/listServer"
+                      android:entryValues="@array/listServerValues" />
+</PreferenceScreen>

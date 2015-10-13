@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string-array name="listServer">
+	<item>frontg8</item>
+	<item>localhost</item>
+</string-array>
+<string-array name="listServerValues">
+    <item>server.frontg8.ch:8080</item>
+    <item>localhost:8080</item>
+</string-array>
+</resources>

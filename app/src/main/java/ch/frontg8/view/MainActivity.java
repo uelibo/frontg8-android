@@ -90,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.action_settings:
-                //Intent intent3 = new Intent(this, SettingsActivity.class);
-                //startActivity(intent3);
+                Intent intent2 = new Intent(this, SettingsActivity.class);
+                startActivity(intent2);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
