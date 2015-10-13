@@ -30,19 +30,8 @@ public class MessageActivity extends AppCompatActivity {
         final ArrayList<Message> messageList = TestDataHandler.getMessages();
         dataAdapter = new MessageAdapter(this, R.layout.rowlayout_message, messageList);
         ListView listView = (ListView) findViewById(R.id.listView);
-
         listView.setAdapter(dataAdapter);
         listView.setTextFilterEnabled(true);
-
-        /*
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Message message = (Message) parent.getItemAtPosition(position);
-                dataAdapter.notifyDataSetChanged();
-            }
-        });
-        */
-
     }
 
     @Override

@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
         final ArrayList<Contact> contactList = TestDataHandler.getContacts();
         dataAdapter = new ContactAdapter(this, R.layout.rowlayout_contact, contactList);
         ListView listView = (ListView) findViewById(R.id.listView);
-
         listView.setAdapter(dataAdapter);
         listView.setTextFilterEnabled(true);
 
@@ -98,11 +97,7 @@ public class MainActivity extends AppCompatActivity {
         ListView lvItems = (ListView) findViewById(R.id.listView);
         RelativeLayout vwParentRow = (RelativeLayout)v.getParent();
 
-        //Contact currentContact = (Contact) parent.getItemAtPosition(position);
-
         Intent intent = new Intent(this, ContactActivity.class);
-        //Contact currentContact = dataAdapter.getAll().get(pos);
-        //intent.putExtra(getString(R.string.editcontact), (Serializable) currentContact;
         startActivity(intent);
     }
 
