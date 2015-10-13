@@ -3,9 +3,4 @@
 .DS_Store
 /build
 /captures
-/.idea/workspace.xml
-/.idea/.name
-/.idea/gradle.xml
-/.idea/misc.xml
-/.idea/vcs.xml
-/.idea/libraries
+.idea/
