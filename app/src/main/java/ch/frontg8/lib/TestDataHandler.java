@@ -36,9 +36,7 @@ public class TestDataHandler {
 
     public static ArrayList<Message> getMessages() {
         final ArrayList<Message> messageList = new ArrayList<>();
-        messageList.add(new Message("Foo"));
-        messageList.add(new Message("Bar"));
-        messageList.add(new Message("Baz"));
+        messageList.add(new Message("? something is wrong here ?"));
         return messageList;
     }
 
