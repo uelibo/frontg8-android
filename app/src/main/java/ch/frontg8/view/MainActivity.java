@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
+import ch.frontg8.lib.TestDataHandler;
 import ch.frontg8.view.model.ContactAdapter;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,13 +30,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final ArrayList<Contact> contactList = new ArrayList<>();
-        contactList.add(new Contact("Ueli"));
-        contactList.add(new Contact("Tobi"));
-        contactList.add(new Contact("Flix"));
-        contactList.add(new Contact("Paul"));
-        contactList.add(new Contact("Benny"));
-
+        final ArrayList<Contact> contactList = TestDataHandler.getContacts();
         dataAdapter = new ContactAdapter(this, R.layout.rowlayout_contact, contactList);
         ListView listView = (ListView) findViewById(R.id.listView);
 
