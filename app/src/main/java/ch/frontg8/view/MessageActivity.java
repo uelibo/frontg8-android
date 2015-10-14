@@ -24,7 +24,6 @@ import ch.frontg8.lib.TestDataHandler;
 import ch.frontg8.view.model.MessageAdapter;
 
 public class MessageActivity extends AppCompatActivity {
-    private Context thisActivity = this;
     private MessageAdapter dataAdapter = null;
 
     @Override

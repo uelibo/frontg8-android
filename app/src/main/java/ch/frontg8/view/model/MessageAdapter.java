@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Locale;
 
 import ch.frontg8.R;
-import ch.frontg8.bl.Contact;
 import ch.frontg8.bl.Message;
 
 public class MessageAdapter extends ArrayAdapter<Message> {

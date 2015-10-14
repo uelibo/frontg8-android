@@ -85,7 +85,7 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
         TextView textView = (TextView) convertView.findViewById(R.id.textView);
         TextView textView2 = (TextView) convertView.findViewById(R.id.textView2);
 
-        textView2.setText(" (" + contact.getCode() + ")");
+        textView2.setText(" (" + contact.getMessages().size() + ")");
         textView.setText(contact.getName());
 
         return convertView;
