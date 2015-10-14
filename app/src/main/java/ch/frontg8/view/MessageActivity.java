@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -31,14 +33,16 @@ public class MessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_message);
 
         final ArrayList<Message> messageList;
+        final Contact contact;
 
         Intent intent=this.getIntent();
         Bundle bundle=intent.getExtras();
-        Contact contact=TestDataHandler.getContactById((String)bundle.getSerializable("contactid"));
+        String contactId=(String)bundle.getSerializable("contactid");
+        contact=TestDataHandler.getContactById(contactId);
 
-        TextView tv = (TextView) findViewById(R.id.textView2);
+        TextView title = (TextView) findViewById(R.id.textViewTitle);
         if (contact != null) {
-            tv.append(" of " + contact.getName());
+            title.append(" of " + contact.getName());
             messageList = contact.getMessages();
         } else {
             messageList = TestDataHandler.getMessages();
@@ -48,6 +52,22 @@ public class MessageActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(dataAdapter);
         listView.setTextFilterEnabled(true);
+
+        final EditText textSend = (EditText) findViewById(R.id.editTextSend);
+        Button buttonSend = (Button) findViewById(R.id.buttonSend);
+
+        buttonSend.setOnClickListener(new AdapterView.OnClickListener() {
+            public void onClick(View view) {
+                if (contact != null) {
+                    Message message = new Message(textSend.getText().toString());
+                    contact.addMessage(message);
+                    dataAdapter.replace(contact.getMessages());
+                    textSend.getText().clear();
+                }
+            }
+        });
+
+
     }
 
     @Override
@@ -88,4 +108,8 @@ public class MessageActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void updateMessages() {
+    }
+
 }

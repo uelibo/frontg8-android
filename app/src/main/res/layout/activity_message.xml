@@ -7,15 +7,15 @@
 
     <TextView android:text="@string/messagelist" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView2" />
+        android:id="@+id/textViewTitle" />
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/listView"
-        android:layout_below="@+id/textView2"
+        android:layout_below="@+id/textViewTitle"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/editText4" />
+        android:layout_above="@+id/editTextSend" />
 
     <Button
         android:layout_width="wrap_content"
@@ -28,7 +28,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editText4"
+        android:id="@+id/editTextSend"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/buttonSend" />

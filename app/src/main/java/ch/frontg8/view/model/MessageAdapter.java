@@ -38,6 +38,13 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         return messages;
     }
 
+    public void replace(List<Message> data) {
+        originalMessageList.clear();
+        originalMessageList.addAll(data);
+        filteredMessageList.clear();
+        filteredMessageList.addAll(data);
+    }
+
     @Override
     public Filter getFilter() {
         return new Filter() {
