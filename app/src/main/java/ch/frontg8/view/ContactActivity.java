@@ -28,7 +28,7 @@ public class ContactActivity extends AppCompatActivity {
         TextView title = (TextView) findViewById(R.id.textViewTitle);
         TextView name = (TextView) findViewById(R.id.editPersonName);
 
-        title.append(" " + contact.getName());
+        title.append(" " + contact.getName() + " (" + contact.getContactId() + ")");
         name.setText(contact.getName());
 
     }
