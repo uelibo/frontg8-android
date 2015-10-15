@@ -8,6 +8,8 @@
         android:title="Search"/>
     <item android:id="@+id/action_newcontact" android:title="@string/action_newcontact"
         android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_connection_test" android:title="@string/action_connection_test"
+        android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>

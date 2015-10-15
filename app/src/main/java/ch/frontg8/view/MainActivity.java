@@ -82,9 +82,13 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, ContactActivity.class);
                 startActivity(intent);
                 return true;
-            case R.id.action_settings:
-                Intent intent2 = new Intent(this, SettingsActivity.class);
+            case R.id.action_connection_test:
+                Intent intent2 = new Intent(this, ConnectionTestActivity.class);
                 startActivity(intent2);
+                return true;
+            case R.id.action_settings:
+                Intent intent3 = new Intent(this, SettingsActivity.class);
+                startActivity(intent3);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
