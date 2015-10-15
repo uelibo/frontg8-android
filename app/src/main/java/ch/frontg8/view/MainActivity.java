@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 
@@ -45,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
 
     }
 
@@ -95,10 +93,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void myContactButtonHandler(View v)
     {
-        ListView lvItems = (ListView) findViewById(R.id.listView);
-        RelativeLayout vwParentRow = (RelativeLayout)v.getParent();
-
-        Intent intent = new Intent(this, ContactActivity.class);
+        View parentRow = (View) v.getParent();
+        ListView parent = (ListView) parentRow.getParent();
+        final int position = parent.getPositionForView(parentRow);
+        Contact contact = (Contact) parent.getItemAtPosition(position);
+        Intent intent = new Intent(thisActivity, ContactActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("contactid", contact.getContactId());
+        intent.putExtras(bundle);
         startActivity(intent);
     }
 

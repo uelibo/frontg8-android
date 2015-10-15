@@ -1,11 +1,15 @@
 package ch.frontg8.view;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import ch.frontg8.R;
+import ch.frontg8.bl.Contact;
+import ch.frontg8.lib.TestDataHandler;
 
 public class ContactActivity extends AppCompatActivity {
 
@@ -13,6 +17,20 @@ public class ContactActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
+
+        final Contact contact;
+
+        Intent intent=this.getIntent();
+        Bundle bundle=intent.getExtras();
+        String contactId=(String)bundle.getSerializable("contactid");
+        contact= TestDataHandler.getContactById(contactId);
+
+        TextView title = (TextView) findViewById(R.id.textViewTitle);
+        TextView name = (TextView) findViewById(R.id.editPersonName);
+
+        title.append(" " + contact.getName());
+        name.setText(contact.getName());
+
     }
 
     @Override

@@ -7,7 +7,7 @@
 
     <TextView android:text="@string/editcontact" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView" />
+        android:id="@+id/textViewTitle" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -15,8 +15,8 @@
         android:inputType="textPersonName"
         android:text="Name"
         android:ems="10"
-        android:id="@+id/editText"
-        android:layout_below="@+id/textView"
+        android:id="@+id/editPersonName"
+        android:layout_below="@+id/textViewTitle"
         android:layout_alignParentStart="true"
         android:layout_marginTop="15dp" />
 
@@ -26,15 +26,15 @@
         android:inputType="textPersonName"
         android:text="Surname"
         android:ems="10"
-        android:id="@+id/editText2"
-        android:layout_below="@+id/editText"
+        android:id="@+id/editPersonSurname"
+        android:layout_below="@+id/editPersonName"
         android:layout_alignParentStart="true" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editText3"
-        android:layout_below="@+id/editText2"
+        android:id="@+id/editPublickey"
+        android:layout_below="@+id/editPersonSurname"
         android:layout_alignParentStart="true"
         android:ems="7"
         android:text="Publickey"
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:text="save"
         android:id="@+id/button"
-        android:layout_below="@+id/editText3"
+        android:layout_below="@+id/editPublickey"
         android:layout_alignParentStart="true"
         android:layout_marginTop="30dp"/>
 
@@ -55,8 +55,8 @@
         android:layout_height="wrap_content"
         android:text="load"
         android:id="@+id/button2"
-        android:layout_below="@+id/editText2"
-        android:layout_toEndOf="@+id/editText3" />
+        android:layout_alignBottom="@+id/editPublickey"
+        android:layout_alignEnd="@+id/editPersonSurname" />
 
 
 </RelativeLayout>
