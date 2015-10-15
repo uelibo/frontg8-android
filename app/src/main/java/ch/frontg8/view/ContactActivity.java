@@ -20,15 +20,21 @@ public class ContactActivity extends AppCompatActivity {
 
         final Contact contact;
 
-        Intent intent=this.getIntent();
-        Bundle bundle=intent.getExtras();
-        String contactId=(String)bundle.getSerializable("contactid");
-        contact= TestDataHandler.getContactById(contactId);
-
         TextView title = (TextView) findViewById(R.id.textViewTitle);
         TextView name = (TextView) findViewById(R.id.editPersonName);
 
-        title.append(" " + contact.getName() + " (" + contact.getContactId() + ")");
+        Intent intent=this.getIntent();
+        Bundle bundle=intent.getExtras();
+
+        if (bundle == null) {
+            contact = new Contact("","");
+            title.setText("New Contact");
+        } else {
+            String contactId=(String)bundle.getSerializable("contactid");
+            contact= TestDataHandler.getContactById(contactId);
+            title.append(" " + contact.getName() + " (" + contact.getContactId() + ")");
+        }
+
         name.setText(contact.getName());
 
     }

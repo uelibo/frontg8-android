@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import ch.frontg8.bl.Contact;
 import ch.frontg8.bl.Message;
+import java.util.UUID;
 
 public class TestDataHandler {
     final private static ArrayList<Contact> contactList = new ArrayList<>();
