@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Frontg8</string>
+    <string name="app_name">frontg8</string>
     <string name="contactlist">Contact List</string>
     <string name="editcontact">Edit Contact</string>
     <string name="action_newcontact">New Contact</string>

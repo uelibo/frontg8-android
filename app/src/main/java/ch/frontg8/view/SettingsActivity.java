@@ -7,7 +7,6 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -38,7 +37,6 @@ public class SettingsActivity extends AppCompatActivity {
         public void onResume() {
             super.onResume();
             updateDescription();
-            Log.i(super.getClass().getSimpleName(), "onResume");
         }
 
         private void updateDescription(){
