@@ -7,6 +7,8 @@ import android.preference.EditTextPreference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 
+import java.util.ArrayList;
+
 import ch.frontg8.R;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -30,11 +32,15 @@ public class SettingsActivity extends AppCompatActivity {
         public void onResume() {
             super.onResume();
 
-            EditTextPreference preference_hostname = (EditTextPreference) this.getPreferenceManager().findPreference("edittext_preference_hostname");
-            EditTextPreference preference_port = (EditTextPreference) this.getPreferenceManager().findPreference("edittext_preference_port");
+            ArrayList<String> fields = new ArrayList<>();
+            fields.add("edittext_preference_username");
+            fields.add("edittext_preference_hostname");
+            fields.add("edittext_preference_port");
 
-            preference_hostname.setSummary(preference_hostname.getText().toString());
-            preference_port.setSummary(preference_port.getText().toString());
+            for (String field : fields) {
+                EditTextPreference preference_field = (EditTextPreference) this.getPreferenceManager().findPreference(field);
+                preference_field.setSummary(preference_field.getText().toString());
+            }
 
         }
     }
