@@ -1,21 +1,31 @@
 package ch.frontg8.view;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
+import android.preference.PreferenceFragment;
+import android.support.v7.app.AppCompatActivity;
+
 import ch.frontg8.R;
 
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FragmentManager mFragmentManager = getFragmentManager();
+        FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
+        PrefsFragment mPrefsFragment = new PrefsFragment();
+        mFragmentTransaction.replace(android.R.id.content, mPrefsFragment);
+        mFragmentTransaction.commit();
+    }
 
-        PreferenceManager prefMgr = getPreferenceManager();
-        prefMgr.setSharedPreferencesName(getString(R.string.preferences));
-        prefMgr.setSharedPreferencesMode(MODE_PRIVATE);
-
-        addPreferencesFromResource(R.xml.preferences);
+    public static class PrefsFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.preferences);
+        }
     }
 
 }
