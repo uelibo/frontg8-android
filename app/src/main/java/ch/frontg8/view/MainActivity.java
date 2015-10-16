@@ -3,7 +3,9 @@ package ch.frontg8.view;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
@@ -11,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -45,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        TextView title = (TextView) findViewById(R.id.textViewTitle);
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
+        title.append(" of " + preferences.getString("edittext_preference_username", "paul"));
     }
 
     @Override

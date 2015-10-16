@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
-    <string name="preference_customerid">com.example.library.CUSTOMER_ID</string>
-    <string name="preference_securityid">com.example.library.SECURITY_ID</string>
-    <string name="preferences">com.example.library.PREFERENCES</string>
-
+    <string name="preference_customerid">ch.frontg8.CUSTOMER_ID</string>
+    <string name="preference_securityid">ch.frontg8.SECURITY_ID</string>
+    <string name="preferences">ch.frontg.PREFERENCES</string>
 </resources>

@@ -4,8 +4,10 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -27,11 +29,19 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            getPreferenceManager().setSharedPreferencesMode(MODE_PRIVATE);
+            getPreferenceManager().setSharedPreferencesName(getString(R.string.preferences));
             addPreferencesFromResource(R.xml.preferences);
         }
+
+        @Override
         public void onResume() {
             super.onResume();
+            updateDescription();
+            Log.i(super.getClass().getSimpleName(), "onResume");
+        }
 
+        private void updateDescription(){
             ArrayList<String> fields = new ArrayList<>();
             fields.add("edittext_preference_username");
             fields.add("edittext_preference_hostname");
@@ -40,8 +50,16 @@ public class SettingsActivity extends AppCompatActivity {
             for (String field : fields) {
                 EditTextPreference preference_field = (EditTextPreference) this.getPreferenceManager().findPreference(field);
                 preference_field.setSummary(preference_field.getText().toString());
-            }
 
+                preference_field.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        preference.setSummary(newValue.toString());
+                        return true;
+                    }
+                });
+
+            }
         }
     }
 
