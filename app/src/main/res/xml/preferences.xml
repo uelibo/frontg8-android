@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-  <ListPreference     android:title="Server"
-                      android:summary="Choose server to connect to"
-                      android:key="serverurl"
-                      android:defaultValue="server.frontg8.ch:8080"
-                      android:entries="@array/listServer"
-                      android:entryValues="@array/listServerValues" />
+    <PreferenceCategory android:title="Personal settings">
+        <EditTextPreference
+            android:key="edittext_preference_username"
+            android:title="Username"
+            android:summary="Your username"
+            android:dialogTitle="Please enter username"
+            android:defaultValue="John" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Server settings">
+        <EditTextPreference
+            android:key="edittext_preference_hostname"
+            android:title="Hostname"
+            android:summary="Hostname to connect to"
+            android:dialogTitle="Please enter server hostname"
+            android:defaultValue="server.frontg8.ch" />
+        <EditTextPreference
+            android:key="edittext_preference_port"
+            android:title="Port"
+            android:summary="Port to connect to"
+            android:dialogTitle="Please enter port"
+            android:defaultValue="8080" />
+    </PreferenceCategory>
 </PreferenceScreen>
