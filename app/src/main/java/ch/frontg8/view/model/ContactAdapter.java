@@ -37,6 +37,13 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
         return contacts;
     }
 
+    public void replace(List<Contact> data) {
+        originalContactList.clear();
+        originalContactList.addAll(data);
+        filteredContactList.clear();
+        filteredContactList.addAll(data);
+    }
+
     @Override
     public Filter getFilter() {
         return new Filter() {

@@ -22,10 +22,12 @@ import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
 import ch.frontg8.bl.Message;
 import ch.frontg8.lib.TestDataHandler;
+import ch.frontg8.lib.dbstore.ContactsDataSource;
 import ch.frontg8.view.model.MessageAdapter;
 
 public class MessageActivity extends AppCompatActivity {
     private MessageAdapter dataAdapter = null;
+    private ContactsDataSource datasource = new ContactsDataSource(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +40,9 @@ public class MessageActivity extends AppCompatActivity {
         Intent intent=this.getIntent();
         Bundle bundle=intent.getExtras();
         UUID contactId=(UUID)bundle.getSerializable("contactid");
-        contact=TestDataHandler.getContactById(contactId);
+
+        datasource.open();
+        contact = datasource.getContactByUUID(contactId);
 
         TextView title = (TextView) findViewById(R.id.textViewTitle);
         if (contact != null) {

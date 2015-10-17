@@ -14,24 +14,24 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
-import ch.frontg8.lib.TestDataHandler;
+import ch.frontg8.lib.dbstore.ContactsDataSource;
 import ch.frontg8.view.model.ContactAdapter;
 
 public class MainActivity extends AppCompatActivity {
     private Context thisActivity = this;
     private ContactAdapter dataAdapter = null;
+    private ContactsDataSource datasource = new ContactsDataSource(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final ArrayList<Contact> contactList = TestDataHandler.getContacts();
-        dataAdapter = new ContactAdapter(this, R.layout.rowlayout_contact, contactList);
+        datasource.open();
+
+        dataAdapter = new ContactAdapter(this, R.layout.rowlayout_contact, datasource.getAllContacts());
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(dataAdapter);
         listView.setTextFilterEnabled(true);
@@ -50,6 +50,13 @@ public class MainActivity extends AppCompatActivity {
         TextView title = (TextView) findViewById(R.id.textViewTitle);
         SharedPreferences preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
         title.append(" of " + preferences.getString("edittext_preference_username", "paul"));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("Resumed");
+        //dataAdapter.replace(datasource.getAllContacts());
     }
 
     @Override
@@ -84,16 +91,20 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_newcontact:
-                Intent intent = new Intent(this, ContactActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.action_connection_test:
-                Intent intent2 = new Intent(this, ConnectionTestActivity.class);
-                startActivity(intent2);
+                Intent intentNewContact = new Intent(this, ContactActivity.class);
+                startActivity(intentNewContact);
                 return true;
             case R.id.action_settings:
-                Intent intent3 = new Intent(this, SettingsActivity.class);
-                startActivity(intent3);
+                Intent intentSettings = new Intent(this, SettingsActivity.class);
+                startActivity(intentSettings);
+                return true;
+            case R.id.action_connection_test:
+                Intent intentConnectionTest = new Intent(this, ConnectionTestActivity.class);
+                startActivity(intentConnectionTest);
+                return true;
+            case R.id.action_developer:
+                Intent intentDeveloper = new Intent(this, DeveloperActivity.class);
+                startActivity(intentDeveloper);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

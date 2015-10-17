@@ -29,6 +29,7 @@ public class Contact implements Serializable {
     public void setSurname(String surname) { this.surname = surname; }
 
     public void addMessage(Message msg) { messages.add(msg); }
+    public void addMessages(ArrayList<Message> msgs) { messages.addAll(msgs); }
     public ArrayList<Message> getMessages() { return messages; }
 
     @Override

@@ -41,15 +41,6 @@
         android:layout_marginTop="6dp"/>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="save"
-        android:id="@+id/buttonSave"
-        android:layout_below="@+id/editPublickey"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp"/>
-
-    <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -57,6 +48,23 @@
         android:id="@+id/buttonLoadKey"
         android:layout_alignBottom="@+id/editPublickey"
         android:layout_alignEnd="@+id/editPersonSurname" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="delete"
+        android:id="@+id/buttonDelete"
+        android:layout_below="@+id/editPublickey"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="30dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="save"
+        android:id="@+id/buttonSave"
+        android:layout_alignTop="@+id/buttonDelete"
+        android:layout_toEndOf="@+id/buttonDelete" />
 
 
 </RelativeLayout>

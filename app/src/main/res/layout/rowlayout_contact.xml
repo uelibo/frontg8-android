@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:text="Contact"
         android:textSize="10dp"
-        android:textColor="#0000ff"
+        android:textColor="@color/blue"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/textView" />
 
