@@ -82,11 +82,11 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
             convertView = layoutInflater.inflate(R.layout.rowlayout_contact, null);
         }
 
-        TextView textView = (TextView) convertView.findViewById(R.id.textView);
-        TextView textView2 = (TextView) convertView.findViewById(R.id.textView2);
+        TextView textViewContactName = (TextView) convertView.findViewById(R.id.textView);
+        TextView textViewNumOfMessages = (TextView) convertView.findViewById(R.id.textView2);
 
-        textView2.setText(" (" + contact.getMessages().size() + ")");
-        textView.setText(contact.getName());
+        textViewContactName.setText(contact.getName());
+        textViewNumOfMessages.setText(" (" + contact.getMessages().size() + ")");
 
         return convertView;
     }

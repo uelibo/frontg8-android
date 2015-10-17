@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
@@ -36,7 +37,7 @@ public class MessageActivity extends AppCompatActivity {
 
         Intent intent=this.getIntent();
         Bundle bundle=intent.getExtras();
-        String contactId=(String)bundle.getSerializable("contactid");
+        UUID contactId=(UUID)bundle.getSerializable("contactid");
         contact=TestDataHandler.getContactById(contactId);
 
         TextView title = (TextView) findViewById(R.id.textViewTitle);

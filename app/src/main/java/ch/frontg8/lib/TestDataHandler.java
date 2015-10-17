@@ -10,11 +10,11 @@ public class TestDataHandler {
     final private static ArrayList<Contact> contactList = new ArrayList<>();
 
     private static void createContacts() {
-        contactList.add(new Contact("c01", "Ueli"));
-        contactList.add(new Contact("c02", "Tobi"));
-        contactList.add(new Contact("c03", "Flix"));
-        contactList.add(new Contact("c04", "Paul"));
-        contactList.add(new Contact("c05", "Benny"));
+        contactList.add(new Contact("Ueli"));
+        contactList.add(new Contact("Tobi"));
+        contactList.add(new Contact("Flix"));
+        contactList.add(new Contact("Paul"));
+        contactList.add(new Contact("Benny"));
 
         contactList.get(0).addMessage(new Message("Foo"));
         contactList.get(0).addMessage(new Message("Bar"));
@@ -40,13 +40,13 @@ public class TestDataHandler {
         return contactList;
     }
 
-    public static Contact getContactById(String id) {
+    public static Contact getContactById(UUID id) {
         for (Contact contact:contactList) {
             if (contact.getContactId().equals(id)) {
                 return contact;
             }
         }
-        return new Contact("c00", "dummy");
+        return new Contact("dummy");
     }
 
     public static ArrayList<Message> getMessages() {

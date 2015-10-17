@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="save"
-        android:id="@+id/button"
+        android:id="@+id/buttonSave"
         android:layout_below="@+id/editPublickey"
         android:layout_alignParentStart="true"
         android:layout_marginTop="30dp"/>
@@ -54,7 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="load"
-        android:id="@+id/button2"
+        android:id="@+id/buttonLoadKey"
         android:layout_alignBottom="@+id/editPublickey"
         android:layout_alignEnd="@+id/editPersonSurname" />
 
