@@ -86,6 +86,9 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
         TextView textViewNumOfMessages = (TextView) convertView.findViewById(R.id.textView2);
 
         textViewContactName.setText(contact.getName());
+        if (!contact.getSurname().equals("")) {
+            textViewContactName.append(" " + contact.getSurname());
+        }
         textViewNumOfMessages.setText(" (" + contact.getMessages().size() + ")");
 
         return convertView;

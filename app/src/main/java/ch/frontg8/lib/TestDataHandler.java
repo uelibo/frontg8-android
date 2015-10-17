@@ -10,8 +10,8 @@ public class TestDataHandler {
     final private static ArrayList<Contact> contactList = new ArrayList<>();
 
     private static void createContacts() {
-        contactList.add(new Contact("Ueli"));
-        contactList.add(new Contact("Tobi"));
+        contactList.add(new Contact("Ueli", "Bosshard"));
+        contactList.add(new Contact("Tobi", "Stauber"));
         contactList.add(new Contact("Flix"));
         contactList.add(new Contact("Paul"));
         contactList.add(new Contact("Benny"));

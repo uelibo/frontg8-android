@@ -11,7 +11,7 @@ public class Contact implements Serializable {
     private ArrayList<Message> messages = new ArrayList<Message>();
 
     public Contact(String name) { this(genUUID(), name, ""); }
-    public Contact(UUID contactId, String name) { this(contactId, name, ""); }
+    public Contact(String name, String surname) { this(genUUID(), name, surname); }
     public Contact(UUID contactId, String name, String surname)
     {
         this.contactId = contactId;
