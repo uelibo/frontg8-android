@@ -48,7 +48,8 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
 
                 if (constraint != null) {
                     for (Contact c : originalContactList) {
-                        if (c.getName().toLowerCase(Locale.getDefault()).contains(constraint)) {
+                        if (c.getName().toLowerCase(Locale.getDefault()).contains(constraint) ||
+                                c.getSurname().toLowerCase(Locale.getDefault()).contains(constraint)) {
                             filteredContactList.add(c);
                         }
                     }
