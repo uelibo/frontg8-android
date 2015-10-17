@@ -19,22 +19,19 @@ public class Contact implements Serializable {
         this.surname = surname;
     }
 
+    public UUID getContactId() { return contactId; }
+    private static UUID genUUID() { return java.util.UUID.randomUUID(); }
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
     public String getSurname() { return surname; }
     public void setSurname(String surname) { this.surname = surname; }
 
-    public UUID getContactId() { return contactId; }
+    public void addMessage(Message msg) { messages.add(msg); }
+    public ArrayList<Message> getMessages() { return messages; }
 
-    public void addMessage(Message msg) {
-        messages.add(msg);
-    }
-
-    public ArrayList<Message> getMessages() {
-        return messages;
-    }
-
-    private static UUID genUUID() { return java.util.UUID.randomUUID(); }
+    @Override
+    public String toString() { return name; }
 
 }
