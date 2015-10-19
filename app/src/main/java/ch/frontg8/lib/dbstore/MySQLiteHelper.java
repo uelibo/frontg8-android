@@ -8,7 +8,7 @@ import android.util.Log;
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "frontg8.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     public static final String COLUMN_ID = "id";
 
     public static final String TABLE_CONACTS = "contacts";
@@ -20,14 +20,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_CONTACTUUID = "contactuuid";
     public static final String COLUMN_MESSAGETEXT = "messagetext";
 
-
-    private static final String DATABASE_CREATE = "create table "
+    private static final String DATABASE_CREATE_CONTACTS = "create table "
             + TABLE_CONACTS + "(" + COLUMN_ID
             + " integer primary key autoincrement, "
             + COLUMN_UUID + " text not null, "
             + COLUMN_NAME + " text not null, "
-            + COLUMN_SURNAME + " text null); "
-            + "create table "
+            + COLUMN_SURNAME + " text null); ";
+
+    private static final String DATABASE_CREATE_MESSAGES = "create table "
             + TABLE_MESSAGES + "(" + COLUMN_ID
             + " integer primary key autoincrement, "
             + COLUMN_CONTACTUUID + " text not null, "
@@ -39,7 +39,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database) {
-        database.execSQL(DATABASE_CREATE);
+        database.execSQL(DATABASE_CREATE_CONTACTS);
+        database.execSQL(DATABASE_CREATE_MESSAGES);
     }
 
     @Override

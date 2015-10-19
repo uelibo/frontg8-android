@@ -64,7 +64,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (contact != null) {
                     Message message = new Message(textSend.getText().toString());
-                    contact.addMessage(message);
+                    datasource.insertMessage(contact,message);
                     dataAdapter.replace(contact.getMessages());
                     textSend.getText().clear();
                 }

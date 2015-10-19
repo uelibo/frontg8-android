@@ -80,7 +80,9 @@ public class ContactsDataSource {
         Cursor cursor = database.query(MySQLiteHelper.TABLE_CONACTS,
                 allColumns, MySQLiteHelper.COLUMN_UUID + "=?", queryArgs, null, null, null);
         cursor.moveToFirst();
-        return cursorToContact(cursor);
+        Contact contact = cursorToContact(cursor);
+        contact.addMessages(getMessagesByUUID(contact.getContactId()));
+        return contact;
     }
 
     public ArrayList<Contact> getAllContacts() {
@@ -92,7 +94,7 @@ public class ContactsDataSource {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Contact contact = cursorToContact(cursor);
-            //contact.addMessages(getMessagesByUUID(contact.getContactId()));
+            contact.addMessages(getMessagesByUUID(contact.getContactId()));
             contacts.add(contact);
             cursor.moveToNext();
         }
@@ -118,7 +120,7 @@ public class ContactsDataSource {
 
     public ArrayList<Message> getMessagesByUUID(UUID contactId) {
         String[] queryArgs = { contactId.toString() };
-        ArrayList<Message> messages = new ArrayList<Message>();
+        ArrayList<Message> messages = new ArrayList<>();
         String[] fields = { MySQLiteHelper.COLUMN_MESSAGETEXT };
         Cursor cursor = database.query(MySQLiteHelper.TABLE_MESSAGES,
                 fields, MySQLiteHelper.COLUMN_CONTACTUUID + "=?", queryArgs, null, null, null);
