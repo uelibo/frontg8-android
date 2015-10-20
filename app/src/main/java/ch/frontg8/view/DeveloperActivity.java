@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.TextView;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
@@ -21,6 +22,8 @@ public class DeveloperActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_developer);
 
+        final TextView textViewStatus = (TextView) findViewById(R.id.textViewStatus);
+
         Button ButtonClearDB = (Button) findViewById(R.id.buttonClearDB);
         Button ButtonLoadTestData = (Button) findViewById(R.id.buttonLoadTestData);
 
@@ -29,6 +32,7 @@ public class DeveloperActivity extends AppCompatActivity {
         ButtonClearDB.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
                 datasource.deleteAllContacts();
+                textViewStatus.append("deleted.");
             }
         });
 
@@ -43,6 +47,7 @@ public class DeveloperActivity extends AppCompatActivity {
                 datasource.insertMessage(c, new Message("blc"));
                 datasource.insertMessage(d, new Message("bld"));
                 datasource.insertMessage(d, new Message("bld"));
+                textViewStatus.append("data inserted.");
             }});
 
     }
