@@ -8,7 +8,6 @@ import org.spongycastle.util.encoders.Base64;
 
 import java.security.KeyPair;
 import java.security.PublicKey;
-import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
 
@@ -33,7 +32,6 @@ public class LibCryptoTest extends TestCase {
     @Test
     public void testGenECDHKeys() throws Exception {
         KeyPair kp = genECDHKeys();
-        System.out.println(kp.getPublic() + "\n" + kp.getPrivate());
         KeyPair kp2 = genECDHKeys();
         assertNotEquals(kp, kp2);
     }
@@ -76,20 +74,17 @@ public class LibCryptoTest extends TestCase {
     public void testEncryptDecrypt() throws Exception{
         UUID uuid1 = UUID.randomUUID();
 
-
         KeyPair kp = genECDHKeys();
         setMyKey(kp);
         KeyPair kp1 = genECDHKeys();
         PublicKey pk1 = kp1.getPublic();
-        System.out.println("Contains uuid sks skc: " + containsSKSandSKC(uuid1));
 
-        byte[] plaintext = new byte[20];
+        byte[] plaintext = new byte[1024];
         new Random().nextBytes(plaintext);
 
         genSKCandSKS(uuid1, pk1);
 
         byte[] ciphertext = encryptMSG(uuid1, plaintext);
-
         byte[] decryptedtext = decryptMSG(ciphertext);
 
         String encoded = Base64.toBase64String(plaintext);
@@ -98,8 +93,6 @@ public class LibCryptoTest extends TestCase {
         String decrypted = Base64.toBase64String(decryptedtext);
         System.out.println("Decrypted: " + decrypted);
 
-
-        assertTrue(Arrays.equals(plaintext, decryptedtext));
-
+        assertTrue(encoded.equals(decrypted));
     }
 }

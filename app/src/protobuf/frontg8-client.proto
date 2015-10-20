@@ -1,0 +1,46 @@
+
+package ch.frontg8.lib.protobuf;
+
+message Encrypted {
+  required bytes encrypted_data = 1;
+}
+
+message Data {
+  required bytes session_id = 1;
+  required uint64 timestamp = 2;
+  required bytes message_data = 3;
+}
+
+message Control {
+  required bytes session_id = 1;
+  required uint64 timestamp = 2;
+  required bytes control_data = 3;
+}
+
+message Blacklist {
+  enum Subtype {
+    HASH = 0;
+    REQUEST = 1;
+    BLACKLIST = 2;
+  }
+
+  required Subtype sub_type = 1;
+  optional int32 count = 2;
+  optional bytes blacklist = 3;
+  optional bytes hash = 4;
+}
+
+message Revocation {
+  required bytes public_key = 1;
+  required bytes signature = 2;
+}
+
+message Notification {
+  required int32 count = 1;
+  repeated Encrypted bundle = 2;
+}
+
+message MessageRequest {
+  required bytes hash = 1;
+}
+
