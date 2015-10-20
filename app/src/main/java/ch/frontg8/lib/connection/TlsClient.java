@@ -10,7 +10,7 @@ import java.net.SocketException;
 
 import javax.net.ssl.SSLSocketFactory;
 
-public class SslClient {
+public class TlsClient {
     private static String host = "www.google.ch";
     private static String path = "/";
     private static int port = 443;
