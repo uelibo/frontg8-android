@@ -9,6 +9,7 @@
     <TextView android:text="Developer Settings" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textViewTitle" />
+
     <TextView android:text="Status: " android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewTitle"
@@ -22,7 +23,7 @@
         android:id="@+id/buttonClearDB"
         android:layout_below="@+id/textViewStatus"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="65dp" />
+        android:layout_marginTop="20dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -31,5 +32,23 @@
         android:id="@+id/buttonLoadTestData"
         android:layout_alignTop="@+id/buttonClearDB"
         android:layout_toEndOf="@+id/buttonClearDB" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TLS Test"
+        android:id="@+id/buttonTlsTest"
+        android:layout_alignTop="@+id/buttonClearDB"
+        android:layout_toEndOf="@+id/buttonLoadTestData" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewLog"
+        android:scrollbars = "vertical"
+        android:layout_below="@+id/buttonClearDB"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

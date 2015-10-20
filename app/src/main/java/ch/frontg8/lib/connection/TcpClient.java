@@ -11,11 +11,10 @@ public class TcpClient {
 
         public static final String CLOSED_CONNECTION = "kazy_closed_connection";
         public static final String LOGIN_NAME = "kazy_login_name";
-
     }
 
-    public static final String SERVER_IP = "152.96.193.10"; //your computer IP address
-    public static final int SERVER_PORT = 4444;
+    public static final String SERVER_IP = "152.96.56.70"; //your computer IP address
+    public static final int SERVER_PORT = 40004;
     // message to send to the server
     private String mServerMessage;
     // sends message received notifications
