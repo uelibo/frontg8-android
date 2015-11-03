@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
@@ -40,6 +41,8 @@ public class DeveloperActivity extends AppCompatActivity {
             public void onClick(View view) {
                 datasource.deleteAllContacts();
                 textViewStatus.append("deleted.");
+                Toast toast = Toast.makeText(thisActivity, "all data deleted", Toast.LENGTH_SHORT);
+                toast.show();
             }
         });
 
@@ -55,6 +58,8 @@ public class DeveloperActivity extends AppCompatActivity {
                 datasource.insertMessage(d, new Message("bld"));
                 datasource.insertMessage(d, new Message("bld"));
                 textViewStatus.append("data inserted.");
+                Toast toast = Toast.makeText(thisActivity, "demo data inserted", Toast.LENGTH_SHORT);
+                toast.show();
             }
         });
 
