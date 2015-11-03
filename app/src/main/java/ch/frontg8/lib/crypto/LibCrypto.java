@@ -1,8 +1,10 @@
 package ch.frontg8.lib.crypto;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.InvalidAlgorithmParameterException;
+import android.content.Context;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -15,27 +17,16 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.spec.ECGenParameterSpec;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
 
-import org.spongycastle.asn1.ASN1Sequence;
-import org.spongycastle.asn1.x500.X500Name;
-import org.spongycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.spongycastle.cert.X509CertificateHolder;
-import org.spongycastle.cert.X509v1CertificateBuilder;
-import org.spongycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.spongycastle.crypto.digests.SHA256Digest;
 import org.spongycastle.crypto.macs.HMac;
 import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
-import org.spongycastle.operator.ContentSigner;
-import org.spongycastle.operator.OperatorCreationException;
-import org.spongycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.spongycastle.util.Arrays;
 
 import javax.crypto.Cipher;
@@ -44,9 +35,20 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import static ch.frontg8.lib.crypto.LibCert.generateCertificate;
 import static java.util.Collections.list;
 
 public class LibCrypto {
+
+    /*
+    What must be public:
+        Generate a new key and save it. ✓
+        Encrypt byte[] ✓
+        Decrypt byte[] ✓
+        Get my pubkey  ✓
+        Genereate new skc and sks ✓
+        Set new Keystore-password
+     */
 
     private static final String BC = BouncyCastleProvider.PROVIDER_NAME;
     private static final UUID MYUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
@@ -56,62 +58,61 @@ public class LibCrypto {
     private static final String SUFFIXSESSIONKEYSIGN = "sks";
     private static final int KEYSIZE = 32; //Bytes
     private static final int IVSIZE = 16;  //Bytes
-
     private static final String MYALIAS = MYUUID.toString() + SUFFIXPRIVATE;
-    private static final char[] PASSWORD = "MyPassword".toCharArray();
 
+    private static char[] ksPassword = "KEYSTORE PASSWORD".toCharArray(); //TODO: change to real pw
+    private static String ksFileName = "frontg8Keystore"; //TODO: make configurable
+
+    private static char[] PASSWORD = ksPassword;
 
     private static KeyStore ks;
 
     static {
         Security.addProvider(new BouncyCastleProvider());
-        try {
-            ks = KeyStore.getInstance("BKS", Security.getProvider(BC));
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (ks == null) {
+            try {
+                ks = KeyStore.getInstance("BKS", Security.getProvider(BC));
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     // Encryption / Decryption
 
-    public static byte[] encryptMSG(UUID uuid, byte[] plainBytes) {
+    /**
+     * @param uuid       The uuid of the user, for which the message should be encrypted
+     * @param plainBytes The unencrypted message as byte array
+     * @param context    The android context (Activity)
+     * @return The message as an encrypted byte array
+     */
+    public static byte[] encryptMSG(UUID uuid, byte[] plainBytes, Context context) {
+        loadKS(context);
         SecretKey skc = getSKC(uuid);
         byte[] encryptedBytes = new byte[]{};
         byte[] iv = genIV();
         IvParameterSpec ivspec = new IvParameterSpec(iv);
 
-        Cipher cipher = getEncryptCipher(skc,ivspec);
+        Cipher cipher = getEncryptCipher(skc, ivspec);
         try {
             encryptedBytes = cipher.doFinal(plainBytes);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        byte[] hmac = getHMAC(getSKS(uuid),encryptedBytes);
+        byte[] hmac = getHMAC(getSKS(uuid), encryptedBytes);
 
         return concat(iv, encryptedBytes, hmac);
         // TODO: what to do if uuid does not have a sessionkey?
     }
 
-    private static byte[] concat(byte[] a, byte[] b, byte[] c) {
-        int aLen = a.length;
-        int bLen = b.length;
-        int cLen = c.length;
-        byte[] d= new byte[aLen+bLen+cLen];
-        System.arraycopy(a, 0, d, 0, aLen);
-        System.arraycopy(b, 0, d, aLen, bLen);
-        System.arraycopy(c, 0, d, aLen+bLen, cLen);
-        return d;
-    }
-
-    private static byte[] genIV(){
-        byte[] iv = new byte[IVSIZE];
-        new Random().nextBytes(iv);
-        return iv;
-    }
-
-    public static byte[] decryptMSG(byte[] encryptedMSG) {
+    /**
+     * @param encryptedMSG The encrypted message as byte array
+     * @param context      The android context (Activity)
+     * @return The message as an unencrypted byte array
+     */
+    public static byte[] decryptMSG(byte[] encryptedMSG, Context context) {
+        loadKS(context);
         byte[] decodedBytes = null;
-
         byte[] iv = Arrays.copyOfRange(encryptedMSG, 0, IVSIZE);
         IvParameterSpec ivspec = new IvParameterSpec(iv);
         byte[] encryptedBytes = Arrays.copyOfRange(encryptedMSG, IVSIZE, (encryptedMSG.length - KEYSIZE));
@@ -121,7 +122,7 @@ public class LibCrypto {
         ArrayList<SecretKey> skss = getKeyList(getSKSAliasList());
 
         for (int i = 0; i < skcs.size(); i++) {
-            if (verifyHMAC(skss.get(i), encryptedBytes, hmacBytes)){
+            if (verifyHMAC(skss.get(i), encryptedBytes, hmacBytes)) {
                 decodedBytes = decrypt(encryptedBytes, skcs.get(i), ivspec);
                 break;
             }
@@ -129,7 +130,26 @@ public class LibCrypto {
         return decodedBytes;
     }
 
-    public static byte[] decrypt(byte[] encryptedBytes, SecretKey skc, IvParameterSpec ivspec) {
+    // Crypto helpers
+
+    private static byte[] concat(byte[] a, byte[] b, byte[] c) {
+        int aLen = a.length;
+        int bLen = b.length;
+        int cLen = c.length;
+        byte[] d = new byte[aLen + bLen + cLen];
+        System.arraycopy(a, 0, d, 0, aLen);
+        System.arraycopy(b, 0, d, aLen, bLen);
+        System.arraycopy(c, 0, d, aLen + bLen, cLen);
+        return d;
+    }
+
+    private static byte[] genIV() {
+        byte[] iv = new byte[IVSIZE];
+        new Random().nextBytes(iv);
+        return iv;
+    }
+
+    private static byte[] decrypt(byte[] encryptedBytes, SecretKey skc, IvParameterSpec ivspec) {
         byte[] decodedBytes = new byte[]{};
         try {
             Cipher cipher = getDecryptCipher(skc, ivspec);
@@ -164,31 +184,53 @@ public class LibCrypto {
         return cipher;
     }
 
-    public static boolean verifyHMAC(SecretKey sks, byte[] msg, byte[] hmac) {
+    private static boolean verifyHMAC(SecretKey sks, byte[] msg, byte[] hmac) {
         return Arrays.areEqual(hmac, getHMAC(sks, msg));
     }
 
-    public static byte[] getHMAC(SecretKey sks, byte[] msg) {
-        HMac hmac=new HMac(new SHA256Digest());
-        byte[] result=new byte[hmac.getMacSize()];
-        KeyParameter kp=new KeyParameter(sks.getEncoded());
+    private static byte[] getHMAC(SecretKey sks, byte[] msg) {
+        HMac hmac = new HMac(new SHA256Digest());
+        byte[] result = new byte[hmac.getMacSize()];
+        KeyParameter kp = new KeyParameter(sks.getEncoded());
         hmac.init(kp);
-        hmac.update(msg,0,msg.length);
+        hmac.update(msg, 0, msg.length);
         hmac.doFinal(result, 0);
         return result;
     }
 
 
-    // KeyHandling
+    // Key handling
 
-    public static KeyPair genECDHKeys() throws InvalidAlgorithmParameterException, NoSuchProviderException, NoSuchAlgorithmException, KeyStoreException, IOException, CertificateException {
-        ECGenParameterSpec ecParamSpec = new ECGenParameterSpec("secp521r1"); // TODO: Change curve to incompatible to pyg8
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance("ECDH", BC);
-        kpg.initialize(ecParamSpec);
-        return kpg.generateKeyPair();
+    /**
+     * @param context The android context (Activity)
+     * @return My public key.
+     */
+    public static PublicKey getMyPublicKey(Context context) {
+        loadKS(context);
+        final Certificate cert;
+        try {
+            cert = ks.getCertificate(MYALIAS);
+            final PublicKey publicKey = cert.getPublicKey();
+            return publicKey;
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    public static void genSKCandSKS(UUID uuid, PublicKey pubKey) throws NoSuchProviderException, NoSuchAlgorithmException {
+    private static PrivateKey getMyPrivateKey() {
+        return (PrivateKey) getKey(MYALIAS);
+    }
+
+    /**
+     * @param uuid    The uuid of the user
+     * @param pubKey  The public key from the user
+     * @param context The android context (Activity)
+     * @throws NoSuchProviderException
+     * @throws NoSuchAlgorithmException
+     */
+    public static void negotiateSessionKeys(UUID uuid, PublicKey pubKey, Context context) throws NoSuchProviderException, NoSuchAlgorithmException {
+        loadKS(context);
         byte[] sessionKey = negotiateSessionKey(pubKey);
         byte[] skcBytes = Arrays.copyOfRange(sessionKey, 0, KEYSIZE);
         byte[] sksBytes = Arrays.copyOfRange(sessionKey, sessionKey.length - KEYSIZE, sessionKey.length);
@@ -196,13 +238,27 @@ public class LibCrypto {
         SecretKey skc = new SecretKeySpec(skcBytes, 0, skcBytes.length, "AES");
         SecretKey sks = new SecretKeySpec(sksBytes, 0, sksBytes.length, "AES");
 
+        setSecretKey(getSKCalias(uuid), skc, context);
+        setSecretKey(getSKSalias(uuid), sks, context);
+    }
 
-        setSecretKey(getSKCalias(uuid), skc);
-        setSecretKey(getSKSalias(uuid), sks);
+    /**
+     * @throws Exception
+     */
+    public static void generateNewKeys(Context context) throws Exception {
+        loadKS(context);
+        setMyKey(genECDHKeys(), context);
+    }
+
+    private static KeyPair genECDHKeys() throws Exception {
+        ECGenParameterSpec ecParamSpec = new ECGenParameterSpec("secp521r1"); // TODO: Change curve to incompatible to pyg8
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("ECDH", BC);
+        kpg.initialize(ecParamSpec);
+        return kpg.generateKeyPair();
     }
 
     private static byte[] negotiateSessionKey(PublicKey pubKey) {
-        PrivateKey privKey = getMyPrivKey();
+        PrivateKey privKey = getMyPrivateKey();
         byte[] sessionKey = new byte[]{};
         try {
             KeyAgreement kA = KeyAgreement.getInstance("ECDH", BC);
@@ -215,27 +271,34 @@ public class LibCrypto {
         return sessionKey;
     }
 
-    private static void setSecretKey(String alias, SecretKey key) {
+    private static void setSecretKey(String alias, SecretKey key, Context context) {
         try {
-            ks.setEntry(alias, new KeyStore.SecretKeyEntry(key), new KeyStore.PasswordProtection(PASSWORD));
+            //ks.setEntry(alias, new KeyStore.SecretKeyEntry(key), new KeyStore.PasswordProtection(PASSWORD));
+            ks.setKeyEntry(alias, key, PASSWORD, null);
+            writeStore(context);
         } catch (KeyStoreException e) {
             e.printStackTrace();
         }
     }
 
-    public static void setMyKey(KeyPair keyPair) {
+    private static void setMyKey(KeyPair keyPair, Context context) {
+        loadKS(context);
         X509Certificate certificate;
         try {
             certificate = generateCertificate(keyPair);
-            ks.load(null, null);
             Certificate[] certChain = {certificate};
             ks.setKeyEntry(MYUUID.toString() + SUFFIXPRIVATE, keyPair.getPrivate(), PASSWORD, certChain);
+            writeStore(context);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static boolean containsKey(String alias) {
+
+    // Key checks
+
+    public static boolean containsKey(String alias, Context context) {
+        loadKS(context);
         boolean result = false;
         try {
             result = ks.containsAlias(alias);
@@ -245,22 +308,21 @@ public class LibCrypto {
         return result;
     }
 
-    public static boolean containsSKS(UUID uuid) {
-        return containsKey(getSKSalias(uuid));
+    public static boolean containsSKS(UUID uuid, Context context) {
+        loadKS(context);
+        return containsKey(getSKSalias(uuid), context);
     }
 
-    public static boolean containsSKC(UUID uuid) {
-        return containsKey(getSKCalias(uuid));
+    public static boolean containsSKC(UUID uuid, Context context) {
+        return containsKey(getSKCalias(uuid), context);
     }
 
-    public static boolean containsSKSandSKC(UUID uuid) {
-        return containsSKS(uuid) && containsSKC(uuid);
+    public static boolean containsSKSandSKC(UUID uuid, Context context) {
+        return containsSKS(uuid, context) && containsSKC(uuid, context);
     }
 
 
-    private static PrivateKey getMyPrivKey() {
-        return (PrivateKey) getKey(MYALIAS);
-    }
+    // Get keys
 
     private static SecretKey getSKC(UUID uuid) {
         return (SecretKey) getKey(getSKCalias(uuid));
@@ -290,6 +352,7 @@ public class LibCrypto {
         return key;
     }
 
+    // Get key helpers
 
     private static ArrayList<String> getAliasList() throws KeyStoreException {
         return list(ks.aliases());
@@ -339,28 +402,38 @@ public class LibCrypto {
         return keyList;
     }
 
+    // Keystore handling
 
-    // Certificate handling
+    private static void loadKS(Context context) {
+        try {
+            if (ks.containsAlias(MYALIAS)) {
+                return;
+            }
+        } catch (KeyStoreException e) {
+            try (InputStream is = context.openFileInput(ksFileName)) {
+                ks.load(is, ksPassword);
+            } catch (FileNotFoundException fnfe) {
+                try {
+                    ks.load(null);
+                    try (OutputStream os = context.openFileOutput(ksFileName, Context.MODE_PRIVATE)) {
+                        ks.store(os, ksPassword);
+                    } catch (KeyStoreException kse) {
+                        kse.printStackTrace();
+                    }
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+    }
 
-    private static X509Certificate generateCertificate(KeyPair keyPair) throws OperatorCreationException, CertificateException {
-        PrivateKey privKey = keyPair.getPrivate();
-        PublicKey pubKey = keyPair.getPublic();
-
-        ContentSigner sigGen = new JcaContentSignerBuilder("SHA256withECDSA").setProvider(BC).build(privKey);
-        SubjectPublicKeyInfo subPubKeyInfo = new SubjectPublicKeyInfo(ASN1Sequence.getInstance(pubKey.getEncoded()));
-
-        Date startDate = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
-        Date endDate = new Date(System.currentTimeMillis() + 365 * 24 * 60 * 60 * 1000); //TODO: check alert
-
-        X509v1CertificateBuilder v1CertGen = new X509v1CertificateBuilder(
-                new X500Name("CN=frontg8"),
-                BigInteger.ONE,
-                startDate, endDate,
-                new X500Name("CN=frontg8"),
-                subPubKeyInfo);
-
-        X509CertificateHolder certHolder = v1CertGen.build(sigGen);
-
-        return new JcaX509CertificateConverter().setProvider(BC).getCertificate(certHolder);
+    private static void writeStore(Context context) {
+        try (OutputStream os = context.openFileOutput(ksFileName, Context.MODE_PRIVATE)) {
+            ks.store(os, ksPassword);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
