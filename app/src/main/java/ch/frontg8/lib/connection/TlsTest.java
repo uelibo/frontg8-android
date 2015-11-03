@@ -4,14 +4,26 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.TextView;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.UnknownHostException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 
 import ch.frontg8.R;
 
@@ -41,11 +53,64 @@ public class TlsTest {
         String hostname = "redmine.frontg8.ch";
         SSLSocketFactory factory = HttpsURLConnection.getDefaultSSLSocketFactory();
 
-        TRACE("Creating a SSL Socket For " + hostname + " on port " + port);
+
+        CertificateFactory cf = null;
+        Certificate ca;
+        InputStream caInput = null;
+        SSLContext sslContext = null;
+
+        try {
+            cf = CertificateFactory.getInstance("X.509");
+
+            InputStream ins = context.getResources().openRawResource(
+                    context.getResources().getIdentifier("raw/server",
+                            "raw", context.getPackageName()));
+
+            caInput = new BufferedInputStream(ins);
+
+            ca = cf.generateCertificate(caInput);
+            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+            TRACE("ca=" + ((X509Certificate) ca).getSubjectDN());
+
+            String keyStoreType = KeyStore.getDefaultType();
+            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+            keyStore.load(null, null);
+            keyStore.setCertificateEntry("ca", ca);
+
+            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+            tmf.init(keyStore);
+
+            sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, tmf.getTrustManagers(), null);
+
+        } catch (CertificateException e) {
+            e.printStackTrace();
+            TRACE(e.getMessage());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            TRACE(e.getMessage());
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+            TRACE(e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+            TRACE(e.getMessage());
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+            TRACE(e.getMessage());
+        } finally {
+            try {
+                caInput.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         SSLSocket socket = null;
         try {
-            socket = (SSLSocket) factory.createSocket(hostname, port);
+            //socket = (SSLSocket) factory.createSocket(hostname, port);
+            socket = (SSLSocket) sslContext.getSocketFactory().createSocket(hostname, port);
         } catch (UnknownHostException e) {
             TRACE("factory.createSocket >> UnknownHostException");
         } catch (IOException e) {
