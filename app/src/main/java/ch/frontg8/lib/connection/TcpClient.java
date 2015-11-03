@@ -6,15 +6,15 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 public class TcpClient {
-
     public class Constants {
 
-        public static final String CLOSED_CONNECTION = "kazy_closed_connection";
-        public static final String LOGIN_NAME = "kazy_login_name";
+        public static final String CLOSED_CONNECTION = "client_closed_connection";
+        public static final String LOGIN_NAME = "client_login_name";
     }
 
-    public static final String SERVER_IP = "152.96.56.70"; //your computer IP address
-    public static final int SERVER_PORT = 40004;
+    private String serverIp = "152.96.56.70";
+    private int serverPort = 40002;
+
     // message to send to the server
     private String mServerMessage;
     // sends message received notifications
@@ -25,6 +25,11 @@ public class TcpClient {
     private PrintWriter mBufferOut;
     // used to read messages from the server
     private BufferedReader mBufferIn;
+
+    public void TcpClient(String serverIp, int serverPort) {
+        this.serverIp = serverIp;
+        this.serverPort = serverPort;
+    }
 
     /**
      * Constructor of the class. OnMessagedReceived listens for the messages received from server
@@ -51,7 +56,7 @@ public class TcpClient {
     public void stopClient() {
 
         // send mesage that we are closing the connection
-        sendMessage(Constants.CLOSED_CONNECTION+"Kazy");
+        sendMessage(Constants.CLOSED_CONNECTION+"frontg8");
 
         mRun = false;
 
@@ -72,12 +77,12 @@ public class TcpClient {
 
         try {
             //here you must put your computer's IP address.
-            InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
+            InetAddress serverAddr = InetAddress.getByName(serverIp);
 
             Log.e("TCP Client", "C: Connecting...");
 
             //create a socket to make the connection with the server
-            Socket socket = new Socket(serverAddr, SERVER_PORT);
+            Socket socket = new Socket(serverAddr, serverPort);
 
             try {
 
@@ -87,7 +92,7 @@ public class TcpClient {
                 //receives the message which the server sends back
                 mBufferIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 // send login name
-                sendMessage(Constants.LOGIN_NAME+"Kazy");
+                sendMessage(Constants.LOGIN_NAME+"frontg8");
 
                 //in this while the client listens for the messages sent by the server
                 while (mRun) {
