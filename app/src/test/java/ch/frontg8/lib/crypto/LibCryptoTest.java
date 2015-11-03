@@ -33,6 +33,15 @@ public class LibCryptoTest extends TestCase {
     MockContext mc = new MyMockContext();
 
     @Test
+    public void testContainsSKSandSKC() throws Exception {
+        UUID uuid1 = UUID.randomUUID();
+        generateNewKeys(mc);
+        negotiateSessionKeys(uuid1, genKeyPair().getPublic(), mc);
+        assertTrue(containsSKSandSKC(uuid1, mc));
+    }
+
+
+    @Test
     public void testGenECDHKeys() throws Exception {
         generateNewKeys(mc);
         PublicKey pk1 = getMyPublicKey(mc);
@@ -74,10 +83,11 @@ public class LibCryptoTest extends TestCase {
         byte[] ciphertext = encryptMSG(uuid1, plaintext, mc);
         byte[] decryptedtext = decryptMSG(ciphertext, mc);
 
-        String encoded = Base64.toBase64String(plaintext);
+
+        String encoded = plaintext == null ? "null" : Base64.toBase64String(plaintext);
         System.out.println("Plain: " + encoded);
 
-        String decrypted = Base64.toBase64String(decryptedtext);
+        String decrypted = decryptedtext == null ? "null" : Base64.toBase64String(decryptedtext);
         System.out.println("Decrypted: " + decrypted);
 
         assertTrue(encoded.equals(decrypted));

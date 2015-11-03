@@ -20,6 +20,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.security.spec.ECGenParameterSpec;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
 
@@ -28,6 +29,7 @@ import org.spongycastle.crypto.macs.HMac;
 import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.util.Arrays;
+import org.spongycastle.util.encoders.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyAgreement;
@@ -118,12 +120,13 @@ public class LibCrypto {
         byte[] encryptedBytes = Arrays.copyOfRange(encryptedMSG, IVSIZE, (encryptedMSG.length - KEYSIZE));
         byte[] hmacBytes = Arrays.copyOfRange(encryptedMSG, (encryptedMSG.length - KEYSIZE), encryptedMSG.length);
 
-        ArrayList<SecretKey> skcs = getKeyList(getSKCAliasList());
-        ArrayList<SecretKey> skss = getKeyList(getSKSAliasList());
+        HashMap<String, SecretKey> skcs = getKeyList(getSKCAliasList());
+        HashMap<String, SecretKey> skss = getKeyList(getSKSAliasList());
 
-        for (int i = 0; i < skcs.size(); i++) {
-            if (verifyHMAC(skss.get(i), encryptedBytes, hmacBytes)) {
-                decodedBytes = decrypt(encryptedBytes, skcs.get(i), ivspec);
+        //TODO: fertig mache (suffix entfernen)
+        for (String s: skss.keySet()) {
+            if (verifyHMAC(skss.get(s), encryptedBytes, hmacBytes)) {
+                decodedBytes = decrypt(encryptedBytes, skcs.get(s.substring(0,s.length()-3) + SUFFIXSESSIONKEYCRYPTO), ivspec); //TODO: create constant for length suffix
                 break;
             }
         }
@@ -185,6 +188,8 @@ public class LibCrypto {
     }
 
     private static boolean verifyHMAC(SecretKey sks, byte[] msg, byte[] hmac) {
+        System.out.println("-----\n" + Base64.toBase64String(hmac));
+        System.out.println(Base64.toBase64String(getHMAC(sks, msg)) + "\n+++++");
         return Arrays.areEqual(hmac, getHMAC(sks, msg));
     }
 
@@ -210,8 +215,7 @@ public class LibCrypto {
         final Certificate cert;
         try {
             cert = ks.getCertificate(MYALIAS);
-            final PublicKey publicKey = cert.getPublicKey();
-            return publicKey;
+            return cert.getPublicKey();
         } catch (KeyStoreException e) {
             e.printStackTrace();
             return null;
@@ -238,7 +242,9 @@ public class LibCrypto {
         SecretKey skc = new SecretKeySpec(skcBytes, 0, skcBytes.length, "AES");
         SecretKey sks = new SecretKeySpec(sksBytes, 0, sksBytes.length, "AES");
 
+        removeKey(getSKCalias(uuid));
         setSecretKey(getSKCalias(uuid), skc, context);
+        removeKey(getSKSalias(uuid));
         setSecretKey(getSKSalias(uuid), sks, context);
     }
 
@@ -273,12 +279,21 @@ public class LibCrypto {
 
     private static void setSecretKey(String alias, SecretKey key, Context context) {
         try {
-            //ks.setEntry(alias, new KeyStore.SecretKeyEntry(key), new KeyStore.PasswordProtection(PASSWORD));
             ks.setKeyEntry(alias, key, PASSWORD, null);
             writeStore(context);
         } catch (KeyStoreException e) {
             e.printStackTrace();
         }
+    }
+
+    private static Key removeKey(String alias) {
+        Key key = getKey(alias);
+        try {
+            ks.deleteEntry(alias);
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+        return key;
     }
 
     private static void setMyKey(KeyPair keyPair, Context context) {
@@ -314,11 +329,15 @@ public class LibCrypto {
     }
 
     public static boolean containsSKC(UUID uuid, Context context) {
+        loadKS(context);
         return containsKey(getSKCalias(uuid), context);
     }
 
     public static boolean containsSKSandSKC(UUID uuid, Context context) {
-        return containsSKS(uuid, context) && containsSKC(uuid, context);
+        loadKS(context);
+        boolean result1 = containsSKS(uuid, context);
+        boolean result2 = containsSKC(uuid, context);
+        return result1 && result2;
     }
 
 
@@ -388,18 +407,18 @@ public class LibCrypto {
         return sksAliasList;
     }
 
-    private static ArrayList<SecretKey> getKeyList(ArrayList<String> aliasList) {
-        ArrayList<SecretKey> keyList = new ArrayList<>();
+    private static HashMap<String, SecretKey> getKeyList(ArrayList<String> aliasList) {
+        HashMap<String, SecretKey> keyMap = new HashMap<>();
         for (String alias : aliasList) {
             try {
                 byte[] keyBytes = getKey(alias).getEncoded();
                 SecretKey key = new SecretKeySpec(keyBytes, 0, keyBytes.length, "AES");
-                keyList.add(key);
+                keyMap.put(alias, key);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return keyList;
+        return keyMap;
     }
 
     // Keystore handling
