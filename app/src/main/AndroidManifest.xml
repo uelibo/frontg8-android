@@ -57,6 +57,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ch.frontg8.view.MainActivity" />
         </activity>
+        <service
+            android:name=".lib.connection.LocalService"
+            android:exported="false" />
     </application>
 
 </manifest>
