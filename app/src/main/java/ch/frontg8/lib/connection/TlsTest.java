@@ -63,7 +63,7 @@ public class TlsTest {
             cf = CertificateFactory.getInstance("X.509");
 
             InputStream ins = context.getResources().openRawResource(
-                    context.getResources().getIdentifier("raw/server",
+                    context.getResources().getIdentifier("raw/root",
                             "raw", context.getPackageName()));
 
             caInput = new BufferedInputStream(ins);
