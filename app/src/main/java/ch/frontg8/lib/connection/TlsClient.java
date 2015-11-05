@@ -1,104 +1,160 @@
 package ch.frontg8.lib.connection;
 
+import android.app.Activity;
+
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 
 public class TlsClient {
-    private static String host = "www.google.ch";
-    private static String path = "/";
-    private static int port = 443;
-    private static int timeout = 10;
-    private static SSLSocketFactory clientFactory =
-            (SSLSocketFactory) SSLSocketFactory.getDefault();
+    private String hostname;
+    private int port;
+    private Logger Log;
+    private Activity context;
+    public SSLSocket socket;
 
-    private Socket socket;
-    private PrintWriter writer;
+    public TlsClient(String hostname, int port, Logger Log, Activity context) {
+        this.hostname = hostname;
+        this.port = port;
+        this.Log = Log;
+        this.context = context;
+    }
 
     public void connect() {
-        InetSocketAddress address = new InetSocketAddress(host, port);
-        socket = new Socket();
-        OutputStream output;
+        SSLSocketFactory factory = HttpsURLConnection.getDefaultSSLSocketFactory();
+        CertificateFactory cf = null;
+        Certificate ca;
+        InputStream caInput = null;
+        SSLContext sslContext = null;
+
         try {
-            socket.setKeepAlive(true);
-            socket.setSoTimeout(timeout * 1000);
-            socket.connect(address);
-            output = socket.getOutputStream();
-            writer = new PrintWriter(output);
-        } catch (SocketException e) {
+            cf = CertificateFactory.getInstance("X.509");
+
+            InputStream ins = context.getResources().openRawResource(
+                    context.getResources().getIdentifier("raw/root",
+                            "raw", context.getPackageName()));
+
+            caInput = new BufferedInputStream(ins);
+
+            ca = cf.generateCertificate(caInput);
+            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+            Log.TRACE("ca=" + ((X509Certificate) ca).getSubjectDN());
+
+            String keyStoreType = KeyStore.getDefaultType();
+            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+            keyStore.load(null, null);
+            keyStore.setCertificateEntry("ca", ca);
+
+            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+            tmf.init(keyStore);
+
+            sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, tmf.getTrustManagers(), null);
+
+        } catch (CertificateException e) {
             e.printStackTrace();
+            Log.TRACE(e.getMessage());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            Log.TRACE(e.getMessage());
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+            Log.TRACE(e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        try {
-            DataInputStream input = new DataInputStream(socket.getInputStream());
-            android.util.Log.d("SSLSocketTest",
-                    "GET https://" + host + path + " HTTP/1.1");
-
-            // Send a request
-            writer.println("GET https://" + host + path + " HTTP/1.1\r");
-            writer.println("Host: " + host + "\r");
-            writer.println("Connection: " + "Close\r");
-            writer.println("\r");
-            writer.flush();
-
-            int length = -1;
-            boolean chunked = false;
-
-            String line = input.readLine();
-
-            if (line == null) {
-                throw new IOException("No response from server");
-            }
-
-            // Consume the headers, check content length and encoding type
-            while (line != null && line.length() != 0) {
-                System.out.println(line);
-                android.util.Log.d("SSLSocketTest", line);
-                int dot = line.indexOf(':');
-                if (dot != -1) {
-                    String key = line.substring(0, dot).trim();
-                    String value = line.substring(dot + 1).trim();
-
-                    if ("Content-Length".equalsIgnoreCase(key)) {
-                        length = Integer.valueOf(value);
-                    } else if ("Transfer-Encoding".equalsIgnoreCase(key)) {
-                        chunked = "Chunked".equalsIgnoreCase(value);
-                    }
-
-                }
-                line = input.readLine();
-            }
-
-            // Consume the content itself
-            if (chunked) {
-                length = Integer.parseInt(input.readLine(), 16);
-                while (length != 0) {
-                    byte[] buffer = new byte[length];
-                    input.readFully(buffer);
-                    input.readLine();
-                    length = Integer.parseInt(input.readLine(), 16);
-                }
-                input.readLine();
-            } else {
-                byte[] buffer = new byte[length];
-                input.readFully(buffer);
-            }
-
-            // Sleep for the given number of seconds
-            Thread.sleep(1 * 1000);
-        } catch (IOException e) {
+            Log.TRACE(e.getMessage());
+        } catch (KeyManagementException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.TRACE(e.getMessage());
         } finally {
-            //input.close();
+            try {
+                caInput.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //SSLSocket socket = null;
+        try {
+            //socket = (SSLSocket) factory.createSocket(hostname, port);
+            socket = (SSLSocket) sslContext.getSocketFactory().createSocket(hostname, port);
+        } catch (UnknownHostException e) {
+            Log.TRACE("factory.createSocket >> UnknownHostException");
+        } catch (IOException e) {
+            Log.TRACE("factory.createSocket >> IOException");
+        }
+        Log.TRACE("factory.createSocket >> successful");
+        /**
+         * Starts an SSL handshake on this connection. Common reasons include a
+         * need to use new encryption keys, to change cipher suites, or to
+         * initiate a new session. To force complete reauthentication, the
+         * current session could be invalidated before starting this handshake.
+         * If data has already been sent on the connection, it continues to flow
+         * during this handshake. When the handshake completes, this will be
+         * signaled with an event. This method is synchronous for the initial
+         * handshake on a connection and returns when the negotiated handshake
+         * is complete. Some protocols may not support multiple handshakes on an
+         * existing socket and may throw an IOException.
+         */
+        try {
+            socket.startHandshake();
+        } catch (IOException e) {
+            Log.TRACE("socket.startHandshake >> IOException");
+            Log.TRACE(e.getMessage());
+
+        }
+        Log.TRACE("Handshaking Complete");
+
+        /**
+         * Retrieve the server's certificate chain
+         *
+         * Returns the identity of the peer which was established as part of
+         * defining the session. Note: This method can be used only when using
+         * certificate-based cipher suites; using it with non-certificate-based
+         * cipher suites, such as Kerberos, will throw an
+         * SSLPeerUnverifiedException.
+         *
+         *
+         * Returns: an ordered array of peer certificates, with the peer's own
+         * certificate first followed by any certificate authorities.
+         */
+        Certificate[] serverCerts = null;
+        try {
+            serverCerts = socket.getSession().getPeerCertificates();
+        } catch (SSLPeerUnverifiedException e) {
+            Log.TRACE(" socket.getSession().getPeerCertificates >> SSLPeerUnverifiedException");
+        }
+        Log.TRACE("Retreived Server's Certificate Chain");
+        Log.TRACE(serverCerts.length + "Certifcates Found\n\n\n");
+        for (int i = 0; i < serverCerts.length; i++) {
+            Certificate myCert = serverCerts[i];
+            Log.TRACE("====Certificate:" + (i + 1) + "====");
+            Log.TRACE("-Public Key-\n" + myCert.getPublicKey());
+            Log.TRACE("-Certificate Type-\n " + myCert.getType());
+            Log.TRACE("");
         }
     }
 
