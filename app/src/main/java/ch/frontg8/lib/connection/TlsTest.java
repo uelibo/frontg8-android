@@ -4,8 +4,6 @@ import android.app.Activity;
 
 import com.google.protobuf.ByteString;
 
-import java.io.IOException;
-
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
@@ -42,29 +40,11 @@ public class TlsTest {
         Log.TRACE("---\n");
 
         Log.TRACE("sending packet ");
-        try {
-            tlsClient.socket.getOutputStream().write(packet);
-            Log.TRACE("sending packet succeeded");
-        } catch (IOException e1) {
-            Log.TRACE("socket.getOutputStream().write >> IOException");
-        }
-        Log.TRACE("recving packet");
-        byte[] recv = new byte[100];
-        try {
-            int recvLen = tlsClient.socket.getInputStream().read(recv, 0, recv.length);
-            Log.TRACE(MessageHelper.byteArrayAsHexString(recv));
-            String str = new String(recv, 0, recvLen);
-            Log.TRACE("recv packet = " + str);
-        } catch (IOException e1) {
-            Log.TRACE("socket.getInputStream().read >> IOException");
-        }
+        tlsClient.sendBytes(packet);
 
-        try {
-            Log.TRACE("closing socket");
-            tlsClient.socket.close();
-            Log.TRACE("socket closed");
-        } catch (IOException e) {
-            Log.TRACE("socket.close >> IOException");
-        }
+        Log.TRACE("recving packet");
+        byte[] recv = tlsClient.getBytes(100);
+
+        tlsClient.close();
     }
 }

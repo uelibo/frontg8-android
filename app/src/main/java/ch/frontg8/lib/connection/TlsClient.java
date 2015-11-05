@@ -3,14 +3,8 @@ package ch.frontg8.lib.connection;
 import android.app.Activity;
 
 import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -28,18 +22,25 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
+import ch.frontg8.lib.message.MessageHelper;
+
 public class TlsClient {
     private String hostname;
     private int port;
     private Logger Log;
     private Activity context;
-    public SSLSocket socket;
+    private SSLSocket socket = null;
 
     public TlsClient(String hostname, int port, Logger Log, Activity context) {
         this.hostname = hostname;
         this.port = port;
         this.Log = Log;
         this.context = context;
+    }
+
+    public boolean isConnected() {
+        if (socket == null) { return false; }
+        else { return socket.isConnected(); }
     }
 
     public void connect() {
@@ -155,6 +156,38 @@ public class TlsClient {
             Log.TRACE("-Public Key-\n" + myCert.getPublicKey());
             Log.TRACE("-Certificate Type-\n " + myCert.getType());
             Log.TRACE("");
+        }
+    }
+
+    void sendBytes(byte[] packet) {
+        try {
+            socket.getOutputStream().write(packet);
+            Log.TRACE("sending packet succeeded");
+        } catch (IOException e1) {
+            Log.TRACE("socket.getOutputStream().write >> IOException");
+        }
+    }
+
+    byte[] getBytes(int length){
+        byte[] recv = new byte[length];
+        try {
+            int recvLen = socket.getInputStream().read(recv, 0, recv.length);
+            Log.TRACE(MessageHelper.byteArrayAsHexString(recv));
+            String str = new String(recv, 0, recvLen);
+            Log.TRACE("recv packet = " + str);
+        } catch (IOException e1) {
+            Log.TRACE("socket.getInputStream().read >> IOException");
+        }
+        return recv;
+    }
+
+    void close(){
+        try {
+            Log.TRACE("closing socket");
+            socket.close();
+            Log.TRACE("socket closed");
+        } catch (IOException e) {
+            Log.TRACE("socket.close >> IOException");
         }
     }
 
