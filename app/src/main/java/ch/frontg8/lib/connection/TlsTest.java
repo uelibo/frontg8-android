@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.protobuf.ByteString;
+
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
@@ -26,6 +27,8 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import ch.frontg8.R;
+import ch.frontg8.lib.message.MessageHelper;
+import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class TlsTest {
     Activity context;
@@ -167,20 +170,24 @@ public class TlsTest {
             TRACE("");
         }
 
-        // String packet = "GET / HTTP/1.1\r\n\r\n";
-        // packet.getBytes()
+        byte[] packet;
 
-        byte[] packet = new byte[] {
-                (byte)0x00, 0x14, 0x01, 0x00, 0x0a, 0x12, 0x30, 0x30,
-                (byte)0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30,
-                (byte)0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30
-        };
+        packet = new byte[] {
+            (byte)0x00, 0x14, 0x01, 0x00, 0x0a, 0x12, 0x30, 0x31,
+            (byte)0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
+            (byte)0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48
+            };
 
+        TRACE("---\n" + MessageHelper.byteArrayAsHexString(packet));
 
-        //  0x00, 0x14, 0x01, 0x00, 0x0a, 0x12, 0x30, 0x30,
-        //  0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30,
-        //  0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30,
+        Frontg8Client.MessageRequest request = Frontg8Client.MessageRequest.newBuilder().setHash(ByteString.copyFromUtf8("0")).build();
+        Frontg8Client.Data data = Frontg8Client.Data.newBuilder().setMessageData(ByteString.copyFromUtf8("Hallo")).setSessionId(ByteString.copyFromUtf8("0")).setTimestamp(0).build();
+        Frontg8Client.Encrypted encr = Frontg8Client.Encrypted.newBuilder().setEncryptedData(ByteString.copyFromUtf8("Hallo")).build();
 
+        TRACE("---\n" + MessageHelper.byteArrayAsHexString(request.toByteArray()));
+        TRACE("---\n" + MessageHelper.byteArrayAsHexString(encr.toByteArray()));
+        TRACE("---\n" + MessageHelper.byteArrayAsHexString(data.toByteArray()));
+        TRACE("---\n");
 
         TRACE("sending packet ");
         try {
@@ -190,9 +197,10 @@ public class TlsTest {
             TRACE("socket.getOutputStream().write >> IOException");
         }
         TRACE("recving packet");
-        byte[] recv = new byte[10000];
+        byte[] recv = new byte[100];
         try {
             int recvLen = socket.getInputStream().read(recv, 0, recv.length);
+            TRACE(MessageHelper.byteArrayAsHexString(recv));
             String str = new String(recv, 0, recvLen);
             TRACE("recv packet = " + str);
         } catch (IOException e1) {
