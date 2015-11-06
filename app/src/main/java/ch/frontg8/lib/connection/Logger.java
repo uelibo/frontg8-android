@@ -7,8 +7,11 @@ import android.widget.TextView;
 import ch.frontg8.R;
 
 public class Logger {
-    private Activity context;
-    private String acitivtyName;
+    private Activity context=null;
+    private String acitivtyName="noActivity";
+
+    public Logger() {
+    }
 
     public Logger(Activity context, String activityName) {
         this.context = context;
@@ -16,14 +19,18 @@ public class Logger {
     }
 
     public void TRACE(final String log) {
-        context.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Log.w(acitivtyName, log);
-                TextView textViewLog = (TextView) context.findViewById(R.id.textViewLog);
-                textViewLog.append(log + "\r\n");
-            }
-        });
+        if (context == null) {
+            Log.w(acitivtyName, log);
+        } else {
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.w(acitivtyName, log);
+                    TextView textViewLog = (TextView) context.findViewById(R.id.textViewLog);
+                    textViewLog.append(log + "\r\n");
+                }
+            });
+        }
     }
 
 }
