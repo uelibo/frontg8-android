@@ -3,6 +3,7 @@ package ch.frontg8.lib.connection;
 import android.app.Activity;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
@@ -17,7 +18,6 @@ public class TlsTest {
     public void RunTlsTest() {
 
         Logger Log = new Logger(context, "DeveloperActivity");
-
         TlsClient tlsClient = new TlsClient("redmine.frontg8.ch", 40001, Log, context);
         tlsClient.connect();
 
@@ -39,11 +39,27 @@ public class TlsTest {
         Log.TRACE("---\n" + MessageHelper.byteArrayAsHexString(data.toByteArray()));
         Log.TRACE("---\n");
 
-        Log.TRACE("sending packet ");
         tlsClient.sendBytes(packet);
 
-        Log.TRACE("recving packet");
-        byte[] recv = tlsClient.getBytes(100);
+        byte[] recv1 = tlsClient.getBytes(4);
+        Log.TRACE("---\n" + MessageHelper.byteArrayAsHexString(recv1));
+
+        int length = recv1[0] * 256 + recv1[1] ;
+        int proto = recv1[2];
+        Log.TRACE("---\n" + "Length: " + length + " Proto: " + proto);
+
+        byte[] recv2 = tlsClient.getBytes(length);
+        Log.TRACE("---\n" + MessageHelper.byteArrayAsHexString(recv2));
+
+        try {
+            Frontg8Client.Notification notification = Frontg8Client.Notification.parseFrom(recv2);
+            Frontg8Client.Encrypted encrypted = notification.getBundle(0);
+            Frontg8Client.Data message= Frontg8Client.Data.parseFrom(encrypted.getEncryptedData());
+            Log.TRACE("\nMessage: " + message.getMessageData().toString());
+        } catch (InvalidProtocolBufferException e) {
+            Log.TRACE(e.getMessage());
+            e.printStackTrace();
+        }
 
         tlsClient.close();
     }

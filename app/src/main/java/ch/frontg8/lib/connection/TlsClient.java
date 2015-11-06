@@ -160,6 +160,7 @@ public class TlsClient {
     }
 
     void sendBytes(byte[] packet) {
+        Log.TRACE("sending packet ");
         try {
             socket.getOutputStream().write(packet);
             Log.TRACE("sending packet succeeded");
@@ -169,6 +170,7 @@ public class TlsClient {
     }
 
     byte[] getBytes(int length){
+        Log.TRACE("recving packet");
         byte[] recv = new byte[length];
         try {
             int recvLen = socket.getInputStream().read(recv, 0, recv.length);
