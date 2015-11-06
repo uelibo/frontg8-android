@@ -7,6 +7,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import ch.frontg8.bl.Message;
 import ch.frontg8.lib.crypto.LibCrypto;
 import ch.frontg8.lib.message.MessageHelper;
+import ch.frontg8.lib.message.MessageType;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class TlsTest {
@@ -32,13 +33,13 @@ public class TlsTest {
         }
 
         Frontg8Client.Encrypted encr = MessageHelper.buildEncryptedMessage(data.toByteString());
+        byte[] encryptedMessage = MessageHelper.addMessageHeader(MessageHelper.buildEncryptedMessage(data.toByteString()).toByteArray(), MessageType.Encrypted);
 
-        //Log.TRACE("---\n" + MessageHelper.byteArrayAsHexString(encr.toByteArray()));
-        Log.TRACE("---\n" + MessageHelper.byteArrayAsHexString(MessageHelper.addMessageHeader(encr.toByteArray())));
+        Log.TRACE("---\n" + MessageHelper.byteArrayAsHexString(encryptedMessage));
         Log.TRACE("---\n");
 
         // SEND
-        tlsClient.sendBytes(MessageHelper.addMessageHeader(encr.toByteArray()));
+        tlsClient.sendBytes(encryptedMessage);
 
         // RECEIVE
         Frontg8Client.Notification notification = tlsClient.getNotificationMessage();
@@ -57,7 +58,7 @@ public class TlsTest {
         }
 
         // SEND
-        byte[] requestMessage = MessageHelper.addMessageHeader(MessageHelper.buildMessageRequestMessage("0").toByteArray());
+        byte[] requestMessage = MessageHelper.addMessageHeader(MessageHelper.buildMessageRequestMessage("0").toByteArray(), MessageType.MessageRequest);
         Log.TRACE("---\n" + MessageHelper.byteArrayAsHexString(requestMessage));
         tlsClient.sendBytes(requestMessage);
 

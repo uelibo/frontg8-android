@@ -43,11 +43,11 @@ public class MessageHelper {
         return BigInteger.valueOf(size).toByteArray();
     }
 
-    public static byte[] addMessageHeader(byte[] message) {
+    public static byte[] addMessageHeader(byte[] message, int messageType) {
         byte[] header = new byte[4];
         byte[] sizeArray = sizeToByte(message.length);
 
-        header[2] = (byte) MessageType.Encrypted;
+        header[2] = (byte) messageType;
 
         if (sizeArray.length == 2) {
             header[0] = sizeArray[1];
