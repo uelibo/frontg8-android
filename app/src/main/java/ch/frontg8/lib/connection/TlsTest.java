@@ -2,9 +2,8 @@ package ch.frontg8.lib.connection;
 
 import android.app.Activity;
 
-import com.google.protobuf.InvalidProtocolBufferException;
+import java.util.List;
 
-import ch.frontg8.bl.Message;
 import ch.frontg8.lib.crypto.LibCrypto;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.message.MessageType;
@@ -38,43 +37,32 @@ public class TlsTest {
         Log.TRACE("---\n" + MessageHelper.byteArrayAsHexString(encryptedMessage));
         Log.TRACE("---\n");
 
-        // SEND
+        // SEND Message
         tlsClient.sendBytes(encryptedMessage);
 
         // RECEIVE
-        Frontg8Client.Notification notification = tlsClient.getNotificationMessage();
-        Frontg8Client.Encrypted encrypted;
-        Frontg8Client.Data message = null;
-        if (notification != null ) {
-            try {
-                Log.TRACE("\nBundleCount: " + notification.getBundleCount());
-                encrypted = notification.getBundle(0);
-                message = Frontg8Client.Data.parseFrom(encrypted.getEncryptedData());
-                Log.TRACE("----------------\nMessage: " + message.getMessageData().toStringUtf8() +"\n");
-            } catch (InvalidProtocolBufferException e) {
-                Log.TRACE(e.getMessage());
-                e.printStackTrace();
-            }
+        List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(tlsClient.getNotificationMessage());
+        Log.TRACE("Num of messages: " + messages.size());
+        for (Frontg8Client.Encrypted message: messages) {
+            // TODO: Decription of data
+            String text = MessageHelper.getDataMessageFromByteArray(message.getEncryptedData()).getMessageData().toStringUtf8();
+            Log.TRACE(text);
         }
 
-        // SEND
+        // SEND Message Request Message
         byte[] requestMessage = MessageHelper.addMessageHeader(MessageHelper.buildMessageRequestMessage("0").toByteArray(), MessageType.MessageRequest);
         Log.TRACE("---\n" + MessageHelper.byteArrayAsHexString(requestMessage));
         tlsClient.sendBytes(requestMessage);
 
         // RECEIVE
-        notification = tlsClient.getNotificationMessage();
-        if (notification != null ) {
-            try {
-                Log.TRACE("\nBundleCount: " + notification.getBundleCount());
-                encrypted = notification.getBundle(0);
-                message = Frontg8Client.Data.parseFrom(encrypted.getEncryptedData());
-                Log.TRACE("\nMessage: " + message.getMessageData().toStringUtf8());
-            } catch (InvalidProtocolBufferException e) {
-                Log.TRACE(e.getMessage());
-                e.printStackTrace();
-            }
+        messages = MessageHelper.getEncryptedMessagesFromNotification(tlsClient.getNotificationMessage());
+        Log.TRACE("Num of messages: " + messages.size());
+        for (Frontg8Client.Encrypted message: messages) {
+            // TODO: Decription of data
+            String text = MessageHelper.getDataMessageFromByteArray(message.getEncryptedData()).getMessageData().toStringUtf8();
+            Log.TRACE(text);
         }
+
         tlsClient.close();
     }
 }

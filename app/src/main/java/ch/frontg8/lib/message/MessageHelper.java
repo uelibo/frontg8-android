@@ -1,8 +1,11 @@
 package ch.frontg8.lib.message;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
@@ -39,6 +42,25 @@ public class MessageHelper {
                 .build();
     }
 
+    public static List<Frontg8Client.Encrypted> getEncryptedMessagesFromNotification(Frontg8Client.Notification notification) {
+        List<Frontg8Client.Encrypted> encrypted = new ArrayList<>();
+
+        for (int i=0; i < notification.getCount(); i++) {
+            encrypted.add(notification.getBundle(i));
+        }
+        return encrypted;
+    }
+
+    public static Frontg8Client.Data getDataMessageFromByteArray(ByteString data) {
+        Frontg8Client.Data dataMessage = null;
+        try {
+            dataMessage = Frontg8Client.Data.parseFrom(data);
+        } catch (InvalidProtocolBufferException e) {
+            e.printStackTrace();
+        }
+        return dataMessage;
+    }
+
     private static byte[] sizeToByte(int size){
         return BigInteger.valueOf(size).toByteArray();
     }
@@ -55,7 +77,7 @@ public class MessageHelper {
         } else if (sizeArray.length == 1) {
             header[1] = sizeArray[0];
         } else {
-            // TODO: raise new Exception();
+            // TODO: raise Exception
         }
 
         byte[] fullMessage = new byte[header.length + message.length];
