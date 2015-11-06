@@ -2,6 +2,8 @@ package ch.frontg8.lib.connection;
 
 import android.content.Context;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +25,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import ch.frontg8.lib.message.MessageHelper;
+import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class TlsClient {
     private String hostname;
@@ -159,7 +162,7 @@ public class TlsClient {
         }
     }
 
-    void sendBytes(byte[] packet) {
+    public void sendBytes(byte[] packet) {
         Log.TRACE("sending packet ");
         try {
             socket.getOutputStream().write(packet);
@@ -169,21 +172,39 @@ public class TlsClient {
         }
     }
 
-    byte[] getBytes(int length){
+    public byte[] getBytes(int length){
         Log.TRACE("recving packet");
         byte[] recv = new byte[length];
         try {
             int recvLen = socket.getInputStream().read(recv, 0, recv.length);
             Log.TRACE(MessageHelper.byteArrayAsHexString(recv));
-            String str = new String(recv, 0, recvLen);
-            Log.TRACE("recv packet = " + str);
         } catch (IOException e1) {
             Log.TRACE("socket.getInputStream().read >> IOException");
         }
         return recv;
     }
 
-    void close(){
+    public Frontg8Client.Notification getNotificationMessage() {
+        byte[] recv1 = this.getBytes(4);
+
+        int length = recv1[0] * 256 + recv1[1];
+        Log.TRACE("Length: " + length);
+
+        byte[] recv2 = this.getBytes(length);
+
+        Frontg8Client.Notification notification = null;
+
+        try {
+            notification = Frontg8Client.Notification.parseFrom(recv2);
+        } catch (InvalidProtocolBufferException e) {
+            Log.TRACE(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return notification;
+    }
+
+    public void close(){
         try {
             Log.TRACE("closing socket");
             socket.close();
