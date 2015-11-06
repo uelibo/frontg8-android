@@ -18,6 +18,7 @@ import java.security.spec.ECGenParameterSpec;
 import java.util.Random;
 import java.util.UUID;
 
+import static ch.frontg8.lib.crypto.KeyFileGenerator.generateKeyStoreFiles;
 import static ch.frontg8.lib.crypto.LibCrypto.containsSKSandSKC;
 import static ch.frontg8.lib.crypto.LibCrypto.decryptMSG;
 import static ch.frontg8.lib.crypto.LibCrypto.encryptMSG;
@@ -30,7 +31,12 @@ import static org.junit.Assert.assertNotEquals;
  * Created by tstauber on 13.10.15.
  */
 public class LibCryptoTest extends TestCase {
-    MockContext mc = new MyMockContext();
+    private MockContext mc = new MyMockContext();
+
+//    @Test
+//    public void testKeyFileGenerator() {
+//        generateKeyStoreFiles();
+//    }
 
     @Test
     public void testContainsSKSandSKC() throws Exception {

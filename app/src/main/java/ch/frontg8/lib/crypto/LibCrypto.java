@@ -63,7 +63,7 @@ public class LibCrypto {
     private static final String MYALIAS = MYUUID.toString() + SUFFIXPRIVATE;
 
     private static char[] ksPassword = "KEYSTORE PASSWORD".toCharArray(); //TODO: change to real pw
-    private static String ksFileName = "frontg8Keystore"; //TODO: make configurable
+    private static String ksFileName = "src/main/res/raw/frontg8keystore.ks"; //TODO: make configurable
 
     private static char[] PASSWORD = ksPassword;
 
@@ -71,6 +71,10 @@ public class LibCrypto {
 
     static {
         Security.addProvider(new BouncyCastleProvider());
+        initKeystore();
+    }
+
+    private static void initKeystore() {
         if (ks == null) {
             try {
                 ks = KeyStore.getInstance("BKS", Security.getProvider(BC));
@@ -124,9 +128,9 @@ public class LibCrypto {
         HashMap<String, SecretKey> skss = getKeyList(getSKSAliasList());
 
         //TODO: fertig mache (suffix entfernen)
-        for (String s: skss.keySet()) {
+        for (String s : skss.keySet()) {
             if (verifyHMAC(skss.get(s), encryptedBytes, hmacBytes)) {
-                decodedBytes = decrypt(encryptedBytes, skcs.get(s.substring(0,s.length()-3) + SUFFIXSESSIONKEYCRYPTO), ivspec); //TODO: create constant for length suffix
+                decodedBytes = decrypt(encryptedBytes, skcs.get(s.substring(0, s.length() - 3) + SUFFIXSESSIONKEYCRYPTO), ivspec); //TODO: create constant for length suffix
                 break;
             }
         }
@@ -424,6 +428,9 @@ public class LibCrypto {
     // Keystore handling
 
     private static void loadKS(Context context) {
+        if (ks == null) {
+            initKeystore();
+        }
         try {
             if (ks.containsAlias(MYALIAS)) {
                 return;
@@ -454,5 +461,11 @@ public class LibCrypto {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    //helper for KeyFileGeneration
+    static void setKeyfileName(String name) {
+        ks = null;
+        ksFileName = name;
     }
 }
