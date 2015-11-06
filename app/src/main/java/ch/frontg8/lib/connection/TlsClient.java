@@ -1,6 +1,6 @@
 package ch.frontg8.lib.connection;
 
-import android.app.Activity;
+import android.content.Context;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -28,10 +28,10 @@ public class TlsClient {
     private String hostname;
     private int port;
     private Logger Log;
-    private Activity context;
+    private Context context;
     private SSLSocket socket = null;
 
-    public TlsClient(String hostname, int port, Logger Log, Activity context) {
+    public TlsClient(String hostname, int port, Logger Log, Context context) {
         this.hostname = hostname;
         this.port = port;
         this.Log = Log;
