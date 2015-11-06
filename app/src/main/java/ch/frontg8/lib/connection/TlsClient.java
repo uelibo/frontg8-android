@@ -185,9 +185,9 @@ public class TlsClient {
     }
 
     public Frontg8Client.Notification getNotificationMessage() {
-        byte[] recv1 = this.getBytes(4);
+        byte[] bA = this.getBytes(4);
 
-        int length = recv1[0] * 256 + recv1[1];
+        int length = (( bA[0] < 0 ? bA[0]+128 : bA[0] ) << 8) + ( bA[1] < 0 ? bA[1]+128 : bA[1] );
         Log.TRACE("Length: " + length);
 
         byte[] recv2 = this.getBytes(length);
