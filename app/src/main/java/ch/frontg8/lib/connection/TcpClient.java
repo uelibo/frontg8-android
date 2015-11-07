@@ -1,21 +1,24 @@
 package ch.frontg8.lib.connection;
 
-import android.content.SharedPreferences;
 import android.util.Log;
-import java.io.*;
-import java.net.InetAddress;
-import java.net.Socket;
 
-import ch.frontg8.R;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.List;
+
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.message.MessageType;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class TcpClient {
     public class Constants {
-
         public static final String CLOSED_CONNECTION = "client_closed_connection";
-        public static final String LOGIN_NAME = "client_login_name";
     }
 
     private TlsClient tlsClient;
@@ -27,8 +30,10 @@ public class TcpClient {
     // while this is true, the server will continue running
     private boolean mRun = false;
     // used to send messages
+    private OutputStream output;
     private PrintWriter mBufferOut;
     // used to read messages from the server
+    private InputStream input;
     private BufferedReader mBufferIn;
 
     /**
@@ -45,13 +50,19 @@ public class TcpClient {
      * @param message text entered by client
      */
     public void sendMessage(String message) {
-        if (mBufferOut != null && !mBufferOut.checkError()) {
+//        if (mBufferOut != null && !mBufferOut.checkError()) {
+        if (output != null) {
             //mBufferOut.println(message);
             Frontg8Client.Data data = MessageHelper.buildDataMessage(message, "0", 0);
             byte[] encryptedMessage = MessageHelper.addMessageHeader(MessageHelper.buildEncryptedMessage(data.toByteString()).toByteArray(), MessageType.Encrypted);
             Log.e("TCP Client", MessageHelper.byteArrayAsHexString(encryptedMessage));
-            mBufferOut.print(encryptedMessage);
-            mBufferOut.flush();
+            try {
+                output.write(encryptedMessage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //mBufferOut.print(encryptedMessage);
+            //mBufferOut.flush();
         }
     }
 
@@ -87,21 +98,22 @@ public class TcpClient {
             try {
 
                 //sends the message to the server
-                mBufferOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(tlsClient.getOutputStream())), true);
+                output = tlsClient.getOutputStream();
+                mBufferOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(output)), true);
 
                 //receives the message which the server sends back
-                mBufferIn = new BufferedReader(new InputStreamReader(tlsClient.getInputStream()));
+                input = tlsClient.getInputStream();
+                mBufferIn = new BufferedReader(new InputStreamReader(input));
                 // send login name
-                sendMessage(Constants.LOGIN_NAME+"frontg8");
+                sendMessage("frontg8 test");
 
                 //in this while the client listens for the messages sent by the server
                 while (mRun) {
 
-                    mServerMessage = mBufferIn.readLine();
-
-                    if (mServerMessage != null && mMessageListener != null) {
-                        //call the method messageReceived from MyActivity class
-                        mMessageListener.messageReceived(mServerMessage);
+                    List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(tlsClient));
+                    for (Frontg8Client.Encrypted message: messages) {
+                        String text = MessageHelper.getDataMessageFromByteArray(message.getEncryptedData()).getMessageData().toStringUtf8();
+                        mMessageListener.messageReceived(text);
                     }
 
                 }

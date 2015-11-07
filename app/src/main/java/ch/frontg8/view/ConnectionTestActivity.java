@@ -1,5 +1,6 @@
 package ch.frontg8.view;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -103,7 +104,10 @@ public class ConnectionTestActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.connect:
                 // connect to the server
-                new ConnectTask(new TlsClient("server.frontg8.ch", 40001, new Logger(), this)).execute("");
+                SharedPreferences preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
+                String servername = preferences.getString("edittext_preference_hostname", "server.frontg8.ch");
+                int serverport = Integer.parseInt(preferences.getString("edittext_preference_port", "40001"));
+                new ConnectTask(new TlsClient(servername, serverport, new Logger(), this)).execute("");
                 return true;
             case R.id.disconnect:
                 // disconnect
