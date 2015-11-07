@@ -25,17 +25,6 @@ public class LibKeystore {
         Security.addProvider(new BouncyCastleProvider());
     }
 
-    public static boolean isInitialized(KeyStore ks) {
-        try {
-            ks.store(null);
-        } catch (KeyStoreException e) {
-            return false;
-        } catch (Exception e) {
-            return true;
-        }
-        return false;
-    }
-
     private static KeyStore createKeystore() throws KeyStoreException {
         KeyStore ks = KeyStore.getInstance("BKS", Security.getProvider(BC));
         try {

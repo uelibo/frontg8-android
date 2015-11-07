@@ -36,7 +36,6 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import static ch.frontg8.lib.crypto.LibCert.generateCertificate;
-import static ch.frontg8.lib.crypto.LibKeystore.isInitialized;
 import static ch.frontg8.lib.crypto.LibKeystore.loadFromFile;
 import static java.util.Collections.list;
 
@@ -364,7 +363,7 @@ public class LibCrypto {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new KeyNotFoundError("No Key found for UUID: "+ alias);
+            throw new KeyNotFoundError("No Key found for UUID: " + alias);
         }
         return key;
     }
@@ -433,12 +432,16 @@ public class LibCrypto {
 
     private static void loadKS(Context context) {
         initKeystore();
-        if (!isInitialized(ks)) {
+        try {
+            ks.containsAlias(MYALIAS);
+            return;
+        } catch (KeyStoreException e1) {
             try {
                 ks = loadFromFile(ksFileName, ksPassword, context);
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+                if (!ks.containsAlias(MYALIAS)){
+                    generateNewKeys(context);
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
