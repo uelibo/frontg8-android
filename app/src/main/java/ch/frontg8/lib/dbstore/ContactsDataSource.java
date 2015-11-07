@@ -138,6 +138,10 @@ public class ContactsDataSource {
         return messages;
     }
 
+    public void deleteAllMessages() {
+        database.execSQL("delete from " + MySQLiteHelper.TABLE_MESSAGES);
+    }
+
     private Message cursorToMessage(Cursor cursor) {
         Message message = new Message(cursor.getString(0));
         return message;
