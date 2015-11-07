@@ -32,40 +32,45 @@ public class DeveloperActivity extends AppCompatActivity {
 
         thisActivity = this;
 
-        final TextView textViewStatus = (TextView) findViewById(R.id.textViewStatus);
-        Button ButtonClearDB = (Button) findViewById(R.id.buttonClearDB);
-        Button ButtonLoadTestData = (Button) findViewById(R.id.buttonLoadTestData);
-        Button ButtonTlsTest = (Button) findViewById(R.id.buttonTlsTest);
+        Button buttonKeyGen = (Button) findViewById(R.id.buttonKeyGen);
+        Button buttonClearDB = (Button) findViewById(R.id.buttonClearDB);
+        Button buttonLoadTestData = (Button) findViewById(R.id.buttonLoadTestData);
+        Button buttonTlsTest = (Button) findViewById(R.id.buttonTlsTest);
 
         datasource.open();
 
-        ButtonClearDB.setOnClickListener(new AdapterView.OnClickListener() {
+        buttonKeyGen.setOnClickListener(new AdapterView.OnClickListener() {
+            public void onClick(View view) {
+
+            }
+        });
+
+        buttonClearDB.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
                 datasource.deleteAllContacts();
-                textViewStatus.append("deleted.");
                 Toast toast = Toast.makeText(thisActivity, "all data deleted", Toast.LENGTH_SHORT);
                 toast.show();
             }
         });
 
-        ButtonLoadTestData.setOnClickListener(new AdapterView.OnClickListener() {
+        buttonLoadTestData.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-                Contact a = datasource.createContact(new Contact(UUID.fromString("11111111-1111-1111-1111-111111111111"), "Ueli", "Bosshard"));
-                Contact b = datasource.createContact(new Contact(UUID.fromString("22222222-2222-2222-2222-222222222222"), "Tobias", "Stauber"));
-                Contact c = datasource.createContact(new Contact("Flix"));
-                Contact d = datasource.createContact(new Contact("Benny"));
+                Contact a = datasource.createContact(new Contact(UUID.fromString("11111111-1111-1111-1111-111111111111"), "The", "Other"));
+                Contact b = datasource.createContact(new Contact("Tobias", "Stauber"));
+                Contact c = datasource.createContact(new Contact("Ueli", "Bosshard"));
+                Contact d = datasource.createContact(new Contact("Flix"));
+                Contact e = datasource.createContact(new Contact("Benny"));
                 datasource.insertMessage(a, new Message("bla"));
                 datasource.insertMessage(b, new Message("blb"));
                 datasource.insertMessage(c, new Message("blc"));
                 datasource.insertMessage(d, new Message("bld"));
                 datasource.insertMessage(d, new Message("bld"));
-                textViewStatus.append("data inserted.");
                 Toast toast = Toast.makeText(thisActivity, "demo data inserted", Toast.LENGTH_SHORT);
                 toast.show();
             }
         });
 
-        ButtonTlsTest.setOnClickListener(new AdapterView.OnClickListener() {
+        buttonTlsTest.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
                 textViewLog = (TextView) findViewById(R.id.textViewLog);
                 textViewLog.setText("");
