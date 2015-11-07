@@ -24,6 +24,7 @@ import static ch.frontg8.lib.crypto.LibCrypto.decryptMSG;
 import static ch.frontg8.lib.crypto.LibCrypto.encryptMSG;
 import static ch.frontg8.lib.crypto.LibCrypto.generateNewKeys;
 import static ch.frontg8.lib.crypto.LibCrypto.getMyPublicKey;
+import static ch.frontg8.lib.crypto.LibCrypto.getMyPublicKeyBytes;
 import static ch.frontg8.lib.crypto.LibCrypto.negotiateSessionKeys;
 import static org.junit.Assert.assertNotEquals;
 
@@ -37,6 +38,12 @@ public class LibCryptoTest extends TestCase {
 //    public void testKeyFileGenerator() {
 //        generateKeyStoreFiles();
 //    }
+
+    @Test
+   public void testGetKey() {
+        System.out.println(new String(getMyPublicKeyBytes(mc)));
+    }
+
 
     @Test
     public void testContainsSKSandSKC() throws Exception {
