@@ -1,5 +1,6 @@
 package ch.frontg8.view;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,19 +11,26 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.UUID;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
+import ch.frontg8.lib.crypto.LibCrypto;
 import ch.frontg8.lib.dbstore.ContactsDataSource;
 
 public class ContactActivity extends AppCompatActivity {
+    private Context thisContext;
     private ContactsDataSource datasource = new ContactsDataSource(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
+
+        thisContext = this;
 
         final Contact contact;
         final TextView title = (TextView) findViewById(R.id.textViewTitle);
@@ -60,6 +68,12 @@ public class ContactActivity extends AppCompatActivity {
                     contact.setSurname(surname.getText().toString());
                     contact.setPublicKeyString(publicKey.getText().toString());
                     datasource.updateContact(contact);
+                    //TODO: negotiate Keys
+                    try {
+                        LibCrypto.negotiateSessionKeys(contact.getContactId(), publicKey.getText().toString().getBytes(), thisContext);
+                    } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });

@@ -5,12 +5,14 @@ import android.content.Context;
 import org.spongycastle.crypto.digests.SHA256Digest;
 import org.spongycastle.crypto.macs.HMac;
 import org.spongycastle.crypto.params.KeyParameter;
+import org.spongycastle.jce.interfaces.ECPublicKey;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.util.Arrays;
 import org.spongycastle.util.encoders.Base64;
 
 import java.io.IOException;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
@@ -24,6 +26,10 @@ import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.security.spec.ECGenParameterSpec;
+import java.security.spec.ECPublicKeySpec;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -217,6 +223,11 @@ public class LibCrypto {
         }
     }
 
+    public static byte[] getMyPublicKeyBytes(Context context){
+        PublicKey pk = getMyPublicKey(context);
+        return Base64.encode(pk.getEncoded());
+    }
+
     private static PrivateKey getMyPrivateKey() {
         return (PrivateKey) getKey(MYALIAS);
     }
@@ -228,9 +239,10 @@ public class LibCrypto {
      * @throws NoSuchProviderException
      * @throws NoSuchAlgorithmException
      */
-    public static void negotiateSessionKeys(UUID uuid, PublicKey pubKey, Context context) throws NoSuchProviderException, NoSuchAlgorithmException {
+    public static void negotiateSessionKeys(UUID uuid, byte[] pubKey, Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
         loadKS(context);
-        byte[] sessionKey = negotiateSessionKey(pubKey);
+
+        byte[] sessionKey = negotiateSessionKey(createPubKey(pubKey));
         byte[] skcBytes = Arrays.copyOfRange(sessionKey, 0, KEYSIZE);
         byte[] sksBytes = Arrays.copyOfRange(sessionKey, sessionKey.length - KEYSIZE, sessionKey.length);
 
@@ -241,6 +253,12 @@ public class LibCrypto {
         setSecretKey(getSKCalias(uuid), skc, context);
         removeKey(getSKSalias(uuid));
         setSecretKey(getSKSalias(uuid), sks, context);
+    }
+
+    private static PublicKey createPubKey(byte[] pubKey) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
+        KeyFactory factory = KeyFactory.getInstance("ECDSA", "BC");
+        java.security.PublicKey ecPublicKey = factory.generatePublic(new X509EncodedKeySpec(Base64.decode(pubKey)));
+        return ecPublicKey;
     }
 
     /**
