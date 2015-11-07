@@ -18,7 +18,8 @@
         android:id="@+id/editPersonName"
         android:layout_below="@+id/textViewTitle"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="15dp" />
+        android:layout_marginTop="15dp"
+        android:layout_alignEnd="@+id/editPersonSurname" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -28,7 +29,8 @@
         android:ems="10"
         android:id="@+id/editPersonSurname"
         android:layout_below="@+id/editPersonName"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/editPublickey" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -38,7 +40,8 @@
         android:layout_alignParentStart="true"
         android:ems="7"
         android:text=""
-        android:layout_marginTop="6dp"/>
+        android:layout_marginTop="6dp"
+        android:layout_alignParentEnd="true" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -46,17 +49,17 @@
         android:layout_height="wrap_content"
         android:text="load"
         android:id="@+id/buttonLoadKey"
-        android:layout_alignBottom="@+id/editPublickey"
-        android:layout_alignEnd="@+id/editPersonSurname" />
+        android:layout_below="@+id/editPublickey"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="delete"
         android:id="@+id/buttonDelete"
-        android:layout_below="@+id/editPublickey"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/buttonLoadKey"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
