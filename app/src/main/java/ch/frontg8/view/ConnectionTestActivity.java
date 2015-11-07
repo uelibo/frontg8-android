@@ -20,7 +20,6 @@ import javax.net.ssl.SSLContext;
 import ch.frontg8.R;
 import ch.frontg8.lib.connection.Logger;
 import ch.frontg8.lib.connection.TcpClient;
-import ch.frontg8.lib.connection.TlsClient;
 import ch.frontg8.lib.crypto.LibSSLContext;
 import ch.frontg8.view.model.ConnectionTestAdapter;
 
@@ -30,11 +29,18 @@ public class ConnectionTestActivity extends AppCompatActivity {
     private ArrayList<String> arrayList;
     private ConnectionTestAdapter mAdapter;
     private TcpClient mTcpClient;
+    String serverName;
+    int serverPort;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connection_test);
+
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
+        serverName = preferences.getString("edittext_preference_hostname", "server.frontg8.ch");
+        serverPort = Integer.parseInt(preferences.getString("edittext_preference_port", "40001"));
 
         arrayList = new ArrayList<String>();
 
@@ -107,11 +113,8 @@ public class ConnectionTestActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.connect:
                 // connect to the server
-                SharedPreferences preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
-                String servername = preferences.getString("edittext_preference_hostname", "server.frontg8.ch");
-                int serverport = Integer.parseInt(preferences.getString("edittext_preference_port", "40001"));
                 SSLContext sslContext = LibSSLContext.getSSLContext("root", this);
-                new ConnectTask(new TlsClient(servername, serverport, new Logger(), sslContext)).execute("");
+                new ConnectTask(serverName, serverPort, new Logger(), sslContext).execute("");
                 return true;
             case R.id.disconnect:
                 // disconnect
@@ -129,10 +132,16 @@ public class ConnectionTestActivity extends AppCompatActivity {
     }
 
     public class ConnectTask extends AsyncTask<String, String, TcpClient> {
-        private TlsClient tlsClient;
+        private SSLContext sslContext;
+        private String serverName;
+        private int serverPort;
+        private Logger logger;
 
-        public ConnectTask(TlsClient tlsClient) {
-            this.tlsClient = tlsClient;
+        public ConnectTask(String serverName, int serverPort, Logger logger, SSLContext sslContext) {
+            this.sslContext = sslContext;
+            this.serverName = serverName;
+            this.serverPort = serverPort;
+            this.logger = logger;
         }
 
         @Override
@@ -146,7 +155,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
                     //this method calls the onProgressUpdate
                     publishProgress(message);
                 }
-            }, tlsClient);
+            }, serverName, serverPort, logger, sslContext);
             mTcpClient.run();
 
             return null;

@@ -12,6 +12,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.List;
 
+import javax.net.ssl.SSLContext;
+
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.message.MessageType;
 import ch.frontg8.lib.protobuf.Frontg8Client;
@@ -39,9 +41,9 @@ public class TcpClient {
     /**
      * Constructor of the class. OnMessagedReceived listens for the messages received from server
      */
-    public TcpClient(OnMessageReceived listener, TlsClient tlsClient) {
+    public TcpClient(OnMessageReceived listener, String serverName, int serverPort, Logger logger, SSLContext sslContext) {
         mMessageListener = listener;
-        this.tlsClient = tlsClient ;
+        this.tlsClient = new TlsClient(serverName, serverPort, logger, sslContext);
     }
 
     /**
