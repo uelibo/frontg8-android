@@ -63,7 +63,7 @@ public class LibCrypto {
     private static final String MYALIAS = MYUUID.toString() + SUFFIXPRIVATE;
 
     private static char[] ksPassword = "KEYSTORE PASSWORD".toCharArray(); //TODO: change to real pw
-    private static String ksFileName = "src/main/res/raw/frontg8keystore.ks"; //TODO: make configurable
+    private static String ksFileName = "frontg8keystore.ks"; //TODO: make configurable
 
     private static char[] PASSWORD = ksPassword;
 
@@ -340,13 +340,6 @@ public class LibCrypto {
     // Get keys
 
     private static SecretKey getSKC(UUID uuid) {
-        try {
-            for (String s : getAliasList()) {
-                System.out.println(s);
-            }
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        }
         return (SecretKey) getKey(getSKCalias(uuid));
     }
 
@@ -367,9 +360,11 @@ public class LibCrypto {
         try {
             if (ks.isKeyEntry(alias)) {
                 key = ks.getKey(alias, PASSWORD);
+
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw new KeyNotFoundError("No Key found for UUID: "+ alias);
         }
         return key;
     }

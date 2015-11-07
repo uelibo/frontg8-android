@@ -5,17 +5,15 @@ import android.content.SharedPreferences;
 
 import java.util.List;
 import java.util.UUID;
+
 import javax.net.ssl.SSLContext;
 
 import ch.frontg8.R;
-import ch.frontg8.lib.crypto.LibCrypto;
 import ch.frontg8.lib.crypto.LibSSLContext;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.message.MessageType;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
-import static ch.frontg8.lib.crypto.LibCrypto.containsSKSandSKC;
-import static ch.frontg8.lib.crypto.LibCrypto.decryptMSG;
 import static ch.frontg8.lib.message.MessageHelper.buildEncryptedMessage;
 import static ch.frontg8.lib.message.MessageHelper.getDecryptedContent;
 
@@ -40,18 +38,8 @@ public class TlsTest {
         String plainMessage = "frontg8 Test Message";
 
         // TODO: Encryption of data
+        UUID uuid = UUID.fromString("11111111-1111-1111-1111-111111111111");
 
-
-        UUID uuid1 = UUID.fromString("11111111-1111-1111-1111-111111111111");
-        UUID uuid2 = UUID.fromString("22222222-2222-2222-2222-222222222222");
-        UUID uuid = null;
-        if (containsSKSandSKC(uuid1,context)){
-            uuid = uuid1;
-        } else if (containsSKSandSKC(uuid2, context)){
-            uuid = uuid2;
-        }
-
-//        byte[] encryptedMessage = MessageHelper.addMessageHeader(MessageHelper.buildEncryptedMessage(ByteString.copyFrom(encryptedContent)).toByteArray(), MessageType.Encrypted);
         byte[] encryptedMessage = buildEncryptedMessage(plainMessage.getBytes(), "0".getBytes(),0,uuid,context);
 
         Log.TRACE("---\n" + MessageHelper.byteArrayAsHexString(encryptedMessage));
@@ -64,9 +52,8 @@ public class TlsTest {
         List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(tlsClient));
         Log.TRACE("Num of messages: " + messages.size());
         for (Frontg8Client.Encrypted message: messages) {
+
             // TODO: Decription of data
-
-
             String text = new String(getDecryptedContent(message, context));
             Log.TRACE(text);
         }
@@ -80,8 +67,9 @@ public class TlsTest {
         messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(tlsClient));
         Log.TRACE("Num of messages: " + messages.size());
         for (Frontg8Client.Encrypted message: messages) {
+
             // TODO: Decription of data
-            String text = MessageHelper.getDataMessage(message.getEncryptedData()).getMessageData().toStringUtf8();
+            String text = new String(getDecryptedContent(message,context));
             Log.TRACE(text);
         }
 

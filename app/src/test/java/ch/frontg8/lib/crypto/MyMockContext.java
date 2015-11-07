@@ -1,5 +1,6 @@
 package ch.frontg8.lib.crypto;
 
+import java.io.File;
 import java.io.FileInputStream;
 
 import java.io.FileNotFoundException;
@@ -13,7 +14,7 @@ import android.test.mock.MockContext;
  */
 
 public class MyMockContext extends MockContext {
-    private static final String MOCK_FILE_PREFIX = ".frontg8keystore";
+    private static final String MOCK_FILE_SUFFIX = ".test";
 
     public MyMockContext() {
         super();
@@ -21,12 +22,17 @@ public class MyMockContext extends MockContext {
 
     @Override
     public FileInputStream openFileInput(String name) throws FileNotFoundException {
-        return new FileInputStream(MOCK_FILE_PREFIX + name);
+        return new FileInputStream(  name+ MOCK_FILE_SUFFIX);
     }
 
     @Override
     public FileOutputStream openFileOutput(String name, int mode) throws FileNotFoundException {
-        return new FileOutputStream( name + MOCK_FILE_PREFIX);
+        return new FileOutputStream( name + MOCK_FILE_SUFFIX);
+    }
+
+    @Override
+    public File getFilesDir(){
+        return new File("");
     }
 
 }

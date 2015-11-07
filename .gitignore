@@ -5,5 +5,4 @@
 /captures
 .idea/
 app/app.iml
-app/test.*
-app/src/main/res/raw/frontg8keystore.ks
+app/*.test

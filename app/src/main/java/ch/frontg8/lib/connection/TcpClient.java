@@ -114,7 +114,7 @@ public class TcpClient {
 
                     List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(tlsClient));
                     for (Frontg8Client.Encrypted message: messages) {
-                        String text = MessageHelper.getDataMessageFromByteArray(message.getEncryptedData()).getMessageData().toStringUtf8();
+                        String text = MessageHelper.getDataMessage(message.getEncryptedData()).getMessageData().toStringUtf8();
                         mMessageListener.messageReceived(text);
                     }
 

@@ -4,10 +4,7 @@ import android.content.Context;
 
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -51,7 +48,7 @@ public class LibKeystore {
 
     public static KeyStore loadFromFile(String path, char[] password, Context context) throws KeyStoreException, IOException {
         KeyStore ks = createKeystore();
-        try (InputStream is = context.getResources().openRawResource(context.getResources().getIdentifier("raw/" + path, "raw", context.getPackageName())) {
+        try (InputStream is = context.openFileInput(path)) {
             ks.load(is, password);
         } catch (FileNotFoundException fnfe) {
             try {
@@ -67,7 +64,7 @@ public class LibKeystore {
 
 
     public static void writeStore(String path, char[] password, KeyStore ks, Context context) throws KeyStoreException, IOException {
-        try (OutputStream os = context.openFileOutput(path,Context.MODE_PRIVATE)) {
+        try (OutputStream os = context.openFileOutput(path, Context.MODE_PRIVATE)) {
             ks.store(os, password);
         } catch (CertificateException e) {
             e.printStackTrace();
