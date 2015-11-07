@@ -8,24 +8,26 @@ import android.util.Log;
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "frontg8.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
     public static final String COLUMN_ID = "id";
 
-    public static final String TABLE_CONACTS = "contacts";
+    public static final String TABLE_CONTACTS = "contacts";
     public static final String COLUMN_UUID = "contactId";
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_SURNAME = "surname";
+    public static final String COLUMN_PUBLICKEY = "publickey";
 
     public static final String TABLE_MESSAGES = "messages";
     public static final String COLUMN_CONTACTUUID = "contactuuid";
     public static final String COLUMN_MESSAGETEXT = "messagetext";
 
     private static final String DATABASE_CREATE_CONTACTS = "create table "
-            + TABLE_CONACTS + "(" + COLUMN_ID
+            + TABLE_CONTACTS + "(" + COLUMN_ID
             + " integer primary key autoincrement, "
             + COLUMN_UUID + " text not null, "
             + COLUMN_NAME + " text not null, "
-            + COLUMN_SURNAME + " text null); ";
+            + COLUMN_SURNAME + " text null, "
+            + COLUMN_PUBLICKEY + " text null); ";
 
     private static final String DATABASE_CREATE_MESSAGES = "create table "
             + TABLE_MESSAGES + "(" + COLUMN_ID
@@ -48,7 +50,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Log.w(MySQLiteHelper.class.getName(),
                 "Upgrading database from version " + oldVersion + " to "
                         + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONACTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
         onCreate(db);
     }
 

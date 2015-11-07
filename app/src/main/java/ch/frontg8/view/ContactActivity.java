@@ -28,6 +28,7 @@ public class ContactActivity extends AppCompatActivity {
         final TextView title = (TextView) findViewById(R.id.textViewTitle);
         final TextView name = (TextView) findViewById(R.id.editPersonName);
         final TextView surname = (TextView) findViewById(R.id.editPersonSurname);
+        final TextView publicKey = (TextView) findViewById(R.id.editPublickey);
         Button saveButton = (Button) findViewById(R.id.buttonSave);
         Button deleteButton = (Button) findViewById(R.id.buttonDelete);
         Button loadButton = (Button) findViewById(R.id.buttonLoadKey);
@@ -49,6 +50,7 @@ public class ContactActivity extends AppCompatActivity {
 
         name.setText(contact.getName());
         surname.setText(contact.getSurname());
+        publicKey.setText(contact.getPublicKeyString());
 
         saveButton.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
@@ -56,6 +58,7 @@ public class ContactActivity extends AppCompatActivity {
                     title.setText("saved.");
                     contact.setName(name.getText().toString());
                     contact.setSurname(surname.getText().toString());
+                    contact.setPublicKeyString(publicKey.getText().toString());
                     datasource.updateContact(contact);
                 }
             }

@@ -8,15 +8,18 @@ public class Contact implements Serializable {
     private UUID contactId;
     private String name;
     private String surname;
+    private String publicKeyString;
     private ArrayList<Message> messages = new ArrayList<Message>();
 
-    public Contact(String name) { this(genUUID(), name, ""); }
-    public Contact(String name, String surname) { this(genUUID(), name, surname); }
-    public Contact(UUID contactId, String name, String surname)
+    public Contact(String name) { this(genUUID(), name, "", ""); }
+    public Contact(String name, String surname) { this(genUUID(), name, surname, ""); }
+    public Contact(UUID contactId, String name, String surname) { this(contactId, name, surname, ""); }
+    public Contact(UUID contactId, String name, String surname, String publicKeyString)
     {
         this.contactId = contactId;
         this.name = name;
         this.surname = surname;
+        this.publicKeyString = publicKeyString;
     }
 
     public UUID getContactId() { return contactId; }
@@ -27,6 +30,9 @@ public class Contact implements Serializable {
 
     public String getSurname() { return surname; }
     public void setSurname(String surname) { this.surname = surname; }
+
+    public String getPublicKeyString() { return publicKeyString; }
+    public void setPublicKeyString(String publicKeyString) { this.publicKeyString = publicKeyString; }
 
     public void addMessage(Message msg) { messages.add(msg); }
     public void addMessages(ArrayList<Message> msgs) { messages.addAll(msgs); }
