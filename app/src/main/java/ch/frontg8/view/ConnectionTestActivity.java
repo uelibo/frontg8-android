@@ -15,7 +15,9 @@ import android.support.v7.app.AppCompatActivity;
 import java.util.ArrayList;
 
 import ch.frontg8.R;
+import ch.frontg8.lib.connection.Logger;
 import ch.frontg8.lib.connection.TcpClient;
+import ch.frontg8.lib.connection.TlsClient;
 import ch.frontg8.view.model.ConnectionTestAdapter;
 
 public class ConnectionTestActivity extends AppCompatActivity {
@@ -101,7 +103,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.connect:
                 // connect to the server
-                new ConnectTask().execute("");
+                new ConnectTask(new TlsClient("server.frontg8.ch", 40001, new Logger(), this)).execute("");
                 return true;
             case R.id.disconnect:
                 // disconnect
@@ -119,6 +121,11 @@ public class ConnectionTestActivity extends AppCompatActivity {
     }
 
     public class ConnectTask extends AsyncTask<String, String, TcpClient> {
+        private TlsClient tlsClient;
+
+        public ConnectTask(TlsClient tlsClient) {
+            this.tlsClient = tlsClient;
+        }
 
         @Override
         protected TcpClient doInBackground(String... message) {
@@ -131,7 +138,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
                     //this method calls the onProgressUpdate
                     publishProgress(message);
                 }
-            });
+            }, tlsClient);
             mTcpClient.run();
 
             return null;

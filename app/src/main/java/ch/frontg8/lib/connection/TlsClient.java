@@ -2,18 +2,12 @@ package ch.frontg8.lib.connection;
 
 import android.content.Context;
 
-import java.io.BufferedInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.UnknownHostException;
-import java.security.KeyManagementException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 import javax.net.ssl.SSLContext;
@@ -159,6 +153,14 @@ public class TlsClient {
             Log.TRACE("socket.getInputStream().read >> IOException");
         }
         return recv;
+    }
+
+    public InputStream getInputStream() throws IOException {
+        return socket.getInputStream();
+    }
+
+    public OutputStream getOutputStream() throws IOException {
+        return socket.getOutputStream();
     }
 
     public void close(){

@@ -1,9 +1,15 @@
 package ch.frontg8.lib.connection;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+
+import ch.frontg8.R;
+import ch.frontg8.lib.message.MessageHelper;
+import ch.frontg8.lib.message.MessageType;
+import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class TcpClient {
     public class Constants {
@@ -12,8 +18,7 @@ public class TcpClient {
         public static final String LOGIN_NAME = "client_login_name";
     }
 
-    private String serverIp = "152.96.56.70";
-    private int serverPort = 40002;
+    private TlsClient tlsClient;
 
     // message to send to the server
     private String mServerMessage;
@@ -26,16 +31,12 @@ public class TcpClient {
     // used to read messages from the server
     private BufferedReader mBufferIn;
 
-    public void TcpClient(String serverIp, int serverPort) {
-        this.serverIp = serverIp;
-        this.serverPort = serverPort;
-    }
-
     /**
      * Constructor of the class. OnMessagedReceived listens for the messages received from server
      */
-    public TcpClient(OnMessageReceived listener) {
+    public TcpClient(OnMessageReceived listener, TlsClient tlsClient) {
         mMessageListener = listener;
+        this.tlsClient = tlsClient ;
     }
 
     /**
@@ -45,7 +46,10 @@ public class TcpClient {
      */
     public void sendMessage(String message) {
         if (mBufferOut != null && !mBufferOut.checkError()) {
-            mBufferOut.println(message);
+            //mBufferOut.println(message);
+            Frontg8Client.Data data = MessageHelper.buildDataMessage(message, "0", 0);
+            byte[] encryptedMessage = MessageHelper.addMessageHeader(MessageHelper.buildEncryptedMessage(data.toByteString()).toByteArray(), MessageType.Encrypted);
+            mBufferOut.print(encryptedMessage);
             mBufferOut.flush();
         }
     }
@@ -77,20 +81,19 @@ public class TcpClient {
 
         try {
             //here you must put your computer's IP address.
-            InetAddress serverAddr = InetAddress.getByName(serverIp);
+            //InetAddress serverAddr = InetAddress.getByName(serverIp);
 
             Log.e("TCP Client", "C: Connecting...");
 
-            //create a socket to make the connection with the server
-            Socket socket = new Socket(serverAddr, serverPort);
+            tlsClient.connect();
 
             try {
 
                 //sends the message to the server
-                mBufferOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                mBufferOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(tlsClient.getOutputStream())), true);
 
                 //receives the message which the server sends back
-                mBufferIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                mBufferIn = new BufferedReader(new InputStreamReader(tlsClient.getInputStream()));
                 // send login name
                 sendMessage(Constants.LOGIN_NAME+"frontg8");
 
@@ -115,7 +118,7 @@ public class TcpClient {
             } finally {
                 //the socket must be closed. It is not possible to reconnect to this socket
                 // after it is closed, which means a new socket instance has to be created.
-                socket.close();
+                tlsClient.close();
             }
 
         } catch (Exception e) {
