@@ -49,6 +49,7 @@ public class TcpClient {
             //mBufferOut.println(message);
             Frontg8Client.Data data = MessageHelper.buildDataMessage(message, "0", 0);
             byte[] encryptedMessage = MessageHelper.addMessageHeader(MessageHelper.buildEncryptedMessage(data.toByteString()).toByteArray(), MessageType.Encrypted);
+            Log.e("TCP Client", MessageHelper.byteArrayAsHexString(encryptedMessage));
             mBufferOut.print(encryptedMessage);
             mBufferOut.flush();
         }
@@ -80,11 +81,7 @@ public class TcpClient {
         mRun = true;
 
         try {
-            //here you must put your computer's IP address.
-            //InetAddress serverAddr = InetAddress.getByName(serverIp);
-
             Log.e("TCP Client", "C: Connecting...");
-
             tlsClient.connect();
 
             try {
