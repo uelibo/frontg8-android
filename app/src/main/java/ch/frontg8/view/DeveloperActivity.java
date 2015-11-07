@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.UUID;
+
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
 import ch.frontg8.bl.Message;
@@ -48,8 +50,8 @@ public class DeveloperActivity extends AppCompatActivity {
 
         ButtonLoadTestData.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-                Contact a = datasource.createContact(new Contact("Ueli", "Bosshard"));
-                Contact b = datasource.createContact(new Contact("Tobias", "Stauber"));
+                Contact a = datasource.createContact(new Contact(UUID.fromString("11111111-1111-1111-1111-111111111111"), "Ueli", "Bosshard"));
+                Contact b = datasource.createContact(new Contact(UUID.fromString("22222222-2222-2222-2222-222222222222"), "Tobias", "Stauber"));
                 Contact c = datasource.createContact(new Contact("Flix"));
                 Contact d = datasource.createContact(new Contact("Benny"));
                 datasource.insertMessage(a, new Message("bla"));
