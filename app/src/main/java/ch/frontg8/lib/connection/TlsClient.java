@@ -15,11 +15,9 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import ch.frontg8.lib.message.MessageHelper;
@@ -44,14 +42,17 @@ public class TlsClient {
     }
 
     public void connect() {
-        SSLSocketFactory factory = HttpsURLConnection.getDefaultSSLSocketFactory();
-        CertificateFactory cf = null;
-        Certificate ca;
+        getSocket(getSSLContext());
+        tlsHandshake();
+        listCerts();
+    }
+
+    private SSLContext getSSLContext() {
         InputStream caInput = null;
         SSLContext sslContext = null;
 
         try {
-            cf = CertificateFactory.getInstance("X.509");
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
 
             InputStream ins = context.getResources().openRawResource(
                     context.getResources().getIdentifier("raw/root",
@@ -59,8 +60,7 @@ public class TlsClient {
 
             caInput = new BufferedInputStream(ins);
 
-            ca = cf.generateCertificate(caInput);
-            System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+            Certificate ca = cf.generateCertificate(caInput);
             Log.TRACE("ca=" + ((X509Certificate) ca).getSubjectDN());
 
             String keyStoreType = KeyStore.getDefaultType();
@@ -97,10 +97,11 @@ public class TlsClient {
                 e.printStackTrace();
             }
         }
+        return sslContext;
+    }
 
-        //SSLSocket socket = null;
+    private void getSocket(SSLContext sslContext) {
         try {
-            //socket = (SSLSocket) factory.createSocket(hostname, port);
             socket = (SSLSocket) sslContext.getSocketFactory().createSocket(hostname, port);
         } catch (UnknownHostException e) {
             Log.TRACE("factory.createSocket >> UnknownHostException");
@@ -108,6 +109,9 @@ public class TlsClient {
             Log.TRACE("factory.createSocket >> IOException");
         }
         Log.TRACE("factory.createSocket >> successful");
+    }
+
+    private void tlsHandshake() {
         /**
          * Starts an SSL handshake on this connection. Common reasons include a
          * need to use new encryption keys, to change cipher suites, or to
@@ -128,7 +132,9 @@ public class TlsClient {
 
         }
         Log.TRACE("Handshaking Complete");
+    }
 
+    private void listCerts() {
         /**
          * Retrieve the server's certificate chain
          *
@@ -145,17 +151,17 @@ public class TlsClient {
         Certificate[] serverCerts = null;
         try {
             serverCerts = socket.getSession().getPeerCertificates();
+            Log.TRACE("Retreived Server's Certificate Chain");
+            Log.TRACE(serverCerts.length + "Certifcates Found\n\n\n");
+            for (int i = 0; i < serverCerts.length; i++) {
+                Certificate myCert = serverCerts[i];
+                Log.TRACE("====Certificate:" + (i + 1) + "====");
+                Log.TRACE("-Public Key-\n" + myCert.getPublicKey());
+                Log.TRACE("-Certificate Type-\n " + myCert.getType());
+                Log.TRACE("");
+            }
         } catch (SSLPeerUnverifiedException e) {
             Log.TRACE(" socket.getSession().getPeerCertificates >> SSLPeerUnverifiedException");
-        }
-        Log.TRACE("Retreived Server's Certificate Chain");
-        Log.TRACE(serverCerts.length + "Certifcates Found\n\n\n");
-        for (int i = 0; i < serverCerts.length; i++) {
-            Certificate myCert = serverCerts[i];
-            Log.TRACE("====Certificate:" + (i + 1) + "====");
-            Log.TRACE("-Public Key-\n" + myCert.getPublicKey());
-            Log.TRACE("-Certificate Type-\n " + myCert.getType());
-            Log.TRACE("");
         }
     }
 
