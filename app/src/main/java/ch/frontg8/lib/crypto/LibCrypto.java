@@ -9,10 +9,7 @@ import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.util.Arrays;
 import org.spongycastle.util.encoders.Base64;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -39,6 +36,8 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import static ch.frontg8.lib.crypto.LibCert.generateCertificate;
+import static ch.frontg8.lib.crypto.LibKeystore.isInitialized;
+import static ch.frontg8.lib.crypto.LibKeystore.loadFromFile;
 import static java.util.Collections.list;
 
 public class LibCrypto {
@@ -429,31 +428,15 @@ public class LibCrypto {
     }
 
     private static void loadKS(Context context) {
-        if (ks == null) {
-            initKeystore();
-        }
-        try {
-            if (ks.containsAlias(MYALIAS)) {
-                return;
-            }
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        }
-        try (InputStream is = context.openFileInput(ksFileName)) {
-            ks.load(is, ksPassword);
-        } catch (FileNotFoundException fnfe) {
+        initKeystore();
+        if (isInitialized(ks)) {
             try {
-                ks.load(null);
-                try (OutputStream os = context.openFileOutput(ksFileName, Context.MODE_PRIVATE)) {
-                    ks.store(os, ksPassword);
-                } catch (KeyStoreException kse) {
-                    kse.printStackTrace();
-                }
-            } catch (Exception e1) {
-                e1.printStackTrace();
+                ks = loadFromFile(ksFileName, ksPassword, context);
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (Exception e2) {
-            e2.printStackTrace();
         }
     }
 
