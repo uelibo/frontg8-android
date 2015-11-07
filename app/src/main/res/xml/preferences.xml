@@ -20,7 +20,7 @@
             android:title="Port"
             android:summary="Port to connect to"
             android:dialogTitle="Please enter port"
-            android:defaultValue="8080"
+            android:defaultValue="40001"
             android:numeric="integer"
             android:maxLength="5"/>
     </PreferenceCategory>

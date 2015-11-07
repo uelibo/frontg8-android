@@ -1,9 +1,11 @@
 package ch.frontg8.lib.connection;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 
 import java.util.List;
 
+import ch.frontg8.R;
 import ch.frontg8.lib.crypto.LibCrypto;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.message.MessageType;
@@ -17,9 +19,13 @@ public class TlsTest {
     }
 
     public void RunTlsTest() {
-
         Logger Log = new Logger(context, "DeveloperActivity");
-        TlsClient tlsClient = new TlsClient("server.frontg8.ch", 40001, Log, context);
+
+        SharedPreferences preferences = context.getSharedPreferences(context.getString(R.string.preferences), context.MODE_PRIVATE);
+        String servername = preferences.getString("edittext_preference_hostname", "server.frontg8.ch");
+        int serverport = Integer.parseInt(preferences.getString("edittext_preference_port", "40001"));
+
+        TlsClient tlsClient = new TlsClient(servername, serverport, Log, context);
         tlsClient.connect();
 
         Frontg8Client.Data data = MessageHelper.buildDataMessage("frontg8 Test Message", "0", 0);
