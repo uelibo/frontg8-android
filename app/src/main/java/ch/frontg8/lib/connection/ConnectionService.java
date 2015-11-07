@@ -25,17 +25,6 @@ public class ConnectionService extends Service {
         mTlsClient.connect();
     }
 
-//    @Override
-//    public int onStartCommand(Intent intent, int flags, int startId) {
-//        super.onStartCommand(intent, flags, startId);
-//        System.out.println("I am in on start");
-//
-////        //  Toast.makeText(this,"Service created ...", Toast.LENGTH_LONG).show();
-////        Runnable connect = new connectSocket();
-////        new Thread(connect).start();
-//        return START_STICKY;
-//    }
-
     @Override
     public IBinder onBind(Intent intent) {
         // TODO Auto-generated method stub
