@@ -98,6 +98,10 @@ public class MainActivity extends AppCompatActivity {
                 Intent intentSettings = new Intent(this, SettingsActivity.class);
                 startActivity(intentSettings);
                 return true;
+            case R.id.action_aboutme:
+                Intent intentAboutMe = new Intent(this, AboutMeActivity.class);
+                startActivity(intentAboutMe);
+                return true;
             case R.id.action_connection_test:
                 Intent intentConnectionTest = new Intent(this, ConnectionTestActivity.class);
                 startActivity(intentConnectionTest);

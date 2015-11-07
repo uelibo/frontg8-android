@@ -18,6 +18,7 @@ import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
 import ch.frontg8.bl.Message;
 import ch.frontg8.lib.connection.TlsTest;
+import ch.frontg8.lib.crypto.LibCrypto;
 import ch.frontg8.lib.dbstore.ContactsDataSource;
 
 public class DeveloperActivity extends AppCompatActivity {
@@ -41,7 +42,12 @@ public class DeveloperActivity extends AppCompatActivity {
 
         buttonKeyGen.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-
+                try {
+                    LibCrypto.generateNewKeys(thisActivity);
+                    Toast toast = Toast.makeText(thisActivity, "Keys generated", Toast.LENGTH_SHORT);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 

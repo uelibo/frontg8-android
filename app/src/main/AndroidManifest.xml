@@ -66,6 +66,11 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+
+        <activity
+            android:name=".view.AboutMeActivity"
+            android:label="@string/title_activity_about_me" >
+        </activity>
     </application>
 
 </manifest>
