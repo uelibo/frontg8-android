@@ -101,6 +101,7 @@ public class LibCrypto {
         // TODO: what to do if uuid does not have a sessionkey?
     }
 
+
     /**
      * @param encryptedMSG The encrypted message as byte array
      * @param context      The android context (Activity)
@@ -126,6 +127,7 @@ public class LibCrypto {
         }
         return decodedBytes;
     }
+
 
     // Crypto helpers
 
@@ -338,6 +340,13 @@ public class LibCrypto {
     // Get keys
 
     private static SecretKey getSKC(UUID uuid) {
+        try {
+            for (String s : getAliasList()) {
+                System.out.println(s);
+            }
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
         return (SecretKey) getKey(getSKCalias(uuid));
     }
 
@@ -429,7 +438,7 @@ public class LibCrypto {
 
     private static void loadKS(Context context) {
         initKeystore();
-        if (isInitialized(ks)) {
+        if (!isInitialized(ks)) {
             try {
                 ks = loadFromFile(ksFileName, ksPassword, context);
             } catch (KeyStoreException e) {

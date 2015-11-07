@@ -1,14 +1,20 @@
 package ch.frontg8.lib.message;
 
+import android.content.Context;
+
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import ch.frontg8.lib.connection.TlsClient;
 import ch.frontg8.lib.protobuf.Frontg8Client;
+
+import static ch.frontg8.lib.crypto.LibCrypto.decryptMSG;
+import static ch.frontg8.lib.crypto.LibCrypto.encryptMSG;
 
 public class MessageHelper {
 
@@ -28,19 +34,41 @@ public class MessageHelper {
     }
 
     public static Frontg8Client.Data buildDataMessage(String message, String sessionId, int timestamp) {
+        return buildDataMessage(ByteString.copyFromUtf8(message), ByteString.copyFromUtf8(sessionId), timestamp);
+    }
+
+    public static Frontg8Client.Data buildDataMessage(byte[] message, byte[] sessionId, int timestamp) {
+        return buildDataMessage(ByteString.copyFrom(message), ByteString.copyFrom(sessionId), timestamp);
+    }
+
+    public static Frontg8Client.Data buildDataMessage(ByteString message, ByteString sessionId, int timestamp) {
         return Frontg8Client.Data
                 .newBuilder()
-                .setMessageData(ByteString.copyFromUtf8(message))
-                .setSessionId(ByteString.copyFromUtf8(sessionId))
+                .setMessageData(message)
+                .setSessionId(sessionId)
                 .setTimestamp(0)
                 .build();
     }
 
-    public static Frontg8Client.Encrypted buildEncryptedMessage(ByteString data)  {
-        return Frontg8Client.Encrypted
-                .newBuilder()
-                .setEncryptedData(data)
-                .build();
+    public static byte[] buildEncryptedMessage(Frontg8Client.Data dataMessage){
+        return buildEncryptedMessage(dataMessage.toByteString());
+    }
+
+    public static byte[] buildEncryptedMessage(ByteString encryptedData)  {
+        return addMessageHeader(Frontg8Client.Encrypted.newBuilder().setEncryptedData(encryptedData).build().toByteArray(), MessageType.Encrypted);
+    }
+
+    /**
+     * Builds a Encrypted message directly from a byte array containing the message.
+     * @param plainData
+     * @param sessionId
+     * @param timestamp
+     * @return
+     */
+    public static byte[] buildEncryptedMessage(byte[] plainData, byte[] sessionId, int timestamp, UUID uuid, Context context){
+        Frontg8Client.Data dataMSG = buildDataMessage(plainData, sessionId, timestamp);
+        byte[] encryptedDataMSG = encryptMSG(uuid,plainData,context);
+        return buildEncryptedMessage(ByteString.copyFrom(encryptedDataMSG));
     }
 
     public static List<Frontg8Client.Encrypted> getEncryptedMessagesFromNotification(Frontg8Client.Notification notification) {
@@ -52,7 +80,7 @@ public class MessageHelper {
         return encrypted;
     }
 
-    public static Frontg8Client.Data getDataMessageFromByteArray(ByteString data) {
+    public static Frontg8Client.Data getDataMessage(ByteString data) {
         Frontg8Client.Data dataMessage = null;
         try {
             dataMessage = Frontg8Client.Data.parseFrom(data);
@@ -60,6 +88,10 @@ public class MessageHelper {
             e.printStackTrace();
         }
         return dataMessage;
+    }
+
+    public static Frontg8Client.Data getDataMessage(byte[] data){
+        return getDataMessage(ByteString.copyFrom(data));
     }
 
     private static byte[] sizeToByte(int size){
@@ -106,6 +138,11 @@ public class MessageHelper {
         }
         // TODO: raise Exception if notification = null
         return notification;
+    }
+
+    public static byte[] getDecryptedContent(Frontg8Client.Encrypted encryptedMSG, Context context) {
+        Frontg8Client.Data dataMSG = getDataMessage(decryptMSG(encryptedMSG.getEncryptedData().toByteArray(), context));
+        return dataMSG.getMessageData().toByteArray();
     }
 
 

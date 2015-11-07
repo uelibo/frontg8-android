@@ -56,7 +56,7 @@ public class TcpClient {
         if (output != null) {
             //mBufferOut.println(message);
             Frontg8Client.Data data = MessageHelper.buildDataMessage(message, "0", 0);
-            byte[] encryptedMessage = MessageHelper.addMessageHeader(MessageHelper.buildEncryptedMessage(data.toByteString()).toByteArray(), MessageType.Encrypted);
+            byte[] encryptedMessage = MessageHelper.buildEncryptedMessage(data);
             Log.e("TCP Client", MessageHelper.byteArrayAsHexString(encryptedMessage));
             try {
                 output.write(encryptedMessage);
