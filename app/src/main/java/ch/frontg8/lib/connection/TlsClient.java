@@ -3,6 +3,7 @@ package ch.frontg8.lib.connection;
 import android.content.Context;
 
 import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
@@ -22,12 +23,16 @@ import javax.net.ssl.TrustManagerFactory;
 
 import ch.frontg8.lib.message.MessageHelper;
 
+import static ch.frontg8.lib.crypto.LibCert.loadX509CertificateFromFile;
+import static ch.frontg8.lib.crypto.LibKeystore.createFromCertificate;
+
 public class TlsClient {
     private String hostname;
     private int port;
     private Logger Log;
     private Context context;
     private SSLSocket socket = null;
+    private String certpath = "root";
 
     public TlsClient(String hostname, int port, Logger Log, Context context) {
         this.hostname = hostname;
@@ -44,58 +49,27 @@ public class TlsClient {
     public void connect() {
         getSocket(getSSLContext());
         tlsHandshake();
-        listCerts();
+        listCerts(); // TODO: remove debugstuff
     }
 
     private SSLContext getSSLContext() {
-        InputStream caInput = null;
         SSLContext sslContext = null;
-
+        X509Certificate cert;
         try {
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            cert = loadX509CertificateFromFile(certpath, context);
+            Log.TRACE("Created cert");
+            KeyStore ks = createFromCertificate(cert);
+            Log.TRACE("Created ks");
 
-            InputStream ins = context.getResources().openRawResource(
-                    context.getResources().getIdentifier("raw/root",
-                            "raw", context.getPackageName()));
-
-            caInput = new BufferedInputStream(ins);
-
-            Certificate ca = cf.generateCertificate(caInput);
-            Log.TRACE("ca=" + ((X509Certificate) ca).getSubjectDN());
-
-            String keyStoreType = KeyStore.getDefaultType();
-            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-            keyStore.load(null, null);
-            keyStore.setCertificateEntry("ca", ca);
-
+            //TODO; refactor to truststore instead of keystore
             String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-            tmf.init(keyStore);
+            tmf.init(ks);
 
             sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, tmf.getTrustManagers(), null);
-
-        } catch (CertificateException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.TRACE(e.getMessage());
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            Log.TRACE(e.getMessage());
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-            Log.TRACE(e.getMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.TRACE(e.getMessage());
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-            Log.TRACE(e.getMessage());
-        } finally {
-            try {
-                caInput.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
         return sslContext;
     }

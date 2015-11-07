@@ -2,7 +2,15 @@ package ch.frontg8.lib.crypto;
 
 import android.content.Context;
 
+import org.spongycastle.crypto.digests.SHA256Digest;
+import org.spongycastle.crypto.macs.HMac;
+import org.spongycastle.crypto.params.KeyParameter;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.spongycastle.util.Arrays;
+import org.spongycastle.util.encoders.Base64;
+
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
@@ -23,13 +31,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
-
-import org.spongycastle.crypto.digests.SHA256Digest;
-import org.spongycastle.crypto.macs.HMac;
-import org.spongycastle.crypto.params.KeyParameter;
-import org.spongycastle.jce.provider.BouncyCastleProvider;
-import org.spongycastle.util.Arrays;
-import org.spongycastle.util.encoders.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyAgreement;
@@ -72,16 +73,6 @@ public class LibCrypto {
     static {
         Security.addProvider(new BouncyCastleProvider());
         initKeystore();
-    }
-
-    private static void initKeystore() {
-        if (ks == null) {
-            try {
-                ks = KeyStore.getInstance("BKS", Security.getProvider(BC));
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     // Encryption / Decryption
@@ -427,6 +418,16 @@ public class LibCrypto {
 
     // Keystore handling
 
+    private static void initKeystore() {
+        if (ks == null) {
+            try {
+                ks = KeyStore.getInstance("BKS", Security.getProvider(BC));
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private static void loadKS(Context context) {
         if (ks == null) {
             initKeystore();
@@ -436,29 +437,32 @@ public class LibCrypto {
                 return;
             }
         } catch (KeyStoreException e) {
-            try (InputStream is = context.openFileInput(ksFileName)) {
-                ks.load(is, ksPassword);
-            } catch (FileNotFoundException fnfe) {
-                try {
-                    ks.load(null);
-                    try (OutputStream os = context.openFileOutput(ksFileName, Context.MODE_PRIVATE)) {
-                        ks.store(os, ksPassword);
-                    } catch (KeyStoreException kse) {
-                        kse.printStackTrace();
-                    }
-                } catch (Exception e1) {
-                    e1.printStackTrace();
+            e.printStackTrace();
+        }
+        try (InputStream is = context.openFileInput(ksFileName)) {
+            ks.load(is, ksPassword);
+        } catch (FileNotFoundException fnfe) {
+            try {
+                ks.load(null);
+                try (OutputStream os = context.openFileOutput(ksFileName, Context.MODE_PRIVATE)) {
+                    ks.store(os, ksPassword);
+                } catch (KeyStoreException kse) {
+                    kse.printStackTrace();
                 }
-            } catch (Exception e2) {
-                e2.printStackTrace();
+            } catch (Exception e1) {
+                e1.printStackTrace();
             }
+        } catch (Exception e2) {
+            e2.printStackTrace();
         }
     }
 
     private static void writeStore(Context context) {
-        try (OutputStream os = context.openFileOutput(ksFileName, Context.MODE_PRIVATE)) {
-            ks.store(os, ksPassword);
-        } catch (Exception e) {
+        try {
+            LibKeystore.writeStore(ksFileName, ksPassword, ks, context);
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

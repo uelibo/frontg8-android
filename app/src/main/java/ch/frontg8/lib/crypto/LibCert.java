@@ -1,5 +1,7 @@
 package ch.frontg8.lib.crypto;
 
+import android.content.Context;
+
 import org.spongycastle.asn1.ASN1Sequence;
 import org.spongycastle.asn1.x500.X500Name;
 import org.spongycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -11,12 +13,16 @@ import org.spongycastle.operator.ContentSigner;
 import org.spongycastle.operator.OperatorCreationException;
 import org.spongycastle.operator.jcajce.JcaContentSignerBuilder;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
@@ -62,5 +68,22 @@ public class LibCert {
         X509CertificateHolder certHolder = v1CertGen.build(sigGen);
 
         return new JcaX509CertificateConverter().setProvider(BC).getCertificate(certHolder);
+    }
+
+    public static Certificate loadCertificateFromFile(String fileName, String certificateType, Context context) throws CertificateException, FileNotFoundException {
+
+        CertificateFactory cf = CertificateFactory.getInstance(certificateType);
+
+
+        InputStream ins = context.getResources().openRawResource(context.getResources().getIdentifier("raw/" + fileName, "raw", context.getPackageName()));
+//        InputStream ins = context.openFileInput(path);
+
+//        caInput = new BufferedInputStream(ins);
+
+        return cf.generateCertificate(ins);
+    }
+
+    public static X509Certificate loadX509CertificateFromFile(String path, Context context) throws CertificateException, FileNotFoundException {
+        return (X509Certificate) loadCertificateFromFile(path, "X.509", context);
     }
 }
