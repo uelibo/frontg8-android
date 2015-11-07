@@ -15,10 +15,13 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
+import javax.net.ssl.SSLContext;
+
 import ch.frontg8.R;
 import ch.frontg8.lib.connection.Logger;
 import ch.frontg8.lib.connection.TcpClient;
 import ch.frontg8.lib.connection.TlsClient;
+import ch.frontg8.lib.crypto.LibSSLContext;
 import ch.frontg8.view.model.ConnectionTestAdapter;
 
 public class ConnectionTestActivity extends AppCompatActivity {
@@ -107,7 +110,8 @@ public class ConnectionTestActivity extends AppCompatActivity {
                 SharedPreferences preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
                 String servername = preferences.getString("edittext_preference_hostname", "server.frontg8.ch");
                 int serverport = Integer.parseInt(preferences.getString("edittext_preference_port", "40001"));
-                new ConnectTask(new TlsClient(servername, serverport, new Logger(), this)).execute("");
+                SSLContext sslContext = LibSSLContext.getSSLContext("root", this);
+                new ConnectTask(new TlsClient(servername, serverport, new Logger(), sslContext)).execute("");
                 return true;
             case R.id.disconnect:
                 // disconnect

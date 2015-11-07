@@ -1,38 +1,29 @@
 package ch.frontg8.lib.connection;
 
-import android.content.Context;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
-import java.security.KeyStore;
 import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSocket;
-import javax.net.ssl.TrustManagerFactory;
 
 import ch.frontg8.lib.message.MessageHelper;
-
-import static ch.frontg8.lib.crypto.LibCert.loadX509CertificateFromFile;
-import static ch.frontg8.lib.crypto.LibKeystore.createFromCertificate;
 
 public class TlsClient {
     private String hostname;
     private int port;
     private Logger Log;
-    private Context context;
+    private SSLContext sslContext;
     private SSLSocket socket = null;
-    private String certpath = "root";
 
-    public TlsClient(String hostname, int port, Logger Log, Context context) {
+    public TlsClient(String hostname, int port, Logger Log, SSLContext sslContext) {
         this.hostname = hostname;
         this.port = port;
         this.Log = Log;
-        this.context = context;
+        this.sslContext = sslContext;
     }
 
     public boolean isConnected() {
@@ -41,31 +32,9 @@ public class TlsClient {
     }
 
     public void connect() {
-        getSocket(getSSLContext());
+        getSocket(sslContext);
         tlsHandshake();
         listCerts(); // TODO: remove debugstuff
-    }
-
-    private SSLContext getSSLContext() {
-        SSLContext sslContext = null;
-        X509Certificate cert;
-        try {
-            cert = loadX509CertificateFromFile(certpath, context);
-            Log.TRACE("Created cert");
-            KeyStore ks = createFromCertificate(cert);
-            Log.TRACE("Created ks");
-
-            //TODO; refactor to truststore instead of keystore
-            String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-            tmf.init(ks);
-
-            sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, tmf.getTrustManagers(), null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return sslContext;
     }
 
     private void getSocket(SSLContext sslContext) {

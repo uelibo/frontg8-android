@@ -6,6 +6,10 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import javax.net.ssl.SSLContext;
+
+import ch.frontg8.lib.crypto.LibSSLContext;
+
 public class ConnectionService extends Service {
     public ConnectionService() {
     }
@@ -21,7 +25,8 @@ public class ConnectionService extends Service {
         super.onCreate();
         System.out.println("I am in on create");
 
-        mTlsClient = new TlsClient(SERVERIP, SERVERPORT, logger, this);
+        SSLContext sslContext = LibSSLContext.getSSLContext("root", this);
+        mTlsClient = new TlsClient(SERVERIP, SERVERPORT, logger, sslContext);
         mTlsClient.connect();
     }
 
