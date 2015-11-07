@@ -5,6 +5,7 @@ import android.test.mock.MockContext;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.util.UUID;
 
 import static ch.frontg8.lib.crypto.LibCrypto.*;
@@ -36,18 +37,14 @@ public class KeyFileGenerator {
         PublicKey pubkey2 = getMyPublicKey(mc);
         try {
             negotiateSessionKeys(uuid1,pubkey1,mc);
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
         }
 
         setKeyfileName("KS01");
         try {
             negotiateSessionKeys(uuid2, pubkey2,mc);
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
         }
     }

@@ -241,8 +241,12 @@ public class LibCrypto {
      */
     public static void negotiateSessionKeys(UUID uuid, byte[] pubKey, Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
         loadKS(context);
+        negotiateSessionKeys(uuid,createPubKey(pubKey),context);
+    }
 
-        byte[] sessionKey = negotiateSessionKey(createPubKey(pubKey));
+    public static void negotiateSessionKeys(UUID uuid,PublicKey pubKey, Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
+        loadKS(context);
+        byte[] sessionKey = negotiateSessionKey(pubKey);
         byte[] skcBytes = Arrays.copyOfRange(sessionKey, 0, KEYSIZE);
         byte[] sksBytes = Arrays.copyOfRange(sessionKey, sessionKey.length - KEYSIZE, sessionKey.length);
 
@@ -254,6 +258,7 @@ public class LibCrypto {
         removeKey(getSKSalias(uuid));
         setSecretKey(getSKSalias(uuid), sks, context);
     }
+
 
     private static PublicKey createPubKey(byte[] pubKey) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
         KeyFactory factory = KeyFactory.getInstance("ECDSA", "BC");
