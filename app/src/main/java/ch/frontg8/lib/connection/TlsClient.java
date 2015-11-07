@@ -2,8 +2,6 @@ package ch.frontg8.lib.connection;
 
 import android.content.Context;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +23,6 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import ch.frontg8.lib.message.MessageHelper;
-import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class TlsClient {
     private String hostname;
@@ -177,31 +174,11 @@ public class TlsClient {
         byte[] recv = new byte[length];
         try {
             int recvLen = socket.getInputStream().read(recv, 0, recv.length);
-            Log.TRACE(MessageHelper.byteArrayAsHexString(recv));
+            Log.TRACE(MessageHelper.byteArrayAsHexString(recv) + " (" + recvLen + ")");
         } catch (IOException e1) {
             Log.TRACE("socket.getInputStream().read >> IOException");
         }
         return recv;
-    }
-
-    public Frontg8Client.Notification getNotificationMessage() {
-        byte[] bA = this.getBytes(4);
-
-        int length = (( bA[0] < 0 ? 256+bA[0]: bA[0] ) << 8) + ( bA[1] < 0 ? 256+bA[1] : bA[1] );
-        Log.TRACE("Length: " + length);
-
-        byte[] recv2 = this.getBytes(length);
-
-        Frontg8Client.Notification notification = null;
-
-        try {
-            notification = Frontg8Client.Notification.parseFrom(recv2);
-        } catch (InvalidProtocolBufferException e) {
-            Log.TRACE(e.getMessage());
-            e.printStackTrace();
-        }
-
-        return notification;
     }
 
     public void close(){

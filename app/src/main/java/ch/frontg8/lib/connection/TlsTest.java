@@ -19,7 +19,7 @@ public class TlsTest {
     public void RunTlsTest() {
 
         Logger Log = new Logger(context, "DeveloperActivity");
-        TlsClient tlsClient = new TlsClient("redmine.frontg8.ch", 40001, Log, context);
+        TlsClient tlsClient = new TlsClient("server.frontg8.ch", 40001, Log, context);
         tlsClient.connect();
 
         Frontg8Client.Data data = MessageHelper.buildDataMessage("frontg8 Test Message", "0", 0);
@@ -31,7 +31,6 @@ public class TlsTest {
             e.printStackTrace();
         }
 
-        Frontg8Client.Encrypted encr = MessageHelper.buildEncryptedMessage(data.toByteString());
         byte[] encryptedMessage = MessageHelper.addMessageHeader(MessageHelper.buildEncryptedMessage(data.toByteString()).toByteArray(), MessageType.Encrypted);
 
         Log.TRACE("---\n" + MessageHelper.byteArrayAsHexString(encryptedMessage));
@@ -41,7 +40,7 @@ public class TlsTest {
         tlsClient.sendBytes(encryptedMessage);
 
         // RECEIVE
-        List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(tlsClient.getNotificationMessage());
+        List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(tlsClient));
         Log.TRACE("Num of messages: " + messages.size());
         for (Frontg8Client.Encrypted message: messages) {
             // TODO: Decription of data
@@ -55,7 +54,7 @@ public class TlsTest {
         tlsClient.sendBytes(requestMessage);
 
         // RECEIVE
-        messages = MessageHelper.getEncryptedMessagesFromNotification(tlsClient.getNotificationMessage());
+        messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(tlsClient));
         Log.TRACE("Num of messages: " + messages.size());
         for (Frontg8Client.Encrypted message: messages) {
             // TODO: Decription of data

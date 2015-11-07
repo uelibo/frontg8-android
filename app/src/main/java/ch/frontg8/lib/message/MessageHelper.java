@@ -7,6 +7,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.frontg8.lib.connection.TlsClient;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class MessageHelper {
@@ -86,5 +87,27 @@ public class MessageHelper {
 
         return fullMessage;
     }
+
+    private static int getLengthFromHeader(byte[] header) {
+        return (( header[0] < 0 ? 256+header[0]: header[0] ) << 8) + ( header[1] < 0 ? 256+header[1] : header[1] );
+    }
+
+    public static Frontg8Client.Notification getNotificationMessage(TlsClient tlsClient) {
+        byte[] header = tlsClient.getBytes(4);
+        int length = getLengthFromHeader(header);
+        byte[] data = tlsClient.getBytes(length);
+
+        Frontg8Client.Notification notification = null;
+
+        try {
+            notification = Frontg8Client.Notification.parseFrom(data);
+        } catch (InvalidProtocolBufferException e) {
+            e.printStackTrace();
+        }
+        // TODO: raise Exception if notification = null
+        return notification;
+    }
+
+
 
 }
