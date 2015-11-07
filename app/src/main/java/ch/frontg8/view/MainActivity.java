@@ -115,6 +115,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        datasource.close();
+    }
+
     public void myContactButtonHandler(View v)
     {
         View parentRow = (View) v.getParent();
