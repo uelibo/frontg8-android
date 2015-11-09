@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import javax.net.ssl.SSLContext;
 
 import ch.frontg8.R;
+import ch.frontg8.lib.connection.ConnectionService;
+import ch.frontg8.lib.connection.LocalService;
 import ch.frontg8.lib.connection.Logger;
 import ch.frontg8.lib.connection.TcpClient;
 import ch.frontg8.lib.crypto.LibSSLContext;
@@ -31,6 +33,10 @@ public class ConnectionTestActivity extends AppCompatActivity {
     private TcpClient mTcpClient;
     String serverName;
     int serverPort;
+
+    LocalService mService;
+    private ConnectionService mConnection = new ConnectionService();
+
 
 
     @Override

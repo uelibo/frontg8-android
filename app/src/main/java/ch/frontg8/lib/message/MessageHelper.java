@@ -65,9 +65,9 @@ public class MessageHelper {
      * @param timestamp
      * @return
      */
-    public static byte[] buildEncryptedMessage(byte[] plainData, byte[] sessionId, int timestamp, UUID uuid, Context context){
+    public static byte[] buildFullEncryptedMessage(byte[] plainData, byte[] sessionId, int timestamp, UUID uuid, Context context){
         Frontg8Client.Data dataMSG = buildDataMessage(plainData, sessionId, timestamp);
-        byte[] encryptedDataMSG = encryptMSG(uuid,plainData,context);
+        byte[] encryptedDataMSG = encryptMSG(uuid,dataMSG.toByteArray(),context);
         return buildEncryptedMessage(ByteString.copyFrom(encryptedDataMSG));
     }
 
@@ -80,17 +80,16 @@ public class MessageHelper {
         return encrypted;
     }
 
-    public static Frontg8Client.Data getDataMessage(ByteString data) {
-        Frontg8Client.Data dataMessage = null;
+    public static Frontg8Client.Data getDataMessage(ByteString data) throws InvalidMessageException {
         try {
-            dataMessage = Frontg8Client.Data.parseFrom(data);
+            return Frontg8Client.Data.parseFrom(data);
         } catch (InvalidProtocolBufferException e) {
-            e.printStackTrace();
+            throw new InvalidMessageException();
         }
-        return dataMessage;
     }
 
-    public static Frontg8Client.Data getDataMessage(byte[] data){
+    public static Frontg8Client.Data getDataMessage(byte[] data) throws InvalidMessageException {
+        //TODO: improve by length check
         return getDataMessage(ByteString.copyFrom(data));
     }
 
@@ -140,8 +139,9 @@ public class MessageHelper {
         return notification;
     }
 
-    public static byte[] getDecryptedContent(Frontg8Client.Encrypted encryptedMSG, Context context) {
-        Frontg8Client.Data dataMSG = getDataMessage(decryptMSG(encryptedMSG.getEncryptedData().toByteArray(), context));
+    public static byte[] getDecryptedContent(Frontg8Client.Encrypted encryptedMSG, Context context) throws InvalidMessageException {
+        byte[] decryptedBytes = decryptMSG((encryptedMSG.getEncryptedData()).toByteArray(), context);
+        Frontg8Client.Data dataMSG = getDataMessage(decryptedBytes);
         return dataMSG.getMessageData().toByteArray();
     }
 

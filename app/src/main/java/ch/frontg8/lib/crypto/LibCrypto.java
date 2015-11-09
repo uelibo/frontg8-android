@@ -117,8 +117,15 @@ public class LibCrypto {
         byte[] decodedBytes = null;
         byte[] iv = Arrays.copyOfRange(encryptedMSG, 0, IVSIZE);
         IvParameterSpec ivspec = new IvParameterSpec(iv);
-        byte[] encryptedBytes = Arrays.copyOfRange(encryptedMSG, IVSIZE, (encryptedMSG.length - KEYSIZE));
-        byte[] hmacBytes = Arrays.copyOfRange(encryptedMSG, (encryptedMSG.length - KEYSIZE), encryptedMSG.length);
+        byte[] encryptedBytes;
+        byte[] hmacBytes;
+        try {
+            encryptedBytes = Arrays.copyOfRange(encryptedMSG, IVSIZE, (encryptedMSG.length - KEYSIZE));
+            hmacBytes = Arrays.copyOfRange(encryptedMSG, (encryptedMSG.length - KEYSIZE), encryptedMSG.length);
+        }catch (Throwable e){
+            System.err.println("Undecryptable MSG");
+            return new byte[]{};
+        }
 
         HashMap<String, SecretKey> skcs = getKeyList(getSKCAliasList());
         HashMap<String, SecretKey> skss = getKeyList(getSKSAliasList());
@@ -261,7 +268,7 @@ public class LibCrypto {
 
 
     private static PublicKey createPubKey(byte[] pubKey) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
-        KeyFactory factory = KeyFactory.getInstance("ECDSA", "BC");
+        KeyFactory factory = KeyFactory.getInstance("ECDSA", BC);
         java.security.PublicKey ecPublicKey = factory.generatePublic(new X509EncodedKeySpec(Base64.decode(pubKey)));
         return ecPublicKey;
     }

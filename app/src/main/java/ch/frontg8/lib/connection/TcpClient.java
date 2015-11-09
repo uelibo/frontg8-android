@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.net.ssl.SSLContext;
 
+import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.message.MessageType;
 import ch.frontg8.lib.protobuf.Frontg8Client;
@@ -114,7 +115,12 @@ public class TcpClient {
 
                     List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(tlsClient));
                     for (Frontg8Client.Encrypted message: messages) {
-                        String text = MessageHelper.getDataMessage(message.getEncryptedData()).getMessageData().toStringUtf8();
+                        String text = null;
+                        try {
+                            text = MessageHelper.getDataMessage(message.getEncryptedData()).getMessageData().toStringUtf8();
+                        } catch (InvalidMessageException e) {
+                            Log.e("TcpClient", "Invalid MSG");
+                        }
                         mMessageListener.messageReceived(text);
                     }
 
