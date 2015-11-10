@@ -2,22 +2,15 @@ package ch.frontg8.lib.connection;
 
 import android.util.Log;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.util.List;
 
 import javax.net.ssl.SSLContext;
 
 import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
-import ch.frontg8.lib.message.MessageType;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class TcpClient {
@@ -34,12 +27,9 @@ public class TcpClient {
     // while this is true, the server will continue running
     private boolean mRun = false;
     // used to send messages
-    private OutputStream output;
     private BufferedOutputStream bufferedOutput;
-    private PrintWriter mBufferOut;
     // used to read messages from the server
-    private InputStream input;
-    private BufferedReader mBufferIn;
+    //private BufferedInputStream bufferedInput;
 
     /**
      * Constructor of the class. OnMessagedReceived listens for the messages received from server
@@ -55,16 +45,12 @@ public class TcpClient {
      * @param message text entered by client
      */
     public void sendMessage(String message) {
-//        if (mBufferOut != null && !mBufferOut.checkError()) {
-//        if (output != null) {
         if (bufferedOutput != null) {
-            //mBufferOut.println(message);
             Frontg8Client.Data data = MessageHelper.buildDataMessage(message, "0", 0);
             byte[] encryptedMessage = MessageHelper.buildEncryptedMessage(data);
             Log.e("TCP Client", MessageHelper.byteArrayAsHexString(encryptedMessage));
             try {
                 bufferedOutput.write(encryptedMessage);
-                //output.write(encryptedMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -73,8 +59,6 @@ public class TcpClient {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //mBufferOut.print(encryptedMessage);
-            //mBufferOut.flush();
         }
     }
 
@@ -84,18 +68,26 @@ public class TcpClient {
     public void stopClient() {
 
         // send mesage that we are closing the connection
-        sendMessage(Constants.CLOSED_CONNECTION+"frontg8");
+        sendMessage(Constants.CLOSED_CONNECTION);
 
         mRun = false;
 
-        if (mBufferOut != null) {
-            mBufferOut.flush();
-            mBufferOut.close();
+        if (bufferedOutput != null) {
+            try {
+                bufferedOutput.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                bufferedOutput.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         mMessageListener = null;
-        mBufferIn = null;
-        mBufferOut = null;
+        //bufferedInput = null;
+        bufferedOutput = null;
         mServerMessage = null;
     }
 
@@ -110,15 +102,12 @@ public class TcpClient {
             try {
 
                 //sends the message to the server
-                output = tlsClient.getOutputStream();
-                bufferedOutput = new BufferedOutputStream(output);
-                mBufferOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(output)), true);
+                bufferedOutput = new BufferedOutputStream(tlsClient.getOutputStream());
 
                 //receives the message which the server sends back
-                input = tlsClient.getInputStream();
-                mBufferIn = new BufferedReader(new InputStreamReader(input));
+                //bufferedInput = new BufferedInputStream(tlsClient.getInputStream());
                 // send login name
-                sendMessage("frontg8 test");
+                sendMessage("Client connected");
 
                 //in this while the client listens for the messages sent by the server
                 while (mRun) {
@@ -131,7 +120,9 @@ public class TcpClient {
                         } catch (InvalidMessageException e) {
                             Log.e("TcpClient", "Invalid MSG");
                         }
-                        mMessageListener.messageReceived(text);
+                        if (mMessageListener != null) {
+                            mMessageListener.messageReceived(text);
+                        }
                     }
 
                 }
