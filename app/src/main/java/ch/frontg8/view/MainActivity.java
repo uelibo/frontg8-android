@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
+import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.dbstore.ContactsDataSource;
 import ch.frontg8.view.model.ContactAdapter;
 
@@ -48,8 +49,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         TextView title = (TextView) findViewById(R.id.textViewTitle);
-        SharedPreferences preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
-        title.append(" of " + preferences.getString("edittext_preference_username", "paul"));
+        title.append(LibConfig.getUsername(this));
     }
 
     @Override
