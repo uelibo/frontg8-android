@@ -2,6 +2,7 @@ package ch.frontg8.lib.connection;
 
 import android.util.Log;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -34,6 +35,7 @@ public class TcpClient {
     private boolean mRun = false;
     // used to send messages
     private OutputStream output;
+    private BufferedOutputStream bufferedOutput;
     private PrintWriter mBufferOut;
     // used to read messages from the server
     private InputStream input;
@@ -54,13 +56,20 @@ public class TcpClient {
      */
     public void sendMessage(String message) {
 //        if (mBufferOut != null && !mBufferOut.checkError()) {
-        if (output != null) {
+//        if (output != null) {
+        if (bufferedOutput != null) {
             //mBufferOut.println(message);
             Frontg8Client.Data data = MessageHelper.buildDataMessage(message, "0", 0);
             byte[] encryptedMessage = MessageHelper.buildEncryptedMessage(data);
             Log.e("TCP Client", MessageHelper.byteArrayAsHexString(encryptedMessage));
             try {
-                output.write(encryptedMessage);
+                bufferedOutput.write(encryptedMessage);
+                //output.write(encryptedMessage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                bufferedOutput.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -102,6 +111,7 @@ public class TcpClient {
 
                 //sends the message to the server
                 output = tlsClient.getOutputStream();
+                bufferedOutput = new BufferedOutputStream(output);
                 mBufferOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(output)), true);
 
                 //receives the message which the server sends back

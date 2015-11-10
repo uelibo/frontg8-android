@@ -3,6 +3,7 @@ package ch.frontg8.view;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,12 +38,13 @@ public class ConnectionTestActivity extends AppCompatActivity {
     LocalService mService;
     private ConnectionService mConnection = new ConnectionService();
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connection_test);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         SharedPreferences preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
         serverName = preferences.getString("edittext_preference_hostname", "server.frontg8.ch");
