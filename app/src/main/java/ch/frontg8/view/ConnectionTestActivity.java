@@ -1,9 +1,9 @@
 package ch.frontg8.view;
 
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -11,14 +11,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.support.v7.app.AppCompatActivity;
-
 
 import java.util.ArrayList;
 
 import javax.net.ssl.SSLContext;
 
 import ch.frontg8.R;
+import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.connection.ConnectionService;
 import ch.frontg8.lib.connection.LocalService;
 import ch.frontg8.lib.connection.Logger;
@@ -46,9 +45,8 @@ public class ConnectionTestActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        SharedPreferences preferences = getSharedPreferences(getString(R.string.preferences), MODE_PRIVATE);
-        serverName = preferences.getString("edittext_preference_hostname", "server.frontg8.ch");
-        serverPort = Integer.parseInt(preferences.getString("edittext_preference_port", "40001"));
+        serverName = LibConfig.getServerName(this);
+        serverPort = LibConfig.getServerPort(this);
 
         arrayList = new ArrayList<String>();
 
