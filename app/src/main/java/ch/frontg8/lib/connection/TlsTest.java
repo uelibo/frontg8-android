@@ -12,17 +12,12 @@ import javax.net.ssl.SSLContext;
 
 import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.crypto.KeyNotFoundException;
+import ch.frontg8.lib.crypto.LibCrypto;
 import ch.frontg8.lib.crypto.LibSSLContext;
 import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.message.MessageType;
 import ch.frontg8.lib.protobuf.Frontg8Client;
-
-import static ch.frontg8.lib.crypto.LibCrypto.encryptMSG;
-import static ch.frontg8.lib.message.MessageHelper.addMessageHeader;
-import static ch.frontg8.lib.message.MessageHelper.buildDataMessage;
-import static ch.frontg8.lib.message.MessageHelper.buildEncryptedMessage;
-import static ch.frontg8.lib.message.MessageHelper.getDecryptedContent;
 
 public class TlsTest {
     Activity context;
@@ -49,15 +44,16 @@ public class TlsTest {
         Log.TRACE(Arrays.toString(plainMessage.getBytes()));
 
 
-        Frontg8Client.Data dataMessage = buildDataMessage(plainMessage,"0", 0);
+        Frontg8Client.Data dataMessage = MessageHelper.buildDataMessage(plainMessage, "0", 0);
         byte[] encryptedDataMessage = new byte[0];
         try {
-            encryptedDataMessage = encryptMSG(uuid, dataMessage.toByteArray(),context);
+            encryptedDataMessage = LibCrypto.encryptMSG(uuid, dataMessage.toByteArray(), context);
         } catch (KeyNotFoundException e) {
             encryptedDataMessage = dataMessage.toByteArray();
+            Log.TRACE("WARNING: Could not encrypt message");
             e.printStackTrace();
         }
-        byte[] encryptedMessageSemi = addMessageHeader(buildEncryptedMessage(ByteString.copyFrom(encryptedDataMessage)), MessageType.Encrypted);
+        byte[] encryptedMessageSemi = MessageHelper.addMessageHeader(MessageHelper.buildEncryptedMessage(ByteString.copyFrom(encryptedDataMessage)), MessageType.Encrypted);
 
         byte[] encryptedMessage = MessageHelper.buildFullEncryptedMessage(plainMessage.getBytes(), "0".getBytes(), 0, uuid, context);
 
@@ -78,9 +74,10 @@ public class TlsTest {
             // TODO: Decription of data
             String text = null;
             try {
-                text = new String(getDecryptedContent(message, context));
+                text = new String(MessageHelper.getDecryptedContent(message, context));
             } catch (InvalidMessageException e) {
-                Log.e("Invalid MSG");
+                Log.TRACE("WARNING: Could not decrypt message");
+                text = message.toString();
             }
             Log.TRACE(text);
         }
@@ -98,11 +95,12 @@ public class TlsTest {
             // TODO: Decription of data
             String text = null;
             try {
-                text = new String(getDecryptedContent(message,context));
-                Log.TRACE(text);
+                text = new String(MessageHelper.getDecryptedContent(message,context));
             } catch (InvalidMessageException e) {
-                Log.e("Invalid MSG");
+                Log.TRACE("WARNING: Could not decrypt message");
+                text = message.toString();
             }
+            Log.TRACE(text);
 
         }
 
