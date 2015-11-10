@@ -87,7 +87,9 @@ public class ConnectionTestActivity extends AppCompatActivity {
         super.onPause();
 
         // disconnect
-        mTcpClient.stopClient();
+        if (mTcpClient != null) {
+            mTcpClient.stopClient();
+        }
         mTcpClient = null;
 
     }
