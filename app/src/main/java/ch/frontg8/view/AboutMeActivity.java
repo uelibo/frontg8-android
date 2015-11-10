@@ -1,9 +1,15 @@
 package ch.frontg8.view;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import ch.frontg8.R;
@@ -16,8 +22,18 @@ public class AboutMeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_me);
 
-        TextView textViewMyPubkey = (TextView) findViewById(R.id.editTextMyPubkey);
+        final TextView textViewMyPubkey = (TextView) findViewById(R.id.editTextMyPubkey);
         textViewMyPubkey.setText(new String(LibCrypto.getMyPublicKeyBytes(this)));
+
+        Button buttonCopyToClipbord = (Button) findViewById(R.id.buttonCopyToClipbord);
+
+        buttonCopyToClipbord.setOnClickListener(new AdapterView.OnClickListener() {
+            public void onClick(View view) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("label", textViewMyPubkey.getText().toString());
+                clipboard.setPrimaryClip(clip);
+            }
+        });
     }
 
     @Override
