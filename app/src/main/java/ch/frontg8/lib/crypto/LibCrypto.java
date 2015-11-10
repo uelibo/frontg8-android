@@ -390,6 +390,8 @@ public class LibCrypto {
             if (ks.isKeyEntry(alias)) {
                 key = ks.getKey(alias, PASSWORD);
 
+            } else {
+                throw new KeyNotFoundError("No Key found for UUID: " + alias);
             }
         } catch (Exception e) {
             e.printStackTrace();
