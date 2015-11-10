@@ -5,10 +5,7 @@ package ch.frontg8.lib.crypto;
  */
 public class MyKeysNotFoundException extends KeyNotFoundException{
 
-    public MyKeysNotFoundException(String s) {
-        super(s);
-    }
     public MyKeysNotFoundException() {
-        super();
+        super("MY KEYS");
     }
 }
