@@ -2,7 +2,6 @@ package ch.frontg8.lib.connection;
 
 import android.util.Log;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -28,8 +27,6 @@ public class TcpClient {
     private boolean mRun = false;
     // used to send messages
     private BufferedOutputStream bufferedOutput;
-    // used to read messages from the server
-    //private BufferedInputStream bufferedInput;
 
     /**
      * Constructor of the class. OnMessagedReceived listens for the messages received from server
@@ -86,7 +83,6 @@ public class TcpClient {
         }
 
         mMessageListener = null;
-        //bufferedInput = null;
         bufferedOutput = null;
         mServerMessage = null;
     }
@@ -104,8 +100,6 @@ public class TcpClient {
                 //sends the message to the server
                 bufferedOutput = new BufferedOutputStream(tlsClient.getOutputStream());
 
-                //receives the message which the server sends back
-                //bufferedInput = new BufferedInputStream(tlsClient.getInputStream());
                 // send login name
                 sendMessage("Client connected");
 
