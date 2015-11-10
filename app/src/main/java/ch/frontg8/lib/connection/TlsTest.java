@@ -1,7 +1,6 @@
 package ch.frontg8.lib.connection;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 
 import com.google.protobuf.ByteString;
 
@@ -11,7 +10,7 @@ import java.util.UUID;
 
 import javax.net.ssl.SSLContext;
 
-import ch.frontg8.R;
+import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.crypto.KeyNotFoundException;
 import ch.frontg8.lib.crypto.LibSSLContext;
 import ch.frontg8.lib.message.InvalidMessageException;
@@ -35,12 +34,11 @@ public class TlsTest {
     public void RunTlsTest() {
         Logger Log = new Logger(context, "DeveloperActivity");
 
-        SharedPreferences preferences = context.getSharedPreferences(context.getString(R.string.preferences), context.MODE_PRIVATE);
-        String servername = preferences.getString("edittext_preference_hostname", "server.frontg8.ch");
-        int serverport = Integer.parseInt(preferences.getString("edittext_preference_port", "40001"));
+        String serverName = LibConfig.getServerName(context);
+        int serverPort = LibConfig.getServerPort(context);
 
         SSLContext sslContext = LibSSLContext.getSSLContext("root", context);
-        TlsClient tlsClient = new TlsClient(servername, serverport, Log, sslContext);
+        TlsClient tlsClient = new TlsClient(serverName, serverPort, Log, sslContext);
         tlsClient.connect();
 
         String plainMessage = "frontg8 Test Message";
@@ -56,6 +54,7 @@ public class TlsTest {
         try {
             encryptedDataMessage = encryptMSG(uuid, dataMessage.toByteArray(),context);
         } catch (KeyNotFoundException e) {
+            encryptedDataMessage = dataMessage.toByteArray();
             e.printStackTrace();
         }
         byte[] encryptedMessageSemi = addMessageHeader(buildEncryptedMessage(ByteString.copyFrom(encryptedDataMessage)), MessageType.Encrypted);
