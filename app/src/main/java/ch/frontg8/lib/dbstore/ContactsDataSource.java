@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import ch.frontg8.bl.Contact;
 import ch.frontg8.bl.Message;
+import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class ContactsDataSource {
 
@@ -121,6 +122,14 @@ public class ContactsDataSource {
         return contact;
     }
 
+    public Contact insertMessage(Contact contact, Frontg8Client.Encrypted message){
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.COLUMN_CONTACTUUID, contact.getContactId().toString());
+        values.put(MySQLiteHelper.COLUMN_MESSAGEBLOB, message.toByteArray());
+        long insertId = database.insert(MySQLiteHelper.TABLE_MESSAGES, null, values);
+        return contact;
+    }
+
     public ArrayList<Message> getMessagesByUUID(UUID contactId) {
         String[] queryArgs = { contactId.toString() };
         ArrayList<Message> messages = new ArrayList<>();
@@ -131,6 +140,23 @@ public class ContactsDataSource {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Message message = cursorToMessage(cursor);
+            messages.add(message);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return messages;
+    }
+
+    public ArrayList<byte[]> getEncryptedMessagesBlobByUUID(UUID contactId) {
+        String[] queryArgs = { contactId.toString() };
+        ArrayList<byte[]> messages = new ArrayList<>();
+        String[] fields = { MySQLiteHelper.COLUMN_MESSAGETEXT };
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_MESSAGES,
+                fields, MySQLiteHelper.COLUMN_CONTACTUUID + "=?", queryArgs, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            byte[] message = cursor.getBlob(0);
             messages.add(message);
             cursor.moveToNext();
         }
