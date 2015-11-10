@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import ch.frontg8.R;
 import ch.frontg8.lib.crypto.LibCrypto;
+import ch.frontg8.lib.crypto.MyKeysNotFoundException;
 
 public class AboutMeActivity extends AppCompatActivity {
 
@@ -23,7 +24,11 @@ public class AboutMeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about_me);
 
         final TextView textViewMyPubkey = (TextView) findViewById(R.id.editTextMyPubkey);
-        textViewMyPubkey.setText(new String(LibCrypto.getMyPublicKeyBytes(this)));
+        try {
+            textViewMyPubkey.setText(new String(LibCrypto.getMyPublicKeyBytes(this)));
+        } catch (MyKeysNotFoundException e) {
+            e.printStackTrace();
+        } //TODO: find better solution
 
         Button buttonCopyToClipbord = (Button) findViewById(R.id.buttonCopyToClipbord);
 

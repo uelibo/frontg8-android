@@ -12,6 +12,7 @@ import java.util.UUID;
 import javax.net.ssl.SSLContext;
 
 import ch.frontg8.R;
+import ch.frontg8.lib.crypto.KeyNotFoundException;
 import ch.frontg8.lib.crypto.LibSSLContext;
 import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
@@ -51,7 +52,12 @@ public class TlsTest {
 
 
         Frontg8Client.Data dataMessage = buildDataMessage(plainMessage,"0", 0);
-        byte[] encryptedDataMessage = encryptMSG(uuid, dataMessage.toByteArray(),context);
+        byte[] encryptedDataMessage = new byte[0];
+        try {
+            encryptedDataMessage = encryptMSG(uuid, dataMessage.toByteArray(),context);
+        } catch (KeyNotFoundException e) {
+            e.printStackTrace();
+        }
         byte[] encryptedMessageSemi = addMessageHeader(buildEncryptedMessage(ByteString.copyFrom(encryptedDataMessage)), MessageType.Encrypted);
 
         byte[] encryptedMessage = MessageHelper.buildFullEncryptedMessage(plainMessage.getBytes(), "0".getBytes(), 0, uuid, context);

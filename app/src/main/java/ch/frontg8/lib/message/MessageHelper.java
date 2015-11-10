@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 import ch.frontg8.lib.connection.TlsClient;
+import ch.frontg8.lib.crypto.KeyNotFoundException;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
 import static ch.frontg8.lib.crypto.LibCrypto.decryptMSG;
@@ -67,7 +68,12 @@ public class MessageHelper {
      */
     public static byte[] buildFullEncryptedMessage(byte[] plainData, byte[] sessionId, int timestamp, UUID uuid, Context context){
         Frontg8Client.Data dataMSG = buildDataMessage(plainData, sessionId, timestamp);
-        byte[] encryptedDataMSG = encryptMSG(uuid,dataMSG.toByteArray(),context);
+        byte[] encryptedDataMSG = new byte[0];
+        try {
+            encryptedDataMSG = encryptMSG(uuid,dataMSG.toByteArray(),context);
+        } catch (KeyNotFoundException e) {
+            e.printStackTrace();
+        } //TODO: find better solution
         return buildEncryptedMessage(ByteString.copyFrom(encryptedDataMSG));
     }
 

@@ -5,7 +5,6 @@ import android.content.Context;
 import org.spongycastle.crypto.digests.SHA256Digest;
 import org.spongycastle.crypto.macs.HMac;
 import org.spongycastle.crypto.params.KeyParameter;
-import org.spongycastle.jce.interfaces.ECPublicKey;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.util.Arrays;
 import org.spongycastle.util.encoders.Base64;
@@ -23,12 +22,11 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.security.spec.ECGenParameterSpec;
-import java.security.spec.ECPublicKeySpec;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,6 +58,7 @@ public class LibCrypto {
     private static final String BC = BouncyCastleProvider.PROVIDER_NAME;
     private static final UUID MYUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
+    private static final int SUFFIXLENGTH = 3;
     private static final String SUFFIXPRIVATE = "pri";
     private static final String SUFFIXSESSIONKEYCRYPTO = "skc";
     private static final String SUFFIXSESSIONKEYSIGN = "sks";
@@ -87,7 +86,7 @@ public class LibCrypto {
      * @param context    The android context (Activity)
      * @return The message as an encrypted byte array
      */
-    public static byte[] encryptMSG(UUID uuid, byte[] plainBytes, Context context) {
+    public static byte[] encryptMSG(UUID uuid, byte[] plainBytes, Context context) throws KeyNotFoundException {
         loadKS(context);
         SecretKey skc = getSKC(uuid);
         byte[] encryptedBytes = new byte[]{};
@@ -122,7 +121,7 @@ public class LibCrypto {
         try {
             encryptedBytes = Arrays.copyOfRange(encryptedMSG, IVSIZE, (encryptedMSG.length - KEYSIZE));
             hmacBytes = Arrays.copyOfRange(encryptedMSG, (encryptedMSG.length - KEYSIZE), encryptedMSG.length);
-        }catch (Throwable e){
+        } catch (Throwable e) {
             System.err.println("Undecryptable MSG");
             return new byte[]{};
         }
@@ -133,7 +132,7 @@ public class LibCrypto {
         //TODO: fertig mache (suffix entfernen)
         for (String s : skss.keySet()) {
             if (verifyHMAC(skss.get(s), encryptedBytes, hmacBytes)) {
-                decodedBytes = decrypt(encryptedBytes, skcs.get(s.substring(0, s.length() - 3) + SUFFIXSESSIONKEYCRYPTO), ivspec); //TODO: create constant for length suffix
+                decodedBytes = decrypt(encryptedBytes, skcs.get(s.substring(0, s.length() - SUFFIXLENGTH) + SUFFIXSESSIONKEYCRYPTO), ivspec);
                 break;
             }
         }
@@ -218,25 +217,31 @@ public class LibCrypto {
      * @param context The android context (Activity)
      * @return My public key.
      */
-    public static PublicKey getMyPublicKey(Context context) {
+    public static PublicKey getMyPublicKey(Context context) throws MyKeysNotFoundException {
         loadKS(context);
-        final Certificate cert;
+        Certificate cert = null;
         try {
             cert = ks.getCertificate(MYALIAS);
-            return cert.getPublicKey();
         } catch (KeyStoreException e) {
             e.printStackTrace();
-            return null;
         }
+        if (cert == null){
+            throw new MyKeysNotFoundException("My public key not found.");
+        }
+        return cert.getPublicKey();
     }
 
-    public static byte[] getMyPublicKeyBytes(Context context){
+    public static byte[] getMyPublicKeyBytes(Context context) throws MyKeysNotFoundException {
         PublicKey pk = getMyPublicKey(context);
         return Base64.encode(pk.getEncoded());
     }
 
-    private static PrivateKey getMyPrivateKey() {
-        return (PrivateKey) getKey(MYALIAS);
+    private static PrivateKey getMyPrivateKey() throws MyKeysNotFoundException {
+        try {
+            return (PrivateKey) getKey(MYALIAS);
+        } catch (KeyNotFoundException e) {
+            throw new MyKeysNotFoundException(e.getMessage());
+        }
     }
 
     /**
@@ -248,12 +253,17 @@ public class LibCrypto {
      */
     public static void negotiateSessionKeys(UUID uuid, byte[] pubKey, Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
         loadKS(context);
-        negotiateSessionKeys(uuid,createPubKey(pubKey),context);
+        negotiateSessionKeys(uuid, createPubKey(pubKey), context);
     }
 
-    public static void negotiateSessionKeys(UUID uuid,PublicKey pubKey, Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public static void negotiateSessionKeys(UUID uuid, PublicKey pubKey, Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
         loadKS(context);
-        byte[] sessionKey = negotiateSessionKey(pubKey);
+        byte[] sessionKey = new byte[0];
+        try {
+            sessionKey = negotiateSessionKey(pubKey);
+        } catch (KeyNotFoundException e) {
+            e.printStackTrace();
+        }
         byte[] skcBytes = Arrays.copyOfRange(sessionKey, 0, KEYSIZE);
         byte[] sksBytes = Arrays.copyOfRange(sessionKey, sessionKey.length - KEYSIZE, sessionKey.length);
 
@@ -269,8 +279,7 @@ public class LibCrypto {
 
     private static PublicKey createPubKey(byte[] pubKey) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
         KeyFactory factory = KeyFactory.getInstance("ECDSA", BC);
-        java.security.PublicKey ecPublicKey = factory.generatePublic(new X509EncodedKeySpec(Base64.decode(pubKey)));
-        return ecPublicKey;
+        return factory.generatePublic(new X509EncodedKeySpec(Base64.decode(pubKey)));
     }
 
     /**
@@ -288,7 +297,7 @@ public class LibCrypto {
         return kpg.generateKeyPair();
     }
 
-    private static byte[] negotiateSessionKey(PublicKey pubKey) {
+    private static byte[] negotiateSessionKey(PublicKey pubKey) throws KeyNotFoundException {
         PrivateKey privKey = getMyPrivateKey();
         byte[] sessionKey = new byte[]{};
         try {
@@ -312,10 +321,11 @@ public class LibCrypto {
     }
 
     private static Key removeKey(String alias) {
-        Key key = getKey(alias);
+        Key key = null;
         try {
+            key = getKey(alias);
             ks.deleteEntry(alias);
-        } catch (KeyStoreException e) {
+        } catch (KeyStoreException | KeyNotFoundException e) {
             e.printStackTrace();
         }
         return key;
@@ -368,11 +378,11 @@ public class LibCrypto {
 
     // Get keys
 
-    private static SecretKey getSKC(UUID uuid) {
+    private static SecretKey getSKC(UUID uuid) throws KeyNotFoundException {
         return (SecretKey) getKey(getSKCalias(uuid));
     }
 
-    private static SecretKey getSKS(UUID uuid) {
+    private static SecretKey getSKS(UUID uuid) throws KeyNotFoundException {
         return (SecretKey) getKey(getSKSalias(uuid));
     }
 
@@ -384,18 +394,18 @@ public class LibCrypto {
         return uuid.toString() + SUFFIXSESSIONKEYSIGN;
     }
 
-    private static Key getKey(String alias) {
+    private static Key getKey(String alias) throws KeyNotFoundException {
         Key key = null;
         try {
             if (ks.isKeyEntry(alias)) {
                 key = ks.getKey(alias, PASSWORD);
 
-            } else {
-                throw new KeyNotFoundError("No Key found for UUID: " + alias);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new KeyNotFoundError("No Key found for UUID: " + alias);
+        } catch (UnrecoverableKeyException | NoSuchAlgorithmException | KeyStoreException e) {
+            throw new KeyNotFoundException("No Key found for UUID: " + alias);
+        }
+        if (key == null) {
+            throw new KeyNotFoundException("No Key found for UUID: " + alias);
         }
         return key;
     }
@@ -436,18 +446,46 @@ public class LibCrypto {
         return sksAliasList;
     }
 
+    private static HashMap<String, SecretKey[]> getBothKeyMap(){
+        HashMap<String, SecretKey[]> bothAliasMap = new HashMap<>();
+        try {
+            for (String alias : getAliasList()){
+                if (alias.endsWith("sks")) {
+                    bothAliasMap.put(cutSuffix(alias), new SecretKey[]{
+                            createSecretKey(getKey(alias)),
+                            createSecretKey(getKey(changeSuffixToSKC(alias)))
+                    } );
+                }
+            }
+        } catch (KeyStoreException | KeyNotFoundException e) {
+            e.printStackTrace();
+        }
+        return bothAliasMap;
+    }
+
     private static HashMap<String, SecretKey> getKeyList(ArrayList<String> aliasList) {
         HashMap<String, SecretKey> keyMap = new HashMap<>();
         for (String alias : aliasList) {
             try {
-                byte[] keyBytes = getKey(alias).getEncoded();
-                SecretKey key = new SecretKeySpec(keyBytes, 0, keyBytes.length, "AES");
-                keyMap.put(alias, key);
+                keyMap.put(alias, createSecretKey(getKey(alias)));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         return keyMap;
+    }
+
+    private static SecretKey createSecretKey(Key key){
+        byte[] keyBytes = key.getEncoded();
+        return new SecretKeySpec(keyBytes, 0, keyBytes.length, "AES");
+    }
+
+    private static String cutSuffix(String alias){
+        return alias.substring(0,alias.length()-SUFFIXLENGTH);
+    }
+
+    private static String changeSuffixToSKC(String alias){
+        return cutSuffix(alias)+ SUFFIXSESSIONKEYCRYPTO;
     }
 
     // Keystore handling
@@ -466,11 +504,10 @@ public class LibCrypto {
         initKeystore();
         try {
             ks.containsAlias(MYALIAS);
-            return;
         } catch (KeyStoreException e1) {
             try {
                 ks = loadFromFile(ksFileName, ksPassword, context);
-                if (!ks.containsAlias(MYALIAS)){
+                if (!ks.containsAlias(MYALIAS)) {
                     generateNewKeys(context);
                 }
             } catch (Exception e) {
@@ -482,9 +519,7 @@ public class LibCrypto {
     private static void writeStore(Context context) {
         try {
             LibKeystore.writeStore(ksFileName, ksPassword, ks, context);
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (KeyStoreException | IOException e) {
             e.printStackTrace();
         }
     }
