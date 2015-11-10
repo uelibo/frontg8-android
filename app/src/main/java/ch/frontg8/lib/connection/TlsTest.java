@@ -37,48 +37,31 @@ public class TlsTest {
         tlsClient.connect();
 
         String plainMessage = "frontg8 Test Message";
-
-        // TODO: Encryption of data
         UUID uuid = UUID.fromString("11111111-1111-1111-1111-111111111111");
 
-        Log.TRACE(Arrays.toString(plainMessage.getBytes()));
-
-
-        Frontg8Client.Data dataMessage = MessageHelper.buildDataMessage(plainMessage, "0", 0);
-        byte[] encryptedDataMessage = new byte[0];
-        try {
-            encryptedDataMessage = LibCrypto.encryptMSG(uuid, dataMessage.toByteArray(), context);
-        } catch (KeyNotFoundException e) {
-            encryptedDataMessage = dataMessage.toByteArray();
-            Log.TRACE("WARNING: Could not encrypt message");
-            e.printStackTrace();
-        }
-        byte[] encryptedMessageSemi = MessageHelper.addMessageHeader(MessageHelper.buildEncryptedMessage(ByteString.copyFrom(encryptedDataMessage)), MessageType.Encrypted);
-
-        byte[] encryptedMessage = MessageHelper.buildFullEncryptedMessage(plainMessage.getBytes(), "0".getBytes(), 0, uuid, context);
-
-
-
-        Log.TRACE("---\n Is:     " + MessageHelper.byteArrayAsHexString(encryptedMessage));
-        Log.TRACE("---\n Should: " + MessageHelper.byteArrayAsHexString(encryptedMessageSemi));
-        Log.TRACE("---\n");
-
-        // SEND Message
-        tlsClient.sendBytes(encryptedMessage);
+        // SEND Message & Encryption of data
+        tlsClient.sendBytes(MessageHelper.buildFullEncryptedMessage(plainMessage.getBytes(), "0".getBytes(), 0, uuid, context));
 
         // RECEIVE
         List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(tlsClient));
         Log.TRACE("Num of messages: " + messages.size());
         for (Frontg8Client.Encrypted message: messages) {
 
-            // TODO: Decription of data
-            String text = null;
+            // Decription of data
+            String text ="";
             try {
                 text = new String(MessageHelper.getDecryptedContent(message, context));
             } catch (InvalidMessageException e) {
                 Log.TRACE("WARNING: Could not decrypt message");
-                text = message.toString();
+
+                try {
+                    Frontg8Client.Data data = MessageHelper.getDataMessage(message.getEncryptedData().toByteArray());
+                    text = data.getMessageData().toStringUtf8();
+                } catch (InvalidMessageException f) {
+                    f.printStackTrace();
+                }
             }
+
             Log.TRACE(text);
         }
 
@@ -92,13 +75,18 @@ public class TlsTest {
         Log.TRACE("Num of messages: " + messages.size());
         for (Frontg8Client.Encrypted message: messages) {
 
-            // TODO: Decription of data
+            // Decription of data
             String text = null;
             try {
-                text = new String(MessageHelper.getDecryptedContent(message,context));
+                text = new String(MessageHelper.getDecryptedContent(message, context));
             } catch (InvalidMessageException e) {
                 Log.TRACE("WARNING: Could not decrypt message");
-                text = message.toString();
+                try {
+                    Frontg8Client.Data data = MessageHelper.getDataMessage(message.getEncryptedData().toByteArray());
+                    text = data.getMessageData().toStringUtf8();
+                } catch (InvalidMessageException f) {
+                    f.printStackTrace();
+                }
             }
             Log.TRACE(text);
 

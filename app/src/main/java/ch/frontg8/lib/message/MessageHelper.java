@@ -1,6 +1,7 @@
 package ch.frontg8.lib.message;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -45,7 +46,7 @@ public class MessageHelper {
                 .newBuilder()
                 .setMessageData(message)
                 .setSessionId(sessionId)
-                .setTimestamp(0)
+                .setTimestamp(timestamp)
                 .build();
     }
 
@@ -66,10 +67,12 @@ public class MessageHelper {
      */
     public static byte[] buildFullEncryptedMessage(byte[] plainData, byte[] sessionId, int timestamp, UUID uuid, Context context){
         Frontg8Client.Data dataMSG = buildDataMessage(plainData, sessionId, timestamp);
-        byte[] encryptedDataMSG = new byte[0];
+        Log.e("Debug: ", byteArrayAsHexString(dataMSG.toByteArray()));
+        byte[] encryptedDataMSG;
         try {
             encryptedDataMSG = LibCrypto.encryptMSG(uuid, dataMSG.toByteArray(), context);
         } catch (KeyNotFoundException e) {
+            encryptedDataMSG = dataMSG.toByteArray();
             e.printStackTrace();
         } //TODO: find better solution
         return buildEncryptedMessage(ByteString.copyFrom(encryptedDataMSG));
