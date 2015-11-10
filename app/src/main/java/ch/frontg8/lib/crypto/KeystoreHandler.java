@@ -32,9 +32,6 @@ import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
- * Created by tstauber on 07.11.15.
- */
 public class KeystoreHandler {
     private static final String PN = BouncyCastleProvider.PROVIDER_NAME;
     private static char[] ksPassword = "KEYSTORE PASSWORD".toCharArray(); //TODO: change to real pw
@@ -174,7 +171,7 @@ public class KeystoreHandler {
         setMyKey(kpg.generateKeyPair(), context);
     }
 
-    private PublicKey getMyPublicKey() {
+    public PublicKey getMyPublicKey() {
         try {
             Certificate cert = ks.getCertificate(MYALIAS);
             if (cert == null) {
@@ -198,8 +195,6 @@ public class KeystoreHandler {
             throw new Error("There should always be my private key!");
         }
     }
-
-
 
 
     private Key getKey(UUID uuid, String suffix) throws KeyNotFoundException {
@@ -252,42 +247,42 @@ public class KeystoreHandler {
     // Static Methods
 
     public static KeyStore createFromCertificate(Certificate certificate) throws KeyStoreException {
-        KeyStore ks = KeyStore.getInstance("BKS", Security.getProvider(PN));
-        ks.setCertificateEntry("ca", certificate);
-        return ks;
+        try {
+            KeyStore ks = KeyStore.getInstance("BKS", Security.getProvider(PN));
+            ks.load(null);
+            ks.setCertificateEntry("ca", certificate);
+            return ks;
+        } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
+            throw new Error(e.getMessage());
+        }
     }
 
     //Delete
 
 
+    public boolean containsKey(String alias, Context context) {
+        boolean result = false;
+        try {
+            result = ks.containsAlias(alias);
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
-//    public static boolean containsKey(String alias, Context context) {
-//        boolean result = false;
-//        try {
-//            result = ks.containsAlias(alias);
-//        } catch (KeyStoreException e) {
-//            e.printStackTrace();
-//        }
-//        return result;
-//    }
-//
-//    public static boolean containsSKS(UUID uuid, Context context) {
-//        loadKS(context);
-//        return containsKey(getSKSalias(uuid), context);
-//    }
-//
-//    public static boolean containsSKC(UUID uuid, Context context) {
-//        loadKS(context);
-//        return containsKey(getSKCalias(uuid), context);
-//    }
-//
-//    public static boolean containsSKSandSKC(UUID uuid, Context context) {
-//        loadKS(context);
-//        boolean result1 = containsSKS(uuid, context);
-//        boolean result2 = containsSKC(uuid, context);
-//        return result1 && result2;
-//    }
+    public boolean containsSKS(UUID uuid, Context context) {
+        return containsKey(uuid.toString()+SUFFIXSESSIONKEYSIGN, context);
+    }
 
+    public boolean containsSKC(UUID uuid, Context context) {
+        return containsKey(uuid.toString()+SUFFIXSESSIONKEYCRYPTO, context);
+    }
+
+    public boolean containsSKSandSKC(UUID uuid, Context context) {
+        boolean result1 = containsSKS(uuid, context);
+        boolean result2 = containsSKC(uuid, context);
+        return result1 && result2;
+    }
 
 
 //private static void loadKSH(Context context) {

@@ -28,37 +28,19 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import ch.frontg8.view.AboutMeActivity;
+import ch.frontg8.lib.helper.Tuple;
 
 public class LibCrypto {
-
-    /*
-    What must be public:
-        Generate a new key and save it. ✓
-        Encrypt byte[] ✓
-        Decrypt byte[] ✓
-        Get my pubkey  ✓
-        Genereate new skc and sks ✓
-        Set new Keystore-password
-     */
-
     private static final String BC = BouncyCastleProvider.PROVIDER_NAME;
-    private static final int KEYSIZE = 32; //Bytes
-    private static final int IVSIZE = 16;  //Bytes
-
-
+    private static final int KEYSIZE = 32;
+    private static final int IVSIZE = 16;
 
     private static KeystoreHandler ksHandler;
 
 
     // Encryption / Decryption
 
-    /**
-     * @param uuid       The uuid of the user, for which the message should be encrypted
-     * @param plainBytes The unencrypted message as byte array
-     * @param context    The android context (Activity)
-     * @return The message as an encrypted byte array
-     */
+    @NonNull
     public static byte[] encryptMSG(UUID uuid, byte[] plainBytes, Context context) throws KeyNotFoundException {
         loadKSH(context);
         byte[] encryptedBytes;
@@ -77,15 +59,10 @@ public class LibCrypto {
         // TODO: what to do if uuid does not have a sessionkey?
     }
 
-
-    /**
-     * @param encryptedMSG The encrypted message as byte array
-     * @param context      The android context (Activity)
-     * @return The message as an unencrypted byte array
-     */
     @NonNull
-    public static byte[] decryptMSG(byte[] encryptedMSG, Context context) {
+    public static Tuple<UUID, byte[]> decryptMSG(byte[] encryptedMSG, Context context) {
         loadKSH(context);
+        UUID decryptUUID = null;
         byte[] decodedBytes = null;
         byte[] iv = Arrays.copyOfRange(encryptedMSG, 0, IVSIZE);
         IvParameterSpec ivspec = new IvParameterSpec(iv);
@@ -96,21 +73,24 @@ public class LibCrypto {
             hmacBytes = Arrays.copyOfRange(encryptedMSG, (encryptedMSG.length - KEYSIZE), encryptedMSG.length);
         } catch (Throwable e) {
             System.err.println("Undecryptable MSG");
-            return new byte[]{};
+            return new Tuple<>(null, new byte[]{});
         }
 
         HashMap<String, SecretKey[]> sessionKeys = ksHandler.getBothKeyMap();
 
         for (String s : sessionKeys.keySet()) {
+
             if (verifyHMAC(sessionKeys.get(s)[0], encryptedBytes, hmacBytes)) {
+                decryptUUID = UUID.fromString(s);
                 decodedBytes = decrypt(encryptedBytes, sessionKeys.get(s)[1], ivspec);
                 break;
             }
         }
-        return decodedBytes;
+        return new Tuple<>(decryptUUID, decodedBytes);
     }
 
-    // Crypto helpers
+
+    // Crypto Helpers
 
     private static byte[] concat(byte[] a, byte[] b, byte[] c) {
         int aLen = a.length;
@@ -164,6 +144,9 @@ public class LibCrypto {
         return cipher;
     }
 
+
+    // HMAC Helpers
+
     private static boolean verifyHMAC(SecretKey sks, byte[] msg, byte[] hmac) {
         System.out.println("-----\n" + Base64.toBase64String(hmac));
         System.out.println(Base64.toBase64String(getHMAC(sks, msg)) + "\n+++++");
@@ -183,16 +166,23 @@ public class LibCrypto {
 
     // My Key Handling
 
-    public static byte[] getMyPublicKeyBytes(AboutMeActivity aboutMeActivity) {
-        loadKSH(aboutMeActivity);
+    @NonNull
+    public static PublicKey getMyPublicKey(Context context) {
+        loadKSH(context);
+        return ksHandler.getMyPublicKey();
+    }
+
+    @NonNull
+    public static byte[] getMyPublicKeyBytes(Context context) {
+        loadKSH(context);
         return ksHandler.getMyPublicKeyBytes();
     }
 
-    public static void negotiateSessionKeys(UUID uuid, byte[] pubKey, Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public static void negotiateSessionKeys(@NonNull UUID uuid, byte[] pubKey,@NonNull Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
         negotiateSessionKeys(uuid, createPubKey(pubKey), context);
     }
 
-    public static void negotiateSessionKeys(UUID uuid, PublicKey pubKey, Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public static void negotiateSessionKeys(@NonNull UUID uuid, @NonNull PublicKey pubKey, @NonNull Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
         loadKSH(context);
         byte[] sessionKey = new byte[0];
         try {
@@ -219,12 +209,23 @@ public class LibCrypto {
         return factory.generatePublic(new X509EncodedKeySpec(Base64.decode(pubKey)));
     }
 
-    /**
-     * @throws Exception
-     */
-    public static void generateNewKeys(Context context) throws Exception {
+    public static void generateNewKeys(@NonNull Context context) throws Exception {
         loadKSH(context);
         ksHandler.genAndSetMyKeys(context);
+    }
+
+
+    // Session Key Handling
+
+    public static boolean containsSKSandSKC(@NonNull UUID uuid, @NonNull Context context) {
+        return ksHandler.containsSKSandSKC(uuid, context);
+    }
+
+
+    // Keystore Handling
+
+    public static void setNewPassword(byte[] password) {
+        //TODO: implement
     }
 
 
@@ -235,6 +236,4 @@ public class LibCrypto {
             ksHandler = new KeystoreHandler(context);
         }
     }
-
-
 }

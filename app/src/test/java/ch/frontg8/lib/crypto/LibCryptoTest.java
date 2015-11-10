@@ -18,14 +18,7 @@ import java.security.spec.ECGenParameterSpec;
 import java.util.Random;
 import java.util.UUID;
 
-import static ch.frontg8.lib.crypto.KeyFileGenerator.generateKeyStoreFiles;
-import static ch.frontg8.lib.crypto.LibCrypto.containsSKSandSKC;
-import static ch.frontg8.lib.crypto.LibCrypto.decryptMSG;
-import static ch.frontg8.lib.crypto.LibCrypto.encryptMSG;
-import static ch.frontg8.lib.crypto.LibCrypto.generateNewKeys;
-import static ch.frontg8.lib.crypto.LibCrypto.getMyPublicKey;
-import static ch.frontg8.lib.crypto.LibCrypto.getMyPublicKeyBytes;
-import static ch.frontg8.lib.crypto.LibCrypto.negotiateSessionKeys;
+
 import static org.junit.Assert.assertNotEquals;
 
 /**
@@ -34,32 +27,27 @@ import static org.junit.Assert.assertNotEquals;
 public class LibCryptoTest extends TestCase {
     private MockContext mc = new MyMockContext();
 
-//    @Test
-//    public void testKeyFileGenerator() {
-//        generateKeyStoreFiles();
-//    }
-
     @Test
    public void testGetKey() {
-        System.out.println(new String(getMyPublicKeyBytes(mc)));
+        System.out.println(new String(LibCrypto.getMyPublicKeyBytes(mc)));
     }
 
 
     @Test
     public void testContainsSKSandSKC() throws Exception {
         UUID uuid1 = UUID.randomUUID();
-        generateNewKeys(mc);
-        negotiateSessionKeys(uuid1, genKeyPair().getPublic(), mc);
-        assertTrue(containsSKSandSKC(uuid1, mc));
+        LibCrypto.generateNewKeys(mc);
+        LibCrypto.negotiateSessionKeys(uuid1, genKeyPair().getPublic(), mc);
+        assertTrue(LibCrypto.containsSKSandSKC(uuid1, mc));
     }
 
 
     @Test
     public void testGenECDHKeys() throws Exception {
-        generateNewKeys(mc);
-        PublicKey pk1 = getMyPublicKey(mc);
-        generateNewKeys(mc);
-        PublicKey pk2 = getMyPublicKey(mc);
+        LibCrypto.generateNewKeys(mc);
+        PublicKey pk1 = LibCrypto.getMyPublicKey(mc);
+        LibCrypto.generateNewKeys(mc);
+        PublicKey pk2 = LibCrypto.getMyPublicKey(mc);
         assertNotEquals(pk1, pk2);
     }
 
@@ -69,32 +57,32 @@ public class LibCryptoTest extends TestCase {
         UUID uuid2 = UUID.randomUUID();
         UUID uuid3 = UUID.randomUUID();
 
-        generateNewKeys(mc);
+        LibCrypto.generateNewKeys(mc);
 
-        negotiateSessionKeys(uuid1, genKeyPair().getPublic(), mc);
-        negotiateSessionKeys(uuid2, genKeyPair().getPublic(), mc);
-        negotiateSessionKeys(uuid3, genKeyPair().getPublic(), mc);
+        LibCrypto.negotiateSessionKeys(uuid1, genKeyPair().getPublic(), mc);
+        LibCrypto.negotiateSessionKeys(uuid2, genKeyPair().getPublic(), mc);
+        LibCrypto.negotiateSessionKeys(uuid3, genKeyPair().getPublic(), mc);
 
-        assertTrue(containsSKSandSKC(uuid1, mc));
-        assertTrue(containsSKSandSKC(uuid2, mc));
-        assertTrue(containsSKSandSKC(uuid3, mc));
+        assertTrue(LibCrypto.containsSKSandSKC(uuid1, mc));
+        assertTrue(LibCrypto.containsSKSandSKC(uuid2, mc));
+        assertTrue(LibCrypto.containsSKSandSKC(uuid3, mc));
     }
 
     @Test
     public void testEncryptDecrypt() throws Exception {
         UUID uuid1 = UUID.randomUUID();
 
-        generateNewKeys(mc);
+        LibCrypto.generateNewKeys(mc);
 
         byte[] plaintext = new byte[1024];
         new Random().nextBytes(plaintext);
 
         KeyPair kp = genKeyPair();
 
-        negotiateSessionKeys(uuid1, kp.getPublic(), mc);
+        LibCrypto.negotiateSessionKeys(uuid1, kp.getPublic(), mc);
 
-        byte[] ciphertext = encryptMSG(uuid1, plaintext, mc);
-        byte[] decryptedtext = decryptMSG(ciphertext, mc);
+        byte[] ciphertext = LibCrypto.encryptMSG(uuid1, plaintext, mc);
+        byte[] decryptedtext = LibCrypto.decryptMSG(ciphertext, mc)._2;
 
 
         String encoded = plaintext == null ? "null" : Base64.toBase64String(plaintext);
@@ -106,19 +94,10 @@ public class LibCryptoTest extends TestCase {
         assertTrue(encoded.equals(decrypted));
     }
 
-    private KeyPair genKeyPair() {
-        try {
+    private KeyPair genKeyPair() throws NoSuchProviderException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
             ECGenParameterSpec ecParamSpec = new ECGenParameterSpec("secp521r1");
             KeyPairGenerator kpg = KeyPairGenerator.getInstance("ECDH", BouncyCastleProvider.PROVIDER_NAME);
             kpg.initialize(ecParamSpec);
             return kpg.generateKeyPair();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }
