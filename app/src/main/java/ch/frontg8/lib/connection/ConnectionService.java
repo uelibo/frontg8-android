@@ -27,7 +27,11 @@ public class ConnectionService extends Service {
 
         SSLContext sslContext = LibSSLContext.getSSLContext("root", this);
         mTlsClient = new TlsClient(SERVERIP, SERVERPORT, logger, sslContext);
-        mTlsClient.connect();
+        try {
+            mTlsClient.connect();
+        } catch (NotConnectedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -49,17 +53,27 @@ public class ConnectionService extends Service {
     }
 
     public void sendBytes(byte[] packet) {
-        if (!mTlsClient.isConnected()) {
-            mTlsClient.connect();
+        try {
+            if (!mTlsClient.isConnected()) {
+                mTlsClient.connect();
+            }
+            mTlsClient.sendBytes(packet);
+        } catch (NotConnectedException e) {
+            e.printStackTrace();
         }
-        mTlsClient.sendBytes(packet);
     }
 
     public byte[] getBytes(int length) {
-        if (!mTlsClient.isConnected()) {
-            mTlsClient.connect();
+        byte[] data = new byte[0];
+        try {
+            if (!mTlsClient.isConnected()) {
+                mTlsClient.connect();
+            }
+            data = mTlsClient.getBytes(length);
+        } catch (NotConnectedException e) {
+            e.printStackTrace();
         }
-        return mTlsClient.getBytes(length);
+        return data;
     }
 
     @Override

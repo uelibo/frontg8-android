@@ -102,7 +102,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-        if (mTcpClient != null) {
+        if (mTcpClient != null && mTcpClient.isConnected()) {
             // if the client is connected, enable the connect button and disable the disconnect one
             menu.getItem(1).setEnabled(true);
             menu.getItem(0).setEnabled(false);

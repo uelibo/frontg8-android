@@ -29,13 +29,21 @@ public class TlsTest {
 
         SSLContext sslContext = LibSSLContext.getSSLContext("root", context);
         TlsClient tlsClient = new TlsClient(serverName, serverPort, Log, sslContext);
-        tlsClient.connect();
+        try {
+            tlsClient.connect();
+        } catch (NotConnectedException e) {
+            e.printStackTrace();
+        }
 
         String plainMessage = "frontg8 Test Message";
         UUID uuid = UUID.fromString("11111111-1111-1111-1111-111111111111");
 
         // SEND Message & Encryption of data
-        tlsClient.sendBytes(MessageHelper.buildFullEncryptedMessage(plainMessage.getBytes(), "0".getBytes(), 0, uuid, context));
+        try {
+            tlsClient.sendBytes(MessageHelper.buildFullEncryptedMessage(plainMessage.getBytes(), "0".getBytes(), 0, uuid, context));
+        } catch (NotConnectedException e) {
+            e.printStackTrace();
+        }
 
         // RECEIVE
         List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(tlsClient));
@@ -63,7 +71,11 @@ public class TlsTest {
         // SEND Message Request Message
         byte[] requestMessage = MessageHelper.addMessageHeader(MessageHelper.buildMessageRequestMessage("0").toByteArray(), MessageType.MessageRequest);
         Log.TRACE("---\n" + MessageHelper.byteArrayAsHexString(requestMessage));
-        tlsClient.sendBytes(requestMessage);
+        try {
+            tlsClient.sendBytes(requestMessage);
+        } catch (NotConnectedException e) {
+            e.printStackTrace();
+        }
 
         // RECEIVE
         messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(tlsClient));

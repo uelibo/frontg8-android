@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import ch.frontg8.lib.connection.NotConnectedException;
 import ch.frontg8.lib.connection.TlsClient;
 import ch.frontg8.lib.crypto.KeyNotFoundException;
 import ch.frontg8.lib.crypto.LibCrypto;
@@ -78,9 +79,10 @@ public class MessageHelper {
 
     public static List<Frontg8Client.Encrypted> getEncryptedMessagesFromNotification(Frontg8Client.Notification notification) {
         List<Frontg8Client.Encrypted> encrypted = new ArrayList<>();
-
-        for (int i=0; i < notification.getCount(); i++) {
-            encrypted.add(notification.getBundle(i));
+        if (notification != null) {
+            for (int i=0; i < notification.getCount(); i++) {
+                encrypted.add(notification.getBundle(i));
+            }
         }
         return encrypted;
     }
@@ -129,9 +131,15 @@ public class MessageHelper {
     }
 
     public static Frontg8Client.Notification getNotificationMessage(TlsClient tlsClient) {
-        byte[] header = tlsClient.getBytes(4);
-        int length = getLengthFromHeader(header);
-        byte[] data = tlsClient.getBytes(length);
+        byte[] header = new byte[0];
+        byte[] data = new byte[0];
+        try {
+            header = tlsClient.getBytes(4);
+            int length = getLengthFromHeader(header);
+            data = tlsClient.getBytes(length);
+        } catch (NotConnectedException e) {
+            e.printStackTrace();
+        }
 
         Frontg8Client.Notification notification = null;
 

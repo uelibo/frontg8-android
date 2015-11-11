@@ -36,6 +36,10 @@ public class TcpClient {
         this.tlsClient = new TlsClient(serverName, serverPort, logger, sslContext);
     }
 
+    public boolean isConnected() {
+        return tlsClient.isConnected();
+    }
+
     /**
      * Sends the message entered by client to the server
      *
