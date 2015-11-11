@@ -3,8 +3,8 @@ package ch.frontg8.view;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import ch.frontg8.R;
 import ch.frontg8.lib.crypto.LibCrypto;
-import ch.frontg8.lib.crypto.MyKeysNotFoundException;
 
 public class AboutMeActivity extends AppCompatActivity {
 
@@ -24,11 +23,7 @@ public class AboutMeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about_me);
 
         final TextView textViewMyPubkey = (TextView) findViewById(R.id.editTextMyPubkey);
-        try {
-            textViewMyPubkey.setText(new String(LibCrypto.getMyPublicKeyBytes(this)));
-        } catch (MyKeysNotFoundException e) {
-            e.printStackTrace();
-        } //TODO: find better solution
+        textViewMyPubkey.setText(new String(LibCrypto.getMyPublicKeyBytes(this)));
 
         Button buttonCopyToClipbord = (Button) findViewById(R.id.buttonCopyToClipbord);
 

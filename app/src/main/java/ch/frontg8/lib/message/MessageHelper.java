@@ -18,12 +18,12 @@ import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class MessageHelper {
 
-    public static String byteArrayAsHexString(byte[] byteArray){
+    public static String byteArrayAsHexString(byte[] byteArray) {
         StringBuilder sb = new StringBuilder();
         for (byte b : byteArray) {
             sb.append(String.format("%02X ", b));
         }
-        return(sb.toString());
+        return (sb.toString());
     }
 
     public static Frontg8Client.MessageRequest buildMessageRequestMessage(String hash) {
@@ -50,22 +50,23 @@ public class MessageHelper {
                 .build();
     }
 
-    public static byte[] buildEncryptedMessage(Frontg8Client.Data dataMessage){
+    public static byte[] buildEncryptedMessage(Frontg8Client.Data dataMessage) {
         return buildEncryptedMessage(dataMessage.toByteString());
     }
 
-    public static byte[] buildEncryptedMessage(ByteString encryptedData)  {
+    public static byte[] buildEncryptedMessage(ByteString encryptedData) {
         return addMessageHeader(Frontg8Client.Encrypted.newBuilder().setEncryptedData(encryptedData).build().toByteArray(), MessageType.Encrypted);
     }
 
     /**
      * Builds a Encrypted message directly from a byte array containing the message.
+     *
      * @param plainData
      * @param sessionId
      * @param timestamp
      * @return
      */
-    public static byte[] buildFullEncryptedMessage(byte[] plainData, byte[] sessionId, int timestamp, UUID uuid, Context context){
+    public static byte[] buildFullEncryptedMessage(byte[] plainData, byte[] sessionId, int timestamp, UUID uuid, Context context) {
         Frontg8Client.Data dataMSG = buildDataMessage(plainData, sessionId, timestamp);
         byte[] encryptedDataMSG;
         try {
@@ -100,7 +101,7 @@ public class MessageHelper {
         return getDataMessage(ByteString.copyFrom(data));
     }
 
-    private static byte[] sizeToByte(int size){
+    private static byte[] sizeToByte(int size) {
         return BigInteger.valueOf(size).toByteArray();
     }
 
@@ -127,7 +128,7 @@ public class MessageHelper {
     }
 
     private static int getLengthFromHeader(byte[] header) {
-        return (( header[0] < 0 ? 256+header[0]: header[0] ) << 8) + ( header[1] < 0 ? 256+header[1] : header[1] );
+        return ((header[0] < 0 ? 256 + header[0] : header[0]) << 8) + (header[1] < 0 ? 256 + header[1] : header[1]);
     }
 
     public static Frontg8Client.Notification getNotificationMessage(TlsClient tlsClient) {
@@ -153,11 +154,10 @@ public class MessageHelper {
     }
 
     public static byte[] getDecryptedContent(Frontg8Client.Encrypted encryptedMSG, Context context) throws InvalidMessageException {
-        byte[] decryptedBytes = LibCrypto.decryptMSG((encryptedMSG.getEncryptedData()).toByteArray(), context);
+        byte[] decryptedBytes = LibCrypto.decryptMSG((encryptedMSG.getEncryptedData()).toByteArray(), context)._2;
         Frontg8Client.Data dataMSG = getDataMessage(decryptedBytes);
         return dataMSG.getMessageData().toByteArray();
     }
-
 
 
 }
