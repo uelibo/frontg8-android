@@ -2,8 +2,7 @@ package ch.frontg8.lib.crypto;
 
 import android.test.mock.MockContext;
 
-import junit.framework.TestCase;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.util.encoders.Base64;
@@ -18,17 +17,16 @@ import java.security.spec.ECGenParameterSpec;
 import java.util.Random;
 import java.util.UUID;
 
-
 import static org.junit.Assert.assertNotEquals;
 
 /**
  * Created by tstauber on 13.10.15.
  */
-public class LibCryptoTest extends TestCase {
+public class LibCryptoTest {
     private MockContext mc = new MyMockContext();
 
     @Test
-   public void testGetKey() {
+    public void testGetKey() {
         System.out.println(new String(LibCrypto.getMyPublicKeyBytes(mc)));
     }
 
@@ -38,7 +36,7 @@ public class LibCryptoTest extends TestCase {
         UUID uuid1 = UUID.randomUUID();
         LibCrypto.generateNewKeys(mc);
         LibCrypto.negotiateSessionKeys(uuid1, genKeyPair().getPublic(), mc);
-        assertTrue(LibCrypto.containsSKSandSKC(uuid1, mc));
+        Assert.assertTrue(LibCrypto.containsSKSandSKC(uuid1, mc));
     }
 
 
@@ -63,9 +61,9 @@ public class LibCryptoTest extends TestCase {
         LibCrypto.negotiateSessionKeys(uuid2, genKeyPair().getPublic(), mc);
         LibCrypto.negotiateSessionKeys(uuid3, genKeyPair().getPublic(), mc);
 
-        assertTrue(LibCrypto.containsSKSandSKC(uuid1, mc));
-        assertTrue(LibCrypto.containsSKSandSKC(uuid2, mc));
-        assertTrue(LibCrypto.containsSKSandSKC(uuid3, mc));
+        Assert.assertTrue(LibCrypto.containsSKSandSKC(uuid1, mc));
+        Assert.assertTrue(LibCrypto.containsSKSandSKC(uuid2, mc));
+        Assert.assertTrue(LibCrypto.containsSKSandSKC(uuid3, mc));
     }
 
     @Test
@@ -85,19 +83,19 @@ public class LibCryptoTest extends TestCase {
         byte[] decryptedtext = LibCrypto.decryptMSG(ciphertext, mc)._2;
 
 
-        String encoded = plaintext == null ? "null" : Base64.toBase64String(plaintext);
+        String encoded = Base64.toBase64String(plaintext);
         System.out.println("Plain: " + encoded);
 
         String decrypted = decryptedtext == null ? "null" : Base64.toBase64String(decryptedtext);
         System.out.println("Decrypted: " + decrypted);
 
-        assertTrue(encoded.equals(decrypted));
+        Assert.assertTrue(encoded.equals(decrypted));
     }
 
     private KeyPair genKeyPair() throws NoSuchProviderException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
-            ECGenParameterSpec ecParamSpec = new ECGenParameterSpec("secp521r1");
-            KeyPairGenerator kpg = KeyPairGenerator.getInstance("ECDH", BouncyCastleProvider.PROVIDER_NAME);
-            kpg.initialize(ecParamSpec);
-            return kpg.generateKeyPair();
+        ECGenParameterSpec ecParamSpec = new ECGenParameterSpec("secp521r1");
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("ECDH", BouncyCastleProvider.PROVIDER_NAME);
+        kpg.initialize(ecParamSpec);
+        return kpg.generateKeyPair();
     }
 }

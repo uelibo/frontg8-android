@@ -9,12 +9,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
@@ -134,8 +136,8 @@ public class KeystoreHandler {
         }
     }
 
-    public byte[] negotiateSessionKeys(PublicKey publicKey) throws KeyNotFoundException {
-        PrivateKey privateKey = getMyPrivateKey();
+    public byte[] negotiateSessionKeys(PublicKey publicKey, Context context) throws KeyNotFoundException {
+        PrivateKey privateKey = getMyPrivateKey(context);
         byte[] sessionKey = new byte[]{};
         try {
             KeyAgreement kA = KeyAgreement.getInstance("ECDH", PN);
@@ -163,36 +165,50 @@ public class KeystoreHandler {
         }
     }
 
-    public void genAndSetMyKeys(Context context) throws Exception {
+    public void genAndSetMyKeys(Context context) {
         ECGenParameterSpec ecParamSpec = new ECGenParameterSpec("secp521r1"); // TODO: Change curve to incompatible to pyg8
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance("ECDH", PN);
-        kpg.initialize(ecParamSpec);
 
-        setMyKey(kpg.generateKeyPair(), context);
+        try {
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("ECDH", PN);
+            kpg.initialize(ecParamSpec);
+            setMyKey(kpg.generateKeyPair(), context);
+        } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
-    public PublicKey getMyPublicKey() {
+    public PublicKey getMyPublicKey(Context context) {
         try {
             Certificate cert = ks.getCertificate(MYALIAS);
+
             if (cert == null) {
-                throw new Error("There should always be my public key!");
+                genAndSetMyKeys(context);
+                cert = ks.getCertificate(MYALIAS);
+                // throw new Error("There should always be my public key!");
             }
             return cert.getPublicKey();
-        } catch (KeyStoreException e) {
+        } catch (Exception e) {
             throw new Error("KS Should be initialized");
         }
     }
 
-    public byte[] getMyPublicKeyBytes() {
-        PublicKey pk = getMyPublicKey();
+    public byte[] getMyPublicKeyBytes(Context context) {
+        PublicKey pk = getMyPublicKey(context);
         return Base64.encode(pk.getEncoded());
     }
 
-    private PrivateKey getMyPrivateKey() {
+    private PrivateKey getMyPrivateKey(Context context) {
         try {
             return (PrivateKey) getKey(MYUUID, SUFFIXPRIVATE);
         } catch (KeyNotFoundException e) {
-            throw new Error("There should always be my private key!");
+            genAndSetMyKeys(context);
+            try {
+                return (PrivateKey) getKey(MYUUID, SUFFIXPRIVATE);
+            } catch (KeyNotFoundException e1) {
+                throw new Error("There should always be my private key!");
+            }
         }
     }
 
@@ -202,7 +218,7 @@ public class KeystoreHandler {
     }
 
     private Key getKey(String uuid, String suffix) throws KeyNotFoundException {
-        String alias = uuid.toString() + suffix;
+        String alias = uuid + suffix;
         try {
             if (ks.isKeyEntry(alias)) {
                 return ks.getKey(alias, PASSWORD);

@@ -169,16 +169,16 @@ public class LibCrypto {
     @NonNull
     public static PublicKey getMyPublicKey(Context context) {
         loadKSH(context);
-        return ksHandler.getMyPublicKey();
+        return ksHandler.getMyPublicKey(context);
     }
 
     @NonNull
     public static byte[] getMyPublicKeyBytes(Context context) {
         loadKSH(context);
-        return ksHandler.getMyPublicKeyBytes();
+        return ksHandler.getMyPublicKeyBytes(context);
     }
 
-    public static void negotiateSessionKeys(@NonNull UUID uuid, byte[] pubKey,@NonNull Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public static void negotiateSessionKeys(@NonNull UUID uuid, byte[] pubKey, @NonNull Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
         negotiateSessionKeys(uuid, createPubKey(pubKey), context);
     }
 
@@ -186,7 +186,7 @@ public class LibCrypto {
         loadKSH(context);
         byte[] sessionKey = new byte[0];
         try {
-            sessionKey = ksHandler.negotiateSessionKeys(pubKey);
+            sessionKey = ksHandler.negotiateSessionKeys(pubKey,context);
         } catch (KeyNotFoundException e) {
             e.printStackTrace();
         }
