@@ -14,4 +14,9 @@ public class Tuple<T, U> {
     public String toString() {
         return String.format("(%s, %s)", _1, _2);
     }
+
+    @Override
+    public boolean equals(Object other) {
+        return other == this || other instanceof Tuple && this._1.equals(((Tuple) other)._1) && this._2.equals(((Tuple) other)._2);
+    }
 }

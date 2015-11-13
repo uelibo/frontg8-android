@@ -260,6 +260,18 @@ public class KeystoreHandler {
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, "AES");
     }
 
+    // Others
+
+    @Override
+    public String toString(){
+        try {
+            return "Keystore from :" + ksFileName + " Containing " + getAliasList().size()+ " Keys.";
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
     // Static Methods
 
     public static KeyStore createFromCertificate(Certificate certificate) throws KeyStoreException {
@@ -272,6 +284,8 @@ public class KeystoreHandler {
             throw new Error(e.getMessage());
         }
     }
+
+
 
     //Delete
 
