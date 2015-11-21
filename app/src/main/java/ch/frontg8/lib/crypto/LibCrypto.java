@@ -15,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
@@ -32,6 +33,11 @@ import ch.frontg8.lib.helper.Tuple;
 
 public class LibCrypto {
     private static final String BC = BouncyCastleProvider.PROVIDER_NAME;
+
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
     private static final int KEYSIZE = 32;
     private static final int IVSIZE = 16;
 

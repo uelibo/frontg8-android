@@ -81,7 +81,7 @@ public class MessageHelper {
     public static List<Frontg8Client.Encrypted> getEncryptedMessagesFromNotification(Frontg8Client.Notification notification) {
         List<Frontg8Client.Encrypted> encrypted = new ArrayList<>();
         if (notification != null) {
-            for (int i=0; i < notification.getCount(); i++) {
+            for (int i = 0; i < notification.getCount(); i++) {
                 encrypted.add(notification.getBundle(i));
             }
         }
@@ -131,8 +131,9 @@ public class MessageHelper {
         return ((header[0] < 0 ? 256 + header[0] : header[0]) << 8) + (header[1] < 0 ? 256 + header[1] : header[1]);
     }
 
+    @Deprecated
     public static Frontg8Client.Notification getNotificationMessage(TlsClient tlsClient) {
-        byte[] header = new byte[0];
+        byte[] header;
         byte[] data = new byte[0];
         try {
             header = tlsClient.getBytes(4);
@@ -153,6 +154,18 @@ public class MessageHelper {
         return notification;
     }
 
+    public static Frontg8Client.Notification getNotificationMessage(byte[] data) {
+        Frontg8Client.Notification notification = null;
+        try {
+            notification = Frontg8Client.Notification.parseFrom(data);
+        } catch (InvalidProtocolBufferException e) {
+            e.printStackTrace();
+        }
+        // TODO: raise Exception if notification = null
+        return notification;
+    }
+
+    @Deprecated
     public static byte[] getDecryptedContent(Frontg8Client.Encrypted encryptedMSG, Context context) throws InvalidMessageException {
         byte[] decryptedBytes = LibCrypto.decryptMSG((encryptedMSG.getEncryptedData()).toByteArray(), context)._2;
         Frontg8Client.Data dataMSG = getDataMessage(decryptedBytes);

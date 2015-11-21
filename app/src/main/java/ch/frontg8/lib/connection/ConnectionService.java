@@ -1,86 +1,109 @@
 package ch.frontg8.lib.connection;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
-import android.os.Binder;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.os.IBinder;
-import android.widget.Toast;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 
-import javax.net.ssl.SSLContext;
+import java.util.ArrayList;
 
+import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.crypto.LibSSLContext;
 
 public class ConnectionService extends Service {
+
     public ConnectionService() {
     }
 
-    public static final String SERVERIP = "server.frontg8.ch";
-    public static final int SERVERPORT = 40001;
     private Logger logger = new Logger();
-    private TlsClient mTlsClient;
-    private final IBinder myBinder = new LocalBinder();
+    private TcpClient mTcpClient;
+    final Messenger mMessenger = new Messenger(new IncomingHandler());
+    ArrayList<Messenger> mClients = new ArrayList<>();
 
     @Override
     public void onCreate() {
         super.onCreate();
-        System.out.println("I am in on create");
-
-        SSLContext sslContext = LibSSLContext.getSSLContext("root", this);
-        mTlsClient = new TlsClient(SERVERIP, SERVERPORT, logger, sslContext);
-        try {
-            mTlsClient.connect();
-        } catch (NotConnectedException e) {
-            e.printStackTrace();
-        }
+        new ConnectTask(this).execute();
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO Auto-generated method stub
-        System.out.println("I am in Ibinder onBind method");
-        return myBinder;
+        return mMessenger.getBinder();
     }
 
-    public class LocalBinder extends Binder {
-        public ConnectionService getService() {
-            System.out.println("I am in Localbinder ");
-            return ConnectionService.this;
-        }
-    }
 
-    public void IsBoundable() {
-        Toast.makeText(this, "I bind like butter", Toast.LENGTH_LONG).show();
-    }
+    public static final int MSG_REGISTER_CLIENT = 1;
+    public static final int MSG_UNREGISTER_CLIENT = 2;
+    public static final int MSG_GET_ALL = 3;
+    public static final int MSG_MSG = 4;
 
-    public void sendBytes(byte[] packet) {
-        try {
-            if (!mTlsClient.isConnected()) {
-                mTlsClient.connect();
+    class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_REGISTER_CLIENT:
+                    mClients.add(msg.replyTo);
+                    break;
+                case MSG_UNREGISTER_CLIENT:
+                    mClients.remove(msg.replyTo);
+                    break;
+                case MSG_MSG:
+                    mTcpClient.sendMessage((byte[]) msg.obj);
+                    break;
+                case MSG_GET_ALL:
+                    byte[] hash = (byte[]) msg.obj;
+                    //TODO: handle
+                    break;
+                default:
+                    super.handleMessage(msg);
             }
-            mTlsClient.sendBytes(packet);
-        } catch (NotConnectedException e) {
-            e.printStackTrace();
         }
-    }
-
-    public byte[] getBytes(int length) {
-        byte[] data = new byte[0];
-        try {
-            if (!mTlsClient.isConnected()) {
-                mTlsClient.connect();
-            }
-            data = mTlsClient.getBytes(length);
-        } catch (NotConnectedException e) {
-            e.printStackTrace();
-        }
-        return data;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mTlsClient.close();
-        mTlsClient = null;
+        mTcpClient.stopClient();
+        mTcpClient = null;
+    }
+
+    public class ConnectTask extends AsyncTask<byte[], byte[], TcpClient> {
+        private Context context;
+
+        public ConnectTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected TcpClient doInBackground(byte[]... message) {
+            mTcpClient = new TcpClient(new TcpClient.OnMessageReceived() {
+                @Override
+                public void messageReceived(byte[] message) {
+                    publishProgress(message);
+                }
+            }, LibConfig.getServerName(context), LibConfig.getServerPort(context), logger, LibSSLContext.getSSLContext("root", context));
+            mTcpClient.run();
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(byte[]... values) {
+            super.onProgressUpdate(values);
+
+            for (int i = mClients.size() - 1; i >= 0; i--) {
+                try {
+                    mClients.get(i).send(Message.obtain(null, MSG_MSG, values));
+                } catch (RemoteException e) {
+                    mClients.remove(i);
+                }
+            }
+        }
     }
 }
 

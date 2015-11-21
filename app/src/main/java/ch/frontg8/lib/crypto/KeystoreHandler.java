@@ -186,11 +186,11 @@ public class KeystoreHandler {
             if (cert == null) {
                 genAndSetMyKeys(context);
                 cert = ks.getCertificate(MYALIAS);
-                // throw new Error("There should always be my public key!");
+
             }
             return cert.getPublicKey();
         } catch (Exception e) {
-            throw new Error("KS Should be initialized");
+            throw new Error("There should always be my public key!");
         }
     }
 

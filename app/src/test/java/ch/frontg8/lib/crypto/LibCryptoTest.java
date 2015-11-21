@@ -19,9 +19,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertNotEquals;
 
-/**
- * Created by tstauber on 13.10.15.
- */
+
 public class LibCryptoTest {
     private MockContext mc = new MyMockContext();
 
