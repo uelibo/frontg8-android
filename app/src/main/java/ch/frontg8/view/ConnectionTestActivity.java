@@ -10,7 +10,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -66,7 +65,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case ConnectionService.MSG_MSG:
-                    List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(((byte[][]) msg.obj)[0]));
+                    List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(((byte[]) msg.obj)));
                     for (Frontg8Client.Encrypted message : messages) {
                         try {
                             arrayList.add(new String(MessageHelper.getDecryptedContent(message, context)));
@@ -87,9 +86,6 @@ public class ConnectionTestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context = this;
         setContentView(R.layout.activity_connection_test);
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
 
         arrayList = new ArrayList<>();
 

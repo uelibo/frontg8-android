@@ -1,9 +1,7 @@
 package ch.frontg8.lib.connection;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -19,16 +17,29 @@ public class ConnectionService extends Service {
 
     public ConnectionService() {
     }
+    //TODO test for connection lost
 
+    private TcpClient mTcpClient = null;
     private Logger logger = new Logger();
-    private TcpClient mTcpClient;
     final Messenger mMessenger = new Messenger(new IncomingHandler());
     ArrayList<Messenger> mClients = new ArrayList<>();
 
     @Override
     public void onCreate() {
         super.onCreate();
-        new ConnectTask(this).execute();
+        mTcpClient = new TcpClient(new TcpClient.OnMessageReceived() {
+            @Override
+            public void messageReceived(byte[] message) {
+                for (int i = mClients.size() - 1; i >= 0; i--) {
+                    try {
+                        mClients.get(i).send(Message.obtain(null, MSG_MSG, message));
+                    } catch (RemoteException e) {
+                        mClients.remove(i);
+                    }
+                }
+            }
+        }, LibConfig.getServerName(this), LibConfig.getServerPort(this), logger, LibSSLContext.getSSLContext("root", this));
+        mTcpClient.execute();
     }
 
     @Override
@@ -69,41 +80,9 @@ public class ConnectionService extends Service {
     public void onDestroy() {
         super.onDestroy();
         mTcpClient.stopClient();
-        mTcpClient = null;
+        // TODO remove stuff
     }
 
-    public class ConnectTask extends AsyncTask<byte[], byte[], TcpClient> {
-        private Context context;
-
-        public ConnectTask(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected TcpClient doInBackground(byte[]... message) {
-            mTcpClient = new TcpClient(new TcpClient.OnMessageReceived() {
-                @Override
-                public void messageReceived(byte[] message) {
-                    publishProgress(message);
-                }
-            }, LibConfig.getServerName(context), LibConfig.getServerPort(context), logger, LibSSLContext.getSSLContext("root", context));
-            mTcpClient.run();
-
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(byte[]... values) {
-            super.onProgressUpdate(values);
-
-            for (int i = mClients.size() - 1; i >= 0; i--) {
-                try {
-                    mClients.get(i).send(Message.obtain(null, MSG_MSG, values));
-                } catch (RemoteException e) {
-                    mClients.remove(i);
-                }
-            }
-        }
-    }
+    //TODO change to enum
 }
 

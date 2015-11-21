@@ -98,6 +98,7 @@ public class TlsClient {
             Log.TRACE("sending packet ");
             try {
                 socket.getOutputStream().write(packet);
+                socket.getOutputStream().flush();
                 Log.TRACE("sending packet succeeded");
             } catch (IOException e1) {
                 Log.TRACE("socket.getOutputStream().write >> IOException");
