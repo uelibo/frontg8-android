@@ -47,7 +47,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
             Toast.makeText(ConnectionTestActivity.this, "Connected", Toast.LENGTH_SHORT).show();
 
             try {
-                Message msg = Message.obtain(null, ConnectionService.MSG_REGISTER_CLIENT);
+                Message msg = Message.obtain(null, ConnectionService.MessageTypes.MSG_REGISTER_CLIENT);
                 msg.replyTo = mMessenger;
                 mService.send(msg);
             } catch (RemoteException e) {
@@ -64,7 +64,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case ConnectionService.MSG_MSG:
+                case ConnectionService.MessageTypes.MSG_MSG:
                     List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(((byte[]) msg.obj)));
                     for (Frontg8Client.Encrypted message : messages) {
                         try {
@@ -109,7 +109,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
                 byte[] dataMSG = MessageHelper.buildFullEncryptedMessage(message.getBytes(), "0".getBytes(), 0, UUID.fromString("11111111-1111-1111-1111-111111111111"), context);
 
                 try {
-                    mService.send(Message.obtain(null, ConnectionService.MSG_MSG, dataMSG));
+                    mService.send(Message.obtain(null, ConnectionService.MessageTypes.MSG_MSG, dataMSG));
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -125,7 +125,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         try {
-            mService.send(Message.obtain(null, ConnectionService.MSG_UNREGISTER_CLIENT));
+            mService.send(Message.obtain(null, ConnectionService.MessageTypes.MSG_UNREGISTER_CLIENT));
         } catch (RemoteException e) {
             e.printStackTrace();
         }

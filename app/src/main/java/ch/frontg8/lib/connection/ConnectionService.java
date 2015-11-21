@@ -32,7 +32,7 @@ public class ConnectionService extends Service {
             public void messageReceived(byte[] message) {
                 for (int i = mClients.size() - 1; i >= 0; i--) {
                     try {
-                        mClients.get(i).send(Message.obtain(null, MSG_MSG, message));
+                        mClients.get(i).send(Message.obtain(null, MessageTypes.MSG_MSG, message));
                     } catch (RemoteException e) {
                         mClients.remove(i);
                     }
@@ -48,25 +48,22 @@ public class ConnectionService extends Service {
     }
 
 
-    public static final int MSG_REGISTER_CLIENT = 1;
-    public static final int MSG_UNREGISTER_CLIENT = 2;
-    public static final int MSG_GET_ALL = 3;
-    public static final int MSG_MSG = 4;
+
 
     class IncomingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case MSG_REGISTER_CLIENT:
+                case MessageTypes.MSG_REGISTER_CLIENT:
                     mClients.add(msg.replyTo);
                     break;
-                case MSG_UNREGISTER_CLIENT:
+                case MessageTypes.MSG_UNREGISTER_CLIENT:
                     mClients.remove(msg.replyTo);
                     break;
-                case MSG_MSG:
+                case MessageTypes.MSG_MSG:
                     mTcpClient.sendMessage((byte[]) msg.obj);
                     break;
-                case MSG_GET_ALL:
+                case MessageTypes.MSG_GET_ALL:
                     byte[] hash = (byte[]) msg.obj;
                     //TODO: handle
                     break;
@@ -83,6 +80,11 @@ public class ConnectionService extends Service {
         // TODO remove stuff
     }
 
-    //TODO change to enum
+    public static class MessageTypes {
+        public static final int MSG_REGISTER_CLIENT = 1;
+        public static final int MSG_UNREGISTER_CLIENT = 2;
+        public static final int MSG_GET_ALL = 3;
+        public static final int MSG_MSG = 4;
+    }
 }
 

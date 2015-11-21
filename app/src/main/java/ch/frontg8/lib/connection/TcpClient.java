@@ -13,9 +13,6 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
     private byte[] mMSG = null;
     private boolean mRun = true;
 
-    /**
-     * Constructor of the class. OnMessagedReceived listens for the messages received from server
-     */
     public TcpClient(OnMessageReceived listener, String serverName, int serverPort, Logger logger, SSLContext sslContext) {
         mMessageListener = listener;
         this.tlsClient = new TlsClient(serverName, serverPort, logger, sslContext);
@@ -74,7 +71,6 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
                 sendThread.start();
 
                 while (mRun) {
-                    Log.e("TCP RUNLOOP", " Message receiving");
                     byte[] header;
                     byte[] data = new byte[0];
                     try {
