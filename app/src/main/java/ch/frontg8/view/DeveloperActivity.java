@@ -45,6 +45,7 @@ public class DeveloperActivity extends AppCompatActivity {
                 try {
                     LibCrypto.generateNewKeys(thisActivity);
                     Toast toast = Toast.makeText(thisActivity, "Keys generated", Toast.LENGTH_SHORT);
+                    toast.show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
