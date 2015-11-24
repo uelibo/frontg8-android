@@ -12,6 +12,8 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
     private final Object lock = new Object();
     private byte[] mMSG = null;
     private boolean mRun = true;
+    Thread sendThread;
+    Thread receiveThread;
 
     public TcpClient(OnMessageReceived listener, String serverName, int serverPort, Logger logger, SSLContext sslContext) {
         mMessageListener = listener;
@@ -26,7 +28,7 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
         Log.e("TCP Sending", " sending");
         synchronized (lock) {
             mMSG = message;
-            lock.notify();
+            lock.notifyAll();
         }
     }
 
@@ -42,12 +44,12 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
             //TODO Handle not connected
             tlsClient.connect();
             try {
-
-                Thread sendThread = new Thread(new Runnable() {
+                sendThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         synchronized (lock) {
                             while (mRun) {
+                                Log.e("TCP Client", "C: Sending");
                                 if (mMSG != null) {
                                     try {
                                         tlsClient.sendBytes(mMSG);
@@ -62,43 +64,71 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
-                                //TODO think about non active wait
                             }
+                            Log.e("TCP", "Finished sendThread");
                         }
                     }
                 });
 
                 sendThread.start();
 
-                while (mRun) {
-                    byte[] header;
-                    byte[] data = new byte[0];
+                receiveThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isConnected()){
+                            Log.e("TCP Client", "Connected");
+                        }
+                        while (mRun) {
+                            Log.e("TCP Client", "C: Receiving");
+                            byte[] header;
+                            byte[] data = new byte[0];
+                            try {
+                                header = tlsClient.getBytes(4);
+                                int length = getLengthFromHeader(header);
+                                data = tlsClient.getBytes(length);
+                            } catch (NotConnectedException e) {
+                                e.printStackTrace();
+                            }
+                            mMessageListener.messageReceived(data);
+                            Log.e("TCP RUNLOOP", " Message received");
+                        }
+                        Log.e("TCP", "Finished receiveThread");
+                    }
+                });
+
+                receiveThread.start();
+
+                synchronized (lock){
+                    while(mRun){
+                        lock.wait();
+                    }
+
                     try {
-                        header = tlsClient.getBytes(4);
-                        int length = getLengthFromHeader(header);
-                        data = tlsClient.getBytes(length);
-                    } catch (NotConnectedException e) {
+                        tlsClient.close();
+                    } catch (Exception e){
                         e.printStackTrace();
                     }
-                    mMessageListener.messageReceived(data);
-                    Log.e("TCP RUNLOOP", " Message received");
                 }
 
 
+                }catch(Exception e){
+                    Log.e("TCP", "S: Error", e);
+                }finally{
+                    tlsClient.close();
+                }
             } catch (Exception e) {
-                Log.e("TCP", "S: Error", e);
-            } finally {
-                tlsClient.close();
+                Log.e("TCP", "C: Error", e);
             }
-        } catch (Exception e) {
-            Log.e("TCP", "C: Error", e);
+
+            return null;
         }
 
-        return null;
-    }
-
     public void stopClient() {
+        Log.e("TCP Client", " Stop Client");
         mRun = false;
+        synchronized (lock) {
+            lock.notifyAll();
+        }
     }
 
     public interface OnMessageReceived {

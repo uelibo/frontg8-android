@@ -60,6 +60,11 @@ public class ConnectionTestActivity extends AppCompatActivity {
         }
     };
 
+    //TODO: ist hier, weil ich nicht weiss wo sonst... in landscape mode do disable fullscreen editing
+
+
+
+
     class IncomingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -130,7 +135,6 @@ public class ConnectionTestActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         unbindService(mConnection);
-
     }
 
     @Override

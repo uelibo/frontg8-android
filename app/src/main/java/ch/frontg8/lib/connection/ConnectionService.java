@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -27,6 +28,14 @@ public class ConnectionService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.e("CService", "Create");
+
+        if (mTcpClient == null) {
+            Log.e("CService", "mTcpClient was null");
+        } else {
+            Log.e("CService", "mTcpClient was " + mTcpClient.toString());
+        }
+
         mTcpClient = new TcpClient(new TcpClient.OnMessageReceived() {
             @Override
             public void messageReceived(byte[] message) {
@@ -46,8 +55,6 @@ public class ConnectionService extends Service {
     public IBinder onBind(Intent intent) {
         return mMessenger.getBinder();
     }
-
-
 
 
     class IncomingHandler extends Handler {
@@ -75,8 +82,10 @@ public class ConnectionService extends Service {
 
     @Override
     public void onDestroy() {
+        Log.e("CService", "Destroy");
         super.onDestroy();
         mTcpClient.stopClient();
+        mTcpClient = null;
         // TODO remove stuff
     }
 
