@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         TextView title = (TextView) findViewById(R.id.textViewTitle);
-        title.append(LibConfig.getUsername(this));
+        title.append(" " + LibConfig.getUsername(this));
     }
 
     @Override
