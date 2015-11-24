@@ -72,6 +72,12 @@ public class DeveloperActivity extends AppCompatActivity {
                 datasource.insertMessage(c, new Message("blc"));
                 datasource.insertMessage(d, new Message("bld"));
                 datasource.insertMessage(d, new Message("bld"));
+                a.incrementUnreadMessageCounter();
+                b.incrementUnreadMessageCounter();
+                c.incrementUnreadMessageCounter();
+                datasource.updateContact(a);
+                datasource.updateContact(b);
+                datasource.updateContact(c);
                 Toast toast = Toast.makeText(thisActivity, "demo data inserted", Toast.LENGTH_SHORT);
                 toast.show();
             }

@@ -8,7 +8,7 @@ import android.util.Log;
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "frontg8.db";
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
     public static final String COLUMN_ID = "id";
 
     public static final String TABLE_CONTACTS = "contacts";
@@ -16,6 +16,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_SURNAME = "surname";
     public static final String COLUMN_PUBLICKEY = "publickey";
+    public static final String COLUMN_UNREADMSG = "unreadMessageCounter";
 
     public static final String TABLE_MESSAGES = "messages";
     public static final String COLUMN_CONTACTUUID = "contactuuid";
@@ -28,7 +29,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + COLUMN_UUID + " text not null, "
             + COLUMN_NAME + " text not null, "
             + COLUMN_SURNAME + " text null, "
-            + COLUMN_PUBLICKEY + " text null); ";
+            + COLUMN_PUBLICKEY + " text null, "
+            + COLUMN_UNREADMSG + " int null); ";
 
     private static final String DATABASE_CREATE_MESSAGES = "create table "
             + TABLE_MESSAGES + "(" + COLUMN_ID

@@ -9,17 +9,22 @@ public class Contact implements Serializable {
     private String name;
     private String surname;
     private String publicKeyString;
+    private int unreadMessageCounter = 0;
     private ArrayList<Message> messages = new ArrayList<Message>();
 
     public Contact(String name) { this(genUUID(), name, "", ""); }
     public Contact(String name, String surname) { this(genUUID(), name, surname, ""); }
     public Contact(UUID contactId, String name, String surname) { this(contactId, name, surname, ""); }
-    public Contact(UUID contactId, String name, String surname, String publicKeyString)
+    public Contact(UUID contactId, String name, String surname, String publicKeyString ) {
+        this(contactId, name, surname, publicKeyString, 0);
+    }
+    public Contact(UUID contactId, String name, String surname, String publicKeyString, int unreadMessageCounter)
     {
         this.contactId = contactId;
         this.name = name;
         this.surname = surname;
         this.publicKeyString = publicKeyString;
+        this.unreadMessageCounter = unreadMessageCounter;
     }
 
     public UUID getContactId() { return contactId; }
@@ -37,6 +42,10 @@ public class Contact implements Serializable {
     public void addMessage(Message msg) { messages.add(msg); }
     public void addMessages(ArrayList<Message> msgs) { messages.addAll(msgs); }
     public ArrayList<Message> getMessages() { return messages; }
+
+    public void incrementUnreadMessageCounter() { unreadMessageCounter++; }
+    public int getUnreadMessageCounter() { return unreadMessageCounter; }
+    public void resetUnreadMessageCounter() { unreadMessageCounter = 0; }
 
     @Override
     public String toString() { return name; }
