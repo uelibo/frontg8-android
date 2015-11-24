@@ -98,6 +98,9 @@ public class MessageHelper {
 
     public static Frontg8Client.Data getDataMessage(byte[] data) throws InvalidMessageException {
         //TODO: improve by length check
+        if ( data == null ) {
+            return null;
+        }
         return getDataMessage(ByteString.copyFrom(data));
     }
 
@@ -169,7 +172,12 @@ public class MessageHelper {
     public static byte[] getDecryptedContent(Frontg8Client.Encrypted encryptedMSG, Context context) throws InvalidMessageException {
         byte[] decryptedBytes = LibCrypto.decryptMSG((encryptedMSG.getEncryptedData()).toByteArray(), context)._2;
         Frontg8Client.Data dataMSG = getDataMessage(decryptedBytes);
-        return dataMSG.getMessageData().toByteArray();
+        if (dataMSG == null) {
+            byte[] empty = new byte[0];
+            return empty;
+        } else {
+            return dataMSG.getMessageData().toByteArray();
+        }
     }
 
 
