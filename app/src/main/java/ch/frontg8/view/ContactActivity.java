@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -63,16 +64,19 @@ public class ContactActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
                 if (contact != null) {
-                    title.setText("saved.");
+                    Toast toast = Toast.makeText(thisContext, "Contact saved", Toast.LENGTH_SHORT);
+                    toast.show();
                     contact.setName(name.getText().toString());
                     contact.setSurname(surname.getText().toString());
                     contact.setPublicKeyString(publicKey.getText().toString());
                     datasource.updateContact(contact);
-                    //TODO: negotiate Keys
-                    try {
-                        LibCrypto.negotiateSessionKeys(contact.getContactId(), publicKey.getText().toString().getBytes(), thisContext);
-                    } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-                        e.printStackTrace();
+                    // TODO: Handle invalid Publickey
+                    if (!contact.getPublicKeyString().isEmpty()) {
+                        try {
+                            LibCrypto.negotiateSessionKeys(contact.getContactId(), publicKey.getText().toString().getBytes(), thisContext);
+                        } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -83,7 +87,8 @@ public class ContactActivity extends AppCompatActivity {
                 if (contact != null) {
                     datasource.deleteContact(contact);
                 }
-                title.setText("deleted.");
+                Toast toast = Toast.makeText(thisContext, "Contact deleted", Toast.LENGTH_SHORT);
+                toast.show();
                 //finish();
             }
         });
