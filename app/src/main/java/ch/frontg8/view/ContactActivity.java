@@ -64,20 +64,18 @@ public class ContactActivity extends AppCompatActivity {
 
         saveButton.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-                if (contact != null) {
-                    Toast toast = Toast.makeText(thisContext, "Contact saved", Toast.LENGTH_SHORT);
-                    toast.show();
-                    contact.setName(name.getText().toString());
-                    contact.setSurname(surname.getText().toString());
-                    contact.setPublicKeyString(publicKey.getText().toString());
-                    datasource.updateContact(contact);
-                    // TODO: Handle invalid Publickey
-                    if (!contact.getPublicKeyString().isEmpty()) {
-                        try {
-                            LibCrypto.negotiateSessionKeys(contact.getContactId(), publicKey.getText().toString().getBytes(), thisContext);
-                        } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-                            e.printStackTrace();
-                        }
+                Toast toast = Toast.makeText(thisContext, "Contact saved", Toast.LENGTH_SHORT);
+                toast.show();
+                contact.setName(name.getText().toString());
+                contact.setSurname(surname.getText().toString());
+                contact.setPublicKeyString(publicKey.getText().toString());
+                datasource.updateContact(contact);
+                // TODO: Handle invalid Publickey
+                if (!contact.getPublicKeyString().isEmpty()) {
+                    try {
+                        LibCrypto.negotiateSessionKeys(contact.getContactId(), publicKey.getText().toString().getBytes(), new KeystoreHandler(thisContext), thisContext);
+                    } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -85,9 +83,7 @@ public class ContactActivity extends AppCompatActivity {
 
         deleteButton.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-                if (contact != null) {
-                    datasource.deleteContact(contact);
-                }
+                datasource.deleteContact(contact);
                 Toast toast = Toast.makeText(thisContext, "Contact deleted", Toast.LENGTH_SHORT);
                 toast.show();
                 //finish();
@@ -113,10 +109,7 @@ public class ContactActivity extends AppCompatActivity {
 
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
 
-        return super.onOptionsItemSelected(item);
     }
 }

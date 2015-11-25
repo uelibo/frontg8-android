@@ -1,6 +1,7 @@
 package ch.frontg8.view.model;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,7 +62,13 @@ public class ConnectionTestAdapter extends BaseAdapter {
 
             if (itemName != null) {
                 //set the item name on the TextView
+
                 itemName.setText(stringItem);
+                if (stringItem.startsWith("c:")) {
+                    view.setBackgroundColor(Color.GREEN);
+                } else {
+                    view.setBackgroundColor(Color.CYAN);
+                }
             }
         }
 

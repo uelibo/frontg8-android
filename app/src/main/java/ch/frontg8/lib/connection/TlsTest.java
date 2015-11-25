@@ -55,8 +55,8 @@ public class TlsTest {
             // Decription of data
             String text ="";
             try {
-                Tuple<UUID, byte[]> mes = MessageHelper.getDecryptedContent(message, new KeystoreHandler(context));
-                text = mes._1.toString() + new String(mes._2);
+                Tuple<UUID, Frontg8Client.Data> mes = MessageHelper.getDecryptedContent(message, new KeystoreHandler(context));
+                text = mes._1.toString() + mes._2.getMessageData().toStringUtf8();
             } catch (InvalidMessageException e) {
                 Log.TRACE("WARNING: Could not decrypt message");
 
@@ -88,8 +88,8 @@ public class TlsTest {
             // Decription of data
             String text = null;
             try {
-                Tuple<UUID, byte[]> mes = MessageHelper.getDecryptedContent(message, new KeystoreHandler(context));
-                text = mes._1.toString() + new String(mes._2);
+                Tuple<UUID, Frontg8Client.Data> mes = MessageHelper.getDecryptedContent(message, new KeystoreHandler(context));
+                text = mes._1.toString() + mes._2.getMessageData().toStringUtf8();
             } catch (InvalidMessageException e) {
                 Log.TRACE("WARNING: Could not decrypt message");
                 try {

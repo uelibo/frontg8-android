@@ -74,7 +74,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
                     for (Frontg8Client.Encrypted message : messages) {
                         try {
                             Tuple<UUID, Frontg8Client.Data> mes = MessageHelper.getDecryptedContent(message, new KeystoreHandler(context));
-                            arrayList.add(mes._1.toString() + mes._2.getMessageData().toString());
+                            arrayList.add(mes._2.getMessageData().toStringUtf8());
                         } catch (InvalidMessageException e) {
                             e.printStackTrace();
                         }
