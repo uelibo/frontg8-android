@@ -175,8 +175,6 @@ public class KeystoreHandler {
         } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | NoSuchProviderException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public PublicKey getMyPublicKey(Context context) {
@@ -286,11 +284,9 @@ public class KeystoreHandler {
     }
 
 
-
     //Delete
 
-
-    public boolean containsKey(String alias, Context context) {
+    public boolean containsKey(String alias) {
         boolean result = false;
         try {
             result = ks.containsAlias(alias);
@@ -300,120 +296,17 @@ public class KeystoreHandler {
         return result;
     }
 
-    public boolean containsSKS(UUID uuid, Context context) {
-        return containsKey(uuid.toString()+SUFFIXSESSIONKEYSIGN, context);
+    public boolean containsSKS(UUID uuid) {
+        return containsKey(uuid.toString()+SUFFIXSESSIONKEYSIGN);
     }
 
-    public boolean containsSKC(UUID uuid, Context context) {
-        return containsKey(uuid.toString()+SUFFIXSESSIONKEYCRYPTO, context);
+    public boolean containsSKC(UUID uuid) {
+        return containsKey(uuid.toString()+SUFFIXSESSIONKEYCRYPTO);
     }
 
-    public boolean containsSKSandSKC(UUID uuid, Context context) {
-        boolean result1 = containsSKS(uuid, context);
-        boolean result2 = containsSKC(uuid, context);
+    public boolean containsSKSandSKC(UUID uuid) {
+        boolean result1 = containsSKS(uuid);
+        boolean result2 = containsSKC(uuid);
         return result1 && result2;
     }
-
-
-//private static void loadKSH(Context context) {
-//    initKeystore();
-//    try {
-//        ks.containsAlias(MYALIAS);
-//    } catch (KeyStoreException e1) {
-//        try {
-//            ks = loadFromFile(ksFileName, ksPassword, context);
-//            if (!ks.containsAlias(MYALIAS)) {
-//                generateNewKeys(context);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//}
-
-
-//
-//    private static void writeStore(Context context) {
-//        try {
-//            KeystoreHandler.writeStore(ksFileName, ksPassword, ks, context);
-//        } catch (KeyStoreException | IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    //helper for KeyFileGeneration
-//    static void setKeyfileName(String name) {
-//        ks = null;
-//        ksFileName = name;
-//    }
-
-//    private static ArrayList<String> filter(ArrayList<String> coll, String suffix) {
-//        ArrayList<String> internColl = new ArrayList<>();
-//        for (String s : coll) {
-//            if (s.endsWith(suffix)) {
-//                internColl.add(s);
-//            }
-//        }
-//        return internColl;
-//    }
-//
-//    private static ArrayList<String> getSKCAliasList() {
-//        ArrayList<String> skcAliasList = new ArrayList<>();
-//        try {
-//            skcAliasList = filter(getAliasList(), SUFFIXSESSIONKEYCRYPTO);
-//        } catch (KeyStoreException e) {
-//            e.printStackTrace();
-//        }
-//        return skcAliasList;
-//    }
-//
-//    private static ArrayList<String> getSKSAliasList() {
-//        ArrayList<String> sksAliasList = new ArrayList<>();
-//        try {
-//            sksAliasList = filter(getAliasList(), SUFFIXSESSIONKEYSIGN);
-//        } catch (KeyStoreException e) {
-//            e.printStackTrace();
-//        }
-//        return sksAliasList;
-//    }
-
-//    private static String getSKCalias(UUID uuid) {
-//        return uuid.toString() + SUFFIXSESSIONKEYCRYPTO;
-//    }
-//
-//    private static String getSKSalias(UUID uuid) {
-//        return uuid.toString() + SUFFIXSESSIONKEYSIGN;
-//    }
-
-//    private static void initKeystore() {
-//        if (ks == null) {
-//            try {
-//                ks = KeyStore.getInstance("BKS", Security.getProvider(BC));
-//            } catch (KeyStoreException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-
-//    private String cutSuffix(String alias) {
-//        return alias.substring(0, alias.length() - SUFFIXLENGTH);
-//    }
-
-//    private static HashMap<String, SecretKey> getKeyList(ArrayList<String> aliasList) {
-//        HashMap<String, SecretKey> keyMap = new HashMap<>();
-//        for (String alias : aliasList) {
-//            try {
-//                keyMap.put(alias, createSecretKey(getKey(alias)));
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return keyMap;
-//    }
-
-//    private static String changeSuffixToSKC(String alias){
-//        return cutSuffix(alias)+ SUFFIXSESSIONKEYCRYPTO;
-//    }
-
-
 }

@@ -8,7 +8,9 @@ import java.util.UUID;
 import javax.net.ssl.SSLContext;
 
 import ch.frontg8.lib.config.LibConfig;
+import ch.frontg8.lib.crypto.KeystoreHandler;
 import ch.frontg8.lib.crypto.LibSSLContext;
+import ch.frontg8.lib.helper.Tuple;
 import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.message.MessageType;
@@ -40,7 +42,7 @@ public class TlsTest {
 
         // SEND Message & Encryption of data
         try {
-            tlsClient.sendBytes(MessageHelper.buildFullEncryptedMessage(plainMessage.getBytes(), "0".getBytes(), 0, uuid, context));
+            tlsClient.sendBytes(MessageHelper.putInDataEncryptAndPutInEncrypted(plainMessage.getBytes(), "0".getBytes(), 0, uuid, new KeystoreHandler(context)));
         } catch (NotConnectedException e) {
             e.printStackTrace();
         }
@@ -53,7 +55,8 @@ public class TlsTest {
             // Decription of data
             String text ="";
             try {
-                text = new String(MessageHelper.getDecryptedContent(message, context));
+                Tuple<UUID, byte[]> mes = MessageHelper.getDecryptedContent(message, new KeystoreHandler(context));
+                text = mes._1.toString() + new String(mes._2);
             } catch (InvalidMessageException e) {
                 Log.TRACE("WARNING: Could not decrypt message");
 
@@ -85,7 +88,8 @@ public class TlsTest {
             // Decription of data
             String text = null;
             try {
-                text = new String(MessageHelper.getDecryptedContent(message, context));
+                Tuple<UUID, byte[]> mes = MessageHelper.getDecryptedContent(message, new KeystoreHandler(context));
+                text = mes._1.toString() + new String(mes._2);
             } catch (InvalidMessageException e) {
                 Log.TRACE("WARNING: Could not decrypt message");
                 try {

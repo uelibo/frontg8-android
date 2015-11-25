@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import ch.frontg8.R;
+import ch.frontg8.lib.crypto.KeystoreHandler;
 import ch.frontg8.lib.crypto.LibCrypto;
 
 public class AboutMeActivity extends AppCompatActivity {
@@ -23,7 +24,7 @@ public class AboutMeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about_me);
 
         final TextView textViewMyPubkey = (TextView) findViewById(R.id.editTextMyPubkey);
-        textViewMyPubkey.setText(new String(LibCrypto.getMyPublicKeyBytes(this)));
+        textViewMyPubkey.setText(new String(LibCrypto.getMyPublicKeyBytes(new KeystoreHandler(this), this)));
 
         Button buttonCopyToClipbord = (Button) findViewById(R.id.buttonCopyToClipbord);
 

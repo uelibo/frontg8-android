@@ -25,6 +25,8 @@ import java.util.UUID;
 
 import ch.frontg8.R;
 import ch.frontg8.lib.connection.ConnectionService;
+import ch.frontg8.lib.crypto.KeystoreHandler;
+import ch.frontg8.lib.helper.Tuple;
 import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
@@ -42,6 +44,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
 
     private ServiceConnection mConnection = new ServiceConnection() {
 
+        @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
             mService = new Messenger(binder);
             Toast.makeText(ConnectionTestActivity.this, "Connected", Toast.LENGTH_SHORT).show();
@@ -55,14 +58,11 @@ public class ConnectionTestActivity extends AppCompatActivity {
             }
         }
 
+        @Override
         public void onServiceDisconnected(ComponentName className) {
             mService = null;
         }
     };
-
-    //TODO: ist hier, weil ich nicht weiss wo sonst... in landscape mode do disable fullscreen editing
-
-
 
 
     class IncomingHandler extends Handler {
@@ -73,7 +73,8 @@ public class ConnectionTestActivity extends AppCompatActivity {
                     List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(((byte[]) msg.obj)));
                     for (Frontg8Client.Encrypted message : messages) {
                         try {
-                            arrayList.add(new String(MessageHelper.getDecryptedContent(message, context)));
+                            Tuple<UUID, Frontg8Client.Data> mes = MessageHelper.getDecryptedContent(message, new KeystoreHandler(context));
+                            arrayList.add(mes._1.toString() + mes._2.getMessageData().toString());
                         } catch (InvalidMessageException e) {
                             e.printStackTrace();
                         }
@@ -111,7 +112,11 @@ public class ConnectionTestActivity extends AppCompatActivity {
                 //add the text in the arrayList
                 arrayList.add("c: " + message);
                 //TODO let this be done from the DS later on
-                byte[] dataMSG = MessageHelper.buildFullEncryptedMessage(message.getBytes(), "0".getBytes(), 0, UUID.fromString("11111111-1111-1111-1111-111111111111"), context);
+                byte[] dataMSG = MessageHelper.putInDataEncryptAndPutInEncrypted(
+                        message.getBytes(),
+                        "0".getBytes(), 0,
+                        UUID.fromString("11111111-1111-1111-1111-111111111111"),
+                        new KeystoreHandler(context));
 
                 try {
                     mService.send(Message.obtain(null, ConnectionService.MessageTypes.MSG_MSG, dataMSG));

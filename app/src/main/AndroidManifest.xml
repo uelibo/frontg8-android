@@ -73,7 +73,11 @@
             android:enabled="true"
             android:exported="true" >
         </service>
-
+        <service
+            android:name=".lib.data.DataService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>

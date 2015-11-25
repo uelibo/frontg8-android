@@ -9,6 +9,7 @@ import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.util.Arrays;
 import org.spongycastle.util.encoders.Base64;
+import org.spongycastle.util.encoders.DecoderException;
 
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -41,14 +42,13 @@ public class LibCrypto {
     private static final int KEYSIZE = 32;
     private static final int IVSIZE = 16;
 
-    private static KeystoreHandler ksHandler;
+//    private static KeystoreHandler ksHandler;
 
 
     // Encryption / Decryption
 
     @NonNull
-    public static byte[] encryptMSG(UUID uuid, byte[] plainBytes, Context context) throws KeyNotFoundException {
-        loadKSH(context);
+    public static byte[] encryptMSG(UUID uuid, byte[] plainBytes, KeystoreHandler ksHandler) throws KeyNotFoundException {
         byte[] encryptedBytes;
         byte[] iv = genIV();
         IvParameterSpec ivspec = new IvParameterSpec(iv);
@@ -66,8 +66,7 @@ public class LibCrypto {
     }
 
     @NonNull
-    public static Tuple<UUID, byte[]> decryptMSG(byte[] encryptedMSG, Context context) {
-        loadKSH(context);
+    public static Tuple<UUID, byte[]> decryptMSG(byte[] encryptedMSG, KeystoreHandler ksHandler) {
         UUID decryptUUID = null;
         byte[] decodedBytes = null;
         byte[] iv = Arrays.copyOfRange(encryptedMSG, 0, IVSIZE);
@@ -173,23 +172,20 @@ public class LibCrypto {
     // My Key Handling
 
     @NonNull
-    public static PublicKey getMyPublicKey(Context context) {
-        loadKSH(context);
+    public static PublicKey getMyPublicKey(KeystoreHandler ksHandler, Context context) {
         return ksHandler.getMyPublicKey(context);
     }
 
     @NonNull
-    public static byte[] getMyPublicKeyBytes(Context context) {
-        loadKSH(context);
+    public static byte[] getMyPublicKeyBytes(KeystoreHandler ksHandler, Context context) {
         return ksHandler.getMyPublicKeyBytes(context);
     }
 
-    public static void negotiateSessionKeys(@NonNull UUID uuid, byte[] pubKey, @NonNull Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
-        negotiateSessionKeys(uuid, createPubKey(pubKey), context);
+    public static void negotiateSessionKeys(@NonNull UUID uuid, byte[] pubKey, @NonNull KeystoreHandler ksHandler, @NonNull Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
+        negotiateSessionKeys(uuid, createPubKey(pubKey), ksHandler, context);
     }
 
-    public static void negotiateSessionKeys(@NonNull UUID uuid, @NonNull PublicKey pubKey, @NonNull Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
-        loadKSH(context);
+    public static void negotiateSessionKeys(@NonNull UUID uuid, @NonNull PublicKey pubKey, @NonNull KeystoreHandler ksHandler, @NonNull Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] sessionKey = new byte[0];
         try {
             sessionKey = ksHandler.negotiateSessionKeys(pubKey,context);
@@ -210,21 +206,24 @@ public class LibCrypto {
         ksHandler.setSKS(uuid, sks, context);
     }
 
-    private static PublicKey createPubKey(byte[] pubKey) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
+    private static PublicKey createPubKey(@NonNull byte[] pubKey) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
         KeyFactory factory = KeyFactory.getInstance("ECDSA", BC);
-        return factory.generatePublic(new X509EncodedKeySpec(Base64.decode(pubKey)));
+        try {
+            return factory.generatePublic(new X509EncodedKeySpec(Base64.decode(pubKey)));
+        } catch (DecoderException e ) {
+            throw new NullPointerException();
+        }
     }
 
-    public static void generateNewKeys(@NonNull Context context) throws Exception {
-        loadKSH(context);
+    public static void generateNewKeys(@NonNull KeystoreHandler ksHandler, Context context) throws Exception {
         ksHandler.genAndSetMyKeys(context);
     }
 
 
     // Session Key Handling
 
-    public static boolean containsSKSandSKC(@NonNull UUID uuid, @NonNull Context context) {
-        return ksHandler.containsSKSandSKC(uuid, context);
+    public static boolean containsSKSandSKC(@NonNull UUID uuid, @NonNull KeystoreHandler ksHandler) {
+        return ksHandler.containsSKSandSKC(uuid);
     }
 
 
@@ -237,9 +236,9 @@ public class LibCrypto {
 
     // Execute before every public call
 
-    private static void loadKSH(Context context) {
-        if (ksHandler == null) {
-            ksHandler = new KeystoreHandler(context);
-        }
-    }
+//    private static void loadKSH(Context context) {
+//        if (ksHandler == null) {
+//            ksHandler = new KeystoreHandler(context);
+//        }
+//    }
 }
