@@ -40,7 +40,7 @@ public class ContactsDataSource {
     }
 
     public Contact createContact(Contact contact){
-        return this.createContact(contact.getContactId(), contact.getName(), contact.getSurname(), contact.getPublicKeyString(), contact.getUnreadMessageCounter(), contact.isHasValidPubKey());
+        return this.createContact(contact.getContactId(), contact.getName(), contact.getSurname(), contact.getPublicKeyString(), contact.getUnreadMessageCounter(), contact.hasValidPubKey());
     }
 
     private Contact createContact(UUID contactId, String name, String surname, String publickey, int unreadMessageCounter, boolean validPubKey) {
@@ -71,7 +71,7 @@ public class ContactsDataSource {
         values.put(MySQLiteHelper.COLUMN_SURNAME, contact.getSurname());
         values.put(MySQLiteHelper.COLUMN_PUBLICKEY, contact.getPublicKeyString());
         values.put(MySQLiteHelper.COLUMN_UNREADMSG, contact.getUnreadMessageCounter());
-        int validKey = contact.isHasValidPubKey() ? 1 : 0;
+        int validKey = contact.hasValidPubKey() ? 1 : 0;
         values.put(MySQLiteHelper.COLUMN_VALIDKEY, validKey);
         database.update(MySQLiteHelper.TABLE_CONTACTS, values, MySQLiteHelper.COLUMN_UUID + "=?", queryArgs);
     }

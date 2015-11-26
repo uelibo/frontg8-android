@@ -50,7 +50,7 @@ public class ContactActivity extends AppCompatActivity {
 
         if (bundle == null) {
             title.setText("New Contact");
-            contact = new Contact("");
+            contact = new Contact();
             datasource.createContact(contact);
         } else {
             UUID contactId=(UUID)bundle.getSerializable("contactid");

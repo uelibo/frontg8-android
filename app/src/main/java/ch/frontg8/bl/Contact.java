@@ -13,12 +13,7 @@ public class Contact implements Serializable {
     private boolean hasValidPubKey = false;
     private ArrayList<Message> messages = new ArrayList<Message>();
 
-    public Contact(String name) { this(genUUID(), name, "", ""); }
-    public Contact(String name, String surname) { this(genUUID(), name, surname, ""); }
-    public Contact(UUID contactId, String name, String surname) { this(contactId, name, surname, ""); }
-    public Contact(UUID contactId, String name, String surname, String publicKeyString ) {
-        this(contactId, name, surname, publicKeyString, 0, false);
-    }
+    public Contact() { this(genUUID(), "", "", "", 0, false); }
     public Contact(UUID contactId, String name, String surname, String publicKeyString, int unreadMessageCounter, boolean hasValidPubKey)
     {
         this.contactId = contactId;
