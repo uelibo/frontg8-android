@@ -34,10 +34,12 @@ import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import ch.frontg8.lib.config.LibConfig;
+
 public class KeystoreHandler {
     private static final String PN = BouncyCastleProvider.PROVIDER_NAME;
     private static char[] ksPassword = "KEYSTORE PASSWORD".toCharArray(); //TODO: change to real pw
-    private static String ksFileName = "frontg8keystore.ks"; //TODO: make configurable
+    private static String ksFileName;
     private static final UUID MYUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     private static final int SUFFIXLENGTH = 3;
@@ -55,6 +57,7 @@ public class KeystoreHandler {
 
     public KeystoreHandler(Context context) {
         try {
+            ksFileName = LibConfig.getKeystoreFilePath(context);
             this.ks = loadFromFile(context);
         } catch (KeyStoreException | IOException e) {
             e.printStackTrace();
@@ -260,10 +263,20 @@ public class KeystoreHandler {
 
     // Others
 
-    @Override
-    public String toString(){
+    public void changePassword(String password, Context context) {
+        ksPassword = password.toCharArray();
         try {
-            return "Keystore from :" + ksFileName + " Containing " + getAliasList().size()+ " Keys.";
+            writeStore(context);
+            loadFromFile(context);
+        } catch (KeyStoreException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String toString() {
+        try {
+            return "Keystore from :" + ksFileName + " Containing " + getAliasList().size() + " Keys.";
         } catch (KeyStoreException e) {
             e.printStackTrace();
             return "";
@@ -297,11 +310,11 @@ public class KeystoreHandler {
     }
 
     public boolean containsSKS(UUID uuid) {
-        return containsKey(uuid.toString()+SUFFIXSESSIONKEYSIGN);
+        return containsKey(uuid.toString() + SUFFIXSESSIONKEYSIGN);
     }
 
     public boolean containsSKC(UUID uuid) {
-        return containsKey(uuid.toString()+SUFFIXSESSIONKEYCRYPTO);
+        return containsKey(uuid.toString() + SUFFIXSESSIONKEYCRYPTO);
     }
 
     public boolean containsSKSandSKC(UUID uuid) {

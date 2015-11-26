@@ -7,7 +7,11 @@ import ch.frontg8.R;
 
 public class LibConfig {
     private static SharedPreferences getSharedPrefs(Context context) {
-        return context.getSharedPreferences(context.getString(R.string.preferences), context.MODE_PRIVATE);
+        return context.getSharedPreferences(context.getString(R.string.preferences), Context.MODE_PRIVATE);
+    }
+
+    public static String getKeystoreFilePath(Context context){
+        return getSharedPrefs(context).getString("edittext_preference_keyfilepath", "frontg8keystore.ks");
     }
 
     public static String getServerName(Context context){

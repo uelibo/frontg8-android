@@ -105,7 +105,7 @@ public class DataService extends Service {
 
                             Contact contact = contacts.get(decryptedMSG._1);
                             contact.addMessage(new ch.frontg8.bl.Message(decryptedMSG._2));
-                            //TODO increment contact.unreadCounter
+                            contact.incrementUnreadMessageCounter();
 
                             // Send updates to interested partys
                             for (Messenger mMessenger : mContactClients) {
@@ -138,6 +138,8 @@ public class DataService extends Service {
     class DataIncomingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
+            UUID uuid;
+            Contact contact;
             switch (msg.what) {
                 case MessageTypes.MSG_GET_CONTACTS:
                     try {
@@ -151,7 +153,12 @@ public class DataService extends Service {
                     mContactClients.remove(msg.replyTo);
                     break;
                 case MessageTypes.MSG_GET_CONTACT_DETAILS:
-                    //TODO implement logic
+                    uuid = (UUID) msg.obj;
+                    try {
+                        msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_UPDATE, contacts.get(uuid)));
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case MessageTypes.MSG_UPDATE_CONTACT:
                     //TODO implement logic
@@ -160,8 +167,16 @@ public class DataService extends Service {
                     //TODO implement logic
                     break;
                 case MessageTypes.MSG_REGISTER_FOR_MESSAGES:
-                    //TODO implement logic
-                    mMessageClients.add(msg.replyTo);
+                    uuid = (UUID) msg.obj;
+                    contact = contacts.get(uuid);
+                    try {
+                        msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_UPDATE, contact.getMessages()));
+                        mMessageClients.add(msg.replyTo);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    contact.resetUnreadMessageCounter();
+
                     break;
                 case MessageTypes.MSG_UNREGISTER_FOR_MESSAGES:
                     mMessageClients.remove(msg.replyTo);
@@ -210,23 +225,23 @@ public class DataService extends Service {
         public static final int MSG_GET_CONTACTS = 10;
         //- Unregister for Contacts
         public static final int MSG_UNREGISTER_CONTACTS = 11;
-        //Bundle with UUID - will respond with a contact
+        //obj UUID - will respond with a contact
         public static final int MSG_GET_CONTACT_DETAILS = 12;
-        //Bundle with Contact.
+        //obj Contact.
         public static final int MSG_UPDATE_CONTACT = 13;
-        //Bundle with UUID and new pubkey as string
+        //obj Tuple<UUID, new pubkey as string>
         public static final int MSG_UPDATE_CONTACT_KEY = 14;
-        //Bundle with UUID - will respond with all Messages for this UUID,
+        //obj UUID - will respond with all Messages for this UUID,
         // it will set the unread-Counter in the Contact to 0
         // and add you to the list of active clients for message-updates
         public static final int MSG_REGISTER_FOR_MESSAGES = 15;
         // - Will remove you from the list of active clients for message-updates
         public static final int MSG_UNREGISTER_FOR_MESSAGES = 16;
-        //Bundle with UUID and new Frontg8.Data
+        //obj Tuple<UUID, new Frontg8.Data>
         public static final int MSG_SEND_MSG = 17;
         // - Will respond with a Base64 String
         public static final int MSG_GET_KEY = 18;
-        //Bundle with a String (new Password)
+        //obj String (new Password)
         public static final int MSG_CHANGE_PW = 19;
         // - Will change my key, generate new keys for all Contacts, and delete all Messages
         public static final int MSG_GEN_NEW_KEYS = 20;
