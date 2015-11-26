@@ -21,7 +21,6 @@ import java.util.UUID;
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
 import ch.frontg8.bl.Message;
-import ch.frontg8.lib.TestDataHandler;
 import ch.frontg8.lib.dbstore.ContactsDataSource;
 import ch.frontg8.view.model.MessageAdapter;
 
@@ -49,7 +48,8 @@ public class MessageActivity extends AppCompatActivity {
             title.append(" of " + contact.getName());
             messageList = contact.getMessages();
         } else {
-            messageList = TestDataHandler.getMessages();
+            // TODO: Handle invalid contact
+            messageList = new ArrayList<>();
         }
 
         dataAdapter = new MessageAdapter(this, R.layout.rowlayout_message, messageList);
