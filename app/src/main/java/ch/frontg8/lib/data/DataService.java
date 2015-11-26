@@ -162,9 +162,14 @@ public class DataService extends Service {
                     break;
                 case MessageTypes.MSG_UPDATE_CONTACT:
                     //TODO implement logic
+                    //TODO check
                     break;
-                case MessageTypes.MSG_UPDATE_CONTACT_KEY:
-                    //TODO implement logic
+                case MessageTypes.MSG_CONTAINS_SK:
+                    try {
+                        msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_UPDATE, LibCrypto.containsSKSandSKC((UUID)msg.obj, ksHandler)));
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case MessageTypes.MSG_REGISTER_FOR_MESSAGES:
                     uuid = (UUID) msg.obj;
@@ -198,10 +203,10 @@ public class DataService extends Service {
                     }
                     break;
                 case MessageTypes.MSG_CHANGE_PW:
-                    //TODO implement logic
+                    ksHandler.changePassword((String) msg.obj, thisContext);
                     break;
                 case MessageTypes.MSG_GEN_NEW_KEYS:
-                    //TODO implement logic
+                    LibCrypto.generateNewKeys(ksHandler, thisContext);
                     break;
                 default:
                     super.handleMessage(msg);
@@ -229,8 +234,8 @@ public class DataService extends Service {
         public static final int MSG_GET_CONTACT_DETAILS = 12;
         //obj Contact.
         public static final int MSG_UPDATE_CONTACT = 13;
-        //obj Tuple<UUID, new pubkey as string>
-        public static final int MSG_UPDATE_CONTACT_KEY = 14;
+        //obj UUID - will respond with boolean
+        public static final int MSG_CONTAINS_SK = 14;
         //obj UUID - will respond with all Messages for this UUID,
         // it will set the unread-Counter in the Contact to 0
         // and add you to the list of active clients for message-updates

@@ -215,7 +215,7 @@ public class LibCrypto {
         }
     }
 
-    public static void generateNewKeys(@NonNull KeystoreHandler ksHandler, Context context) throws Exception {
+    public static void generateNewKeys(@NonNull KeystoreHandler ksHandler, Context context){
         ksHandler.genAndSetMyKeys(context);
     }
 
