@@ -12,6 +12,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.UUID;
 
 import ch.frontg8.R;
@@ -77,8 +80,16 @@ public class DeveloperActivity extends AppCompatActivity {
                 datasource.insertMessage(c, new Message("blc"));
                 datasource.insertMessage(d, new Message("bld"));
                 datasource.insertMessage(d, new Message("bld"));
-                a.incrementUnreadMessageCounter();
-                datasource.updateContact(a);
+
+                try {
+                    LibCrypto.negotiateSessionKeys(a.getContactId(), a.getPublicKeyString().getBytes(), new KeystoreHandler(thisActivity), thisActivity);
+                    a.setValidPubkey(true);
+                    a.incrementUnreadMessageCounter();
+                    datasource.updateContact(a);
+                } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeySpecException f) {
+                    f.printStackTrace();
+                }
+
                 Toast toast = Toast.makeText(thisActivity, "demo data inserted", Toast.LENGTH_SHORT);
                 toast.show();
             }
