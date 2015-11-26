@@ -23,7 +23,8 @@ public class ContactsDataSource {
             MySQLiteHelper.COLUMN_NAME,
             MySQLiteHelper.COLUMN_SURNAME,
             MySQLiteHelper.COLUMN_PUBLICKEY,
-            MySQLiteHelper.COLUMN_UNREADMSG
+            MySQLiteHelper.COLUMN_UNREADMSG,
+            MySQLiteHelper.COLUMN_VALIDKEY
     };
 
     public ContactsDataSource(Context context) {
@@ -39,16 +40,18 @@ public class ContactsDataSource {
     }
 
     public Contact createContact(Contact contact){
-        return this.createContact(contact.getContactId(), contact.getName(), contact.getSurname(), contact.getPublicKeyString(), contact.getUnreadMessageCounter());
+        return this.createContact(contact.getContactId(), contact.getName(), contact.getSurname(), contact.getPublicKeyString(), contact.getUnreadMessageCounter(), contact.isHasValidPubKey());
     }
 
-    private Contact createContact(UUID contactId, String name, String surname, String publickey, int unreadMessageCounter) {
+    private Contact createContact(UUID contactId, String name, String surname, String publickey, int unreadMessageCounter, boolean validPubKey) {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_UUID, contactId.toString());
         values.put(MySQLiteHelper.COLUMN_NAME, name);
         values.put(MySQLiteHelper.COLUMN_SURNAME, surname);
         values.put(MySQLiteHelper.COLUMN_PUBLICKEY, publickey);
         values.put(MySQLiteHelper.COLUMN_UNREADMSG, unreadMessageCounter);
+        int validKey = validPubKey ? 1 : 0;
+        values.put(MySQLiteHelper.COLUMN_VALIDKEY, validKey);
         long insertId = database.insert(MySQLiteHelper.TABLE_CONTACTS, null,
                 values);
         Cursor cursor = database.query(MySQLiteHelper.TABLE_CONTACTS,
@@ -68,6 +71,8 @@ public class ContactsDataSource {
         values.put(MySQLiteHelper.COLUMN_SURNAME, contact.getSurname());
         values.put(MySQLiteHelper.COLUMN_PUBLICKEY, contact.getPublicKeyString());
         values.put(MySQLiteHelper.COLUMN_UNREADMSG, contact.getUnreadMessageCounter());
+        int validKey = contact.isHasValidPubKey() ? 1 : 0;
+        values.put(MySQLiteHelper.COLUMN_VALIDKEY, validKey);
         database.update(MySQLiteHelper.TABLE_CONTACTS, values, MySQLiteHelper.COLUMN_UUID + "=?", queryArgs);
     }
 
@@ -110,7 +115,8 @@ public class ContactsDataSource {
     }
 
     private Contact cursorToContact(Cursor cursor) {
-        Contact contact = new Contact(UUID.fromString(cursor.getString(1)), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5));
+        boolean validPubKey = cursor.getInt(6) == 1;
+        Contact contact = new Contact(UUID.fromString(cursor.getString(1)), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5), validPubKey);
         return contact;
     }
 

@@ -10,21 +10,23 @@ public class Contact implements Serializable {
     private String surname;
     private String publicKeyString;
     private int unreadMessageCounter = 0;
+    private boolean hasValidPubKey = false;
     private ArrayList<Message> messages = new ArrayList<Message>();
 
     public Contact(String name) { this(genUUID(), name, "", ""); }
     public Contact(String name, String surname) { this(genUUID(), name, surname, ""); }
     public Contact(UUID contactId, String name, String surname) { this(contactId, name, surname, ""); }
     public Contact(UUID contactId, String name, String surname, String publicKeyString ) {
-        this(contactId, name, surname, publicKeyString, 0);
+        this(contactId, name, surname, publicKeyString, 0, false);
     }
-    public Contact(UUID contactId, String name, String surname, String publicKeyString, int unreadMessageCounter)
+    public Contact(UUID contactId, String name, String surname, String publicKeyString, int unreadMessageCounter, boolean hasValidPubKey)
     {
         this.contactId = contactId;
         this.name = name;
         this.surname = surname;
         this.publicKeyString = publicKeyString;
         this.unreadMessageCounter = unreadMessageCounter;
+        this.hasValidPubKey = hasValidPubKey;
     }
 
     public UUID getContactId() { return contactId; }
@@ -46,6 +48,9 @@ public class Contact implements Serializable {
     public void incrementUnreadMessageCounter() { unreadMessageCounter++; }
     public int getUnreadMessageCounter() { return unreadMessageCounter; }
     public void resetUnreadMessageCounter() { unreadMessageCounter = 0; }
+
+    public boolean hasValidPubKey() { return hasValidPubKey; }
+    public void setValidPubkey(boolean valid) { this.hasValidPubKey = valid; }
 
     @Override
     public String toString() { return name; }
