@@ -86,6 +86,7 @@ public class ContactActivity extends AppCompatActivity {
                 datasource.deleteContact(contact);
                 Toast toast = Toast.makeText(thisContext, "Contact deleted", Toast.LENGTH_SHORT);
                 toast.show();
+                // TODO: How to go back to MainActivity?
                 //finish();
             }
         });
