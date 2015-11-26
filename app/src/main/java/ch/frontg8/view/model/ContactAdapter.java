@@ -97,8 +97,11 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
         if (!contact.getSurname().equals("")) {
             textViewContactName.append(" " + contact.getSurname());
         }
-        textViewNumOfMessages.setText(" (" + contact.getUnreadMessageCounter() + ")");
-
+        if (contact.getUnreadMessageCounter() > 0) {
+            textViewNumOfMessages.setText(" (" + contact.getUnreadMessageCounter() + ")");
+        } else {
+            textViewNumOfMessages.setText("");
+        }
         return convertView;
     }
 }
