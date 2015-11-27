@@ -72,7 +72,9 @@ public class MainActivity extends AppCompatActivity {
                 case DataService.MessageTypes.MSG_UPDATE:
                     HashMap<UUID, Contact> contacts = (HashMap<UUID, Contact>) msg.obj;
                     for (Contact c: contacts.values()) {
-                        Log.d("Debug", "got contact " + c.getName());
+                        Log.d("Debug", "got contact " + c.getName()
+                        + " " + c.getSurname()
+                        + " " + c.hasValidPubKey());
                     }
                     break;
                 default:
