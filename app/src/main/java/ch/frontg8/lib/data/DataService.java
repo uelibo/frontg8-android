@@ -188,8 +188,18 @@ public class DataService extends Service {
                             }
                         }
                     }
+                    if (contacts.containsKey(uuid)) {
+                        datasource.updateContact(contact);
+                    } else {
+                        datasource.createContact(contact);
+                    }
                     contacts.put(uuid, contact);
-                    datasource.updateContact(contact);
+                    break;
+                case MessageTypes.MSG_REMOVE_CONTACT:
+                    contact = (Contact) msg.obj;
+                    uuid = contact.getContactId();
+                    datasource.deleteContact(contact);
+                    contacts.remove(uuid);
                     break;
                 case MessageTypes.MSG_CONTAINS_SK:
                     try {
@@ -208,6 +218,7 @@ public class DataService extends Service {
                         e.printStackTrace();
                     }
                     contact.resetUnreadMessageCounter();
+                    datasource.updateContact(contact);
 
                     break;
                 case MessageTypes.MSG_UNREGISTER_FOR_MESSAGES:
@@ -263,22 +274,24 @@ public class DataService extends Service {
         public static final int MSG_GET_CONTACT_DETAILS = 12;
         //obj Contact.
         public static final int MSG_UPDATE_CONTACT = 13;
+        //obj UUID
+        public static final int MSG_REMOVE_CONTACT = 14;
         //obj UUID - will respond with boolean
-        public static final int MSG_CONTAINS_SK = 14;
+        public static final int MSG_CONTAINS_SK = 15;
         //obj UUID - will respond with all Messages for this UUID,
         // it will set the unread-Counter in the Contact to 0
         // and add you to the list of active clients for message-updates
-        public static final int MSG_REGISTER_FOR_MESSAGES = 15;
+        public static final int MSG_REGISTER_FOR_MESSAGES = 16;
         // - Will remove you from the list of active clients for message-updates
-        public static final int MSG_UNREGISTER_FOR_MESSAGES = 16;
+        public static final int MSG_UNREGISTER_FOR_MESSAGES = 17;
         //obj Tuple<UUID, new Frontg8.Data>
-        public static final int MSG_SEND_MSG = 17;
+        public static final int MSG_SEND_MSG = 18;
         // - Will respond with a Base64 String
-        public static final int MSG_GET_KEY = 18;
+        public static final int MSG_GET_KEY = 19;
         //obj String (new Password)
-        public static final int MSG_CHANGE_PW = 19;
+        public static final int MSG_CHANGE_PW = 20;
         // - Will change my key, generate new keys for all Contacts, and delete all Messages
-        public static final int MSG_GEN_NEW_KEYS = 20;
+        public static final int MSG_GEN_NEW_KEYS = 21;
 
         // Outgoing
 
