@@ -13,9 +13,6 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -103,38 +100,41 @@ public class DataService extends Service {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case ConnectionService.MessageTypes.MSG_MSG:
-                    List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(((byte[]) msg.obj)));
-                    for (Frontg8Client.Encrypted message : messages) {
+                    byte[] msgBytes = (byte[]) msg.obj;
+                    if (msgBytes != null) {
                         try {
+                            List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(msgBytes));
+                            for (Frontg8Client.Encrypted message : messages) {
 
-                            //TODO what if could not decrypt
-                            Tuple<UUID, Data> decryptedMSG = MessageHelper.getDecryptedContent(message, ksHandler);
+                                //TODO what if could not decrypt
+                                Tuple<UUID, Data> decryptedMSG = MessageHelper.getDecryptedContent(message, ksHandler);
 
-                            //TODO write to DB
+                                //TODO write to DB
 
-                            Contact contact = contacts.get(decryptedMSG._1);
-                            contact.addMessage(new ch.frontg8.bl.Message(decryptedMSG._2));
-                            contact.incrementUnreadMessageCounter();
+                                Contact contact = contacts.get(decryptedMSG._1);
+                                contact.addMessage(new ch.frontg8.bl.Message(decryptedMSG._2));
+                                contact.incrementUnreadMessageCounter();
 
-                            // Send updates to interested partys
-                            for (Messenger mMessenger : mContactClients) {
-                                try {
-                                    mMessenger.send(Message.obtain(null, MessageTypes.MSG_UPDATE, contact));
-                                } catch (RemoteException e) {
-                                    mMessageClients.remove(mMessenger);
+                                // Send updates to interested partys
+                                for (Messenger mMessenger : mContactClients) {
+                                    try {
+                                        mMessenger.send(Message.obtain(null, MessageTypes.MSG_UPDATE, contact));
+                                    } catch (RemoteException e) {
+                                        mMessageClients.remove(mMessenger);
+                                    }
+                                }
+                                for (Messenger mMessenger : mMessageClients) {
+                                    try {
+                                        mMessenger.send(Message.obtain(null, MessageTypes.MSG_UPDATE, decryptedMSG._2));
+                                    } catch (RemoteException e) {
+                                        mMessageClients.remove(mMessenger);
+                                    }
                                 }
                             }
-                            for (Messenger mMessenger : mMessageClients) {
-                                try {
-                                    mMessenger.send(Message.obtain(null, MessageTypes.MSG_UPDATE, decryptedMSG._2));
-                                } catch (RemoteException e) {
-                                    mMessageClients.remove(mMessenger);
-                                }
-                            }
-
-
+                        } catch (RuntimeException re) {
+                            Log.e("DS", "Could not construct msg!", re);
                         } catch (InvalidMessageException e) {
-                            e.printStackTrace();
+                            Log.e("DS", "Could not construct msg from decryptet content!", e);
                         }
                     }
                     break;
