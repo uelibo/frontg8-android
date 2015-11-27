@@ -32,12 +32,16 @@ import ch.frontg8.bl.Contact;
 import ch.frontg8.bl.Message;
 import ch.frontg8.lib.data.DataService;
 import ch.frontg8.lib.dbstore.ContactsDataSource;
+import ch.frontg8.lib.helper.Tuple;
+import ch.frontg8.lib.message.InvalidMessageException;
+import ch.frontg8.lib.message.MessageHelper;
+import ch.frontg8.lib.protobuf.Frontg8Client;
 import ch.frontg8.view.model.MessageAdapter;
 
 public class MessageActivity extends AppCompatActivity {
     private MessageAdapter dataAdapter = null;
-    UUID contactId;
-    String contactName;
+    private UUID contactId;
+    private String contactName;
     private ContactsDataSource datasource = new ContactsDataSource(this);
 
     // Messenger to get Contacts
@@ -75,11 +79,14 @@ public class MessageActivity extends AppCompatActivity {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case DataService.MessageTypes.MSG_BULK_UPDATE:
-                    ArrayList<Message> messages =
-                            new ArrayList<Message>(((HashMap<UUID, Message>) msg.obj).values());
+                    ArrayList<Message> messages =  (ArrayList<Message>) msg.obj;
                     for (Message m: messages) {
                         Log.d("Debug", "got message " + m.getMessage());
                     }
+                    break;
+                case DataService.MessageTypes.MSG_UPDATE:
+                    Frontg8Client.Data message = (Frontg8Client.Data) msg.obj;
+                    Log.d("Debug", "got message " + message.getMessageData().toStringUtf8());
                     break;
                 default:
                     super.handleMessage(msg);
@@ -129,9 +136,20 @@ public class MessageActivity extends AppCompatActivity {
                     //dataAdapter.replace(contact.getMessages());
                     textSend.getText().clear();
                 }
+                if (contactId != null) {
+                    try {
+                        Frontg8Client.Data message = null;
+                        message = MessageHelper.buildDataMessage(textSend.getText().toString().getBytes(), "0".getBytes(), 0);
+                        Tuple<UUID, Frontg8Client.Data> content = new Tuple<>(contactId, message);
+                        android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_SEND_MSG, content);
+                        msg.replyTo = mMessenger;
+                        mService.send(msg);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
-
 
     }
 
@@ -169,6 +187,17 @@ public class MessageActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("Debug", "MessageActivity Resumed");
+        //dataAdapter.replace(datasource.getAllContacts());
+
+        // bind again to DataService:
+        Intent intent = new Intent(this, DataService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
