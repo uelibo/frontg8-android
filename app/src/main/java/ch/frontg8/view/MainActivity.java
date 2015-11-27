@@ -69,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case DataService.MessageTypes.MSG_BULK_UPDATE:
-                    ArrayList<Contact> contacts = new ArrayList<Contact>(((HashMap<UUID, Contact>) msg.obj).values());
+                    ArrayList<Contact> contacts =
+                            new ArrayList<Contact>(((HashMap<UUID, Contact>) msg.obj).values());
                     for (Contact c: contacts) {
                         dataAdapter.add(c);
                         Log.d("Debug", "got contact " + c.getName()
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(thisActivity, MessageActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("contactid", contact.getContactId());
+                bundle.putSerializable("contactname", contact.getName());
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -111,12 +113,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("Resumed");
+        Log.d("Debug", "MainActivity Resumed");
         //dataAdapter.replace(datasource.getAllContacts());
 
         // bind again to DataService:
         Intent intent = new Intent(this, DataService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unbindService(mConnection);
     }
 
     @Override
@@ -173,12 +182,6 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unbindService(mConnection);
     }
 
     public void myContactButtonHandler(View v)
