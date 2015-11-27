@@ -1,22 +1,34 @@
 package ch.frontg8.view;
 
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
 import ch.frontg8.lib.config.LibConfig;
+import ch.frontg8.lib.data.DataService;
 import ch.frontg8.lib.dbstore.ContactsDataSource;
 import ch.frontg8.view.model.ContactAdapter;
 
@@ -24,6 +36,50 @@ public class MainActivity extends AppCompatActivity {
     private Context thisActivity = this;
     private ContactAdapter dataAdapter = null;
     private ContactsDataSource datasource = new ContactsDataSource(this);
+
+    // Messenger to get Contacts
+    final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private Messenger mService;
+
+    // Connection to DataService
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder binder) {
+            mService = new Messenger(binder);
+            Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+
+            try {
+                Message msg = Message.obtain(null, DataService.MessageTypes.MSG_GET_CONTACTS);
+                msg.replyTo = mMessenger;
+                mService.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            mService = null;
+        }
+    };
+
+    // Handler for Messages from DataService
+    class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case DataService.MessageTypes.MSG_UPDATE:
+                    HashMap<UUID, Contact> contacts = (HashMap<UUID, Contact>) msg.obj;
+                    for (Contact c: contacts.values()) {
+                        Log.d("Debug", "got contact " + c.getName());
+                    }
+                    break;
+                default:
+                    super.handleMessage(msg);
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +113,10 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         System.out.println("Resumed");
         //dataAdapter.replace(datasource.getAllContacts());
+
+        // bind again to DataService:
+        Intent intent = new Intent(this, DataService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -119,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         datasource.close();
+        unbindService(mConnection);
     }
 
     public void myContactButtonHandler(View v)
