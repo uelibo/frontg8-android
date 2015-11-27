@@ -20,14 +20,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import ch.frontg8.R;
 import ch.frontg8.lib.connection.ConnectionService;
-import ch.frontg8.lib.crypto.KeystoreHandler;
+import ch.frontg8.lib.data.DataService;
 import ch.frontg8.lib.helper.Tuple;
-import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 import ch.frontg8.view.model.ConnectionTestAdapter;
@@ -38,6 +36,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
     private Context context;
     private ArrayList<String> arrayList;
     private ConnectionTestAdapter mAdapter;
+    private UUID uuid = UUID.fromString("11111111-1111-1111-1111-111111111111");
     final Messenger mMessenger = new Messenger(new IncomingHandler());
 
     private Messenger mService;
@@ -50,7 +49,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
             Toast.makeText(ConnectionTestActivity.this, "Connected", Toast.LENGTH_SHORT).show();
 
             try {
-                Message msg = Message.obtain(null, ConnectionService.MessageTypes.MSG_REGISTER_CLIENT);
+                Message msg = Message.obtain(null, DataService.MessageTypes.MSG_REGISTER_FOR_MESSAGES, uuid);
                 msg.replyTo = mMessenger;
                 mService.send(msg);
             } catch (RemoteException e) {
@@ -69,16 +68,15 @@ public class ConnectionTestActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case ConnectionService.MessageTypes.MSG_MSG:
-                    List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(((byte[]) msg.obj)));
-                    for (Frontg8Client.Encrypted message : messages) {
-                        try {
-                            Tuple<UUID, Frontg8Client.Data> mes = MessageHelper.getDecryptedContent(message, new KeystoreHandler(context));
-                            arrayList.add(mes._2.getMessageData().toStringUtf8());
-                        } catch (InvalidMessageException e) {
-                            e.printStackTrace();
-                        }
+                case DataService.MessageTypes.MSG_BULK_UPDATE:
+                    ArrayList<ch.frontg8.bl.Message> msgs = (ArrayList<ch.frontg8.bl.Message>) msg.obj;
+                    for ( ch.frontg8.bl.Message m : msgs){
+                        arrayList.add(m.getMessage());
                     }
+                    break;
+                case DataService.MessageTypes.MSG_UPDATE:
+                    Frontg8Client.Data data = (Frontg8Client.Data) msg.obj;
+                    arrayList.add(data.getMessageData().toStringUtf8());
                     mAdapter.notifyDataSetChanged();
                     break;
                 default:
@@ -112,14 +110,10 @@ public class ConnectionTestActivity extends AppCompatActivity {
                 //add the text in the arrayList
                 arrayList.add("c: " + message);
                 //TODO let this be done from the DS later on
-                byte[] dataMSG = MessageHelper.putInDataEncryptAndPutInEncrypted(
-                        message.getBytes(),
-                        "0".getBytes(), 0,
-                        UUID.fromString("11111111-1111-1111-1111-111111111111"),
-                        new KeystoreHandler(context));
-
+                Frontg8Client.Data dataMSG = MessageHelper.buildDataMessage(message.getBytes(), "0".getBytes(), 0);
                 try {
-                    mService.send(Message.obtain(null, ConnectionService.MessageTypes.MSG_MSG, dataMSG));
+                    mService.send(Message.obtain(null, DataService.MessageTypes.MSG_SEND_MSG,
+                            new Tuple<>(uuid, dataMSG)));
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -135,7 +129,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         try {
-            mService.send(Message.obtain(null, ConnectionService.MessageTypes.MSG_UNREGISTER_CLIENT));
+            mService.send(Message.obtain(null, DataService.MessageTypes.MSG_UNREGISTER_FOR_MESSAGES));
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -145,7 +139,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Intent intent = new Intent(this, ConnectionService.class);
+        Intent intent = new Intent(this, DataService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
