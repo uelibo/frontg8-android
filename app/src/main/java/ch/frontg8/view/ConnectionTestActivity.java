@@ -71,6 +71,7 @@ public class ConnectionTestActivity extends AppCompatActivity {
                 case DataService.MessageTypes.MSG_BULK_UPDATE:
                     ArrayList<ch.frontg8.bl.Message> msgs = (ArrayList<ch.frontg8.bl.Message>) msg.obj;
                     for ( ch.frontg8.bl.Message m : msgs){
+                        arrayList.clear();
                         arrayList.add(m.getMessage());
                     }
                     break;

@@ -101,20 +101,20 @@ public class DataService extends Service {
             switch (msg.what) {
                 case ConnectionService.MessageTypes.MSG_MSG:
                     byte[] msgBytes = (byte[]) msg.obj;
-                    Log.e("DS","MSGBytes: " + new String (msgBytes));
-                    if (msgBytes != null) {
-                        try {
-                            List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(msgBytes));
-                            for (Frontg8Client.Encrypted message : messages) {
+                    try {
+                        List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(msgBytes));
 
-                                //TODO what if could not decrypt
-                                Tuple<UUID, Data> decryptedMSG = MessageHelper.getDecryptedContent(message, ksHandler);
+                        for (Frontg8Client.Encrypted message : messages) {
 
-                                //TODO write to DB
+                            Tuple<UUID, Data> decryptedMSG = MessageHelper.getDecryptedContent(message, ksHandler);
+                            if (decryptedMSG._2 != null) {
+
 
                                 Contact contact = contacts.get(decryptedMSG._1);
                                 contact.addMessage(new ch.frontg8.bl.Message(decryptedMSG._2));
                                 contact.incrementUnreadMessageCounter();
+
+                                datasource.insertMessage(contact, message);
 
                                 // Send updates to interested partys
                                 for (Messenger mMessenger : mContactClients) {
@@ -132,11 +132,12 @@ public class DataService extends Service {
                                     }
                                 }
                             }
-                        } catch (RuntimeException re) {
-                            Log.e("DS", "Could not construct msg!", re);
-                        } catch (InvalidMessageException e) {
-                            Log.e("DS", "Could not construct msg from decryptet content!", e);
+
                         }
+                    } catch (RuntimeException re) {
+                        Log.e("DS", "Could not construct msg!", re);
+                    } catch (InvalidMessageException e) {
+                        Log.e("DS", "Could not construct msg from decryptet content!", e);
                     }
                     break;
                 default:
@@ -171,8 +172,6 @@ public class DataService extends Service {
                     }
                     break;
                 case MessageTypes.MSG_UPDATE_CONTACT:
-                    //TODO implement logic
-                    //TODO check
                     contact = (Contact) msg.obj;
                     uuid = contact.getContactId();
                     String pubkey = contact.getPublicKeyString();
@@ -189,7 +188,8 @@ public class DataService extends Service {
                             }
                         }
                     }
-                    //TODO actualize, store and notify
+                    contacts.put(uuid, contact);
+                    datasource.updateContact(contact);
                     break;
                 case MessageTypes.MSG_CONTAINS_SK:
                     try {
