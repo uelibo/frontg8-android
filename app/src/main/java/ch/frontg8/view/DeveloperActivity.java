@@ -16,6 +16,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import ch.frontg8.R;
@@ -42,6 +43,7 @@ public class DeveloperActivity extends AppCompatActivity {
         Button buttonClearDB = (Button) findViewById(R.id.buttonClearDB);
         Button buttonLoadTestData = (Button) findViewById(R.id.buttonLoadTestData);
         Button buttonTlsTest = (Button) findViewById(R.id.buttonTlsTest);
+        Button buttonShowDB = (Button) findViewById(R.id.buttonShowDB);
 
         datasource.open();
 
@@ -110,6 +112,24 @@ public class DeveloperActivity extends AppCompatActivity {
                 }).start();
             }
         });
+
+        buttonShowDB.setOnClickListener(new AdapterView.OnClickListener() {
+            public void onClick(View view) {
+                textViewLog = (TextView) findViewById(R.id.textViewLog);
+                textViewLog.setText("");
+                datasource.open();
+                ArrayList<Contact> contacts = datasource.getAllContacts();
+                for (Contact c: contacts) {
+                    textViewLog.append("Contact: "
+                            + c.getName() + " "
+                            + c.getSurname() + " "
+                            + c.hasValidPubKey()
+                            );
+                }
+
+            }
+        });
+
     }
 
     @Override
@@ -125,6 +145,12 @@ public class DeveloperActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        datasource.close();
     }
 
 }
