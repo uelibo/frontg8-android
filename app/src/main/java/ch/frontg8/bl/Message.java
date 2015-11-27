@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
-public class Message implements Serializable {
+public class Message implements Serializable, Filtertext {
     private String messagetext;
     private String sessionID = "0";
     private long timestamp = 0;
@@ -23,5 +23,6 @@ public class Message implements Serializable {
     public String getMessage() { return messagetext; }
     public String getSessionID() { return sessionID; }
     public long getTimestamp() { return timestamp; }
+    public String getFilterValue() { return this.messagetext; }
 
 }

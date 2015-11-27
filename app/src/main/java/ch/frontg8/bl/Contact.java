@@ -3,8 +3,9 @@ package ch.frontg8.bl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.logging.Filter;
 
-public class Contact implements Serializable {
+public class Contact implements Serializable, Filtertext {
     private UUID contactId;
     private String name;
     private String surname;
@@ -46,6 +47,8 @@ public class Contact implements Serializable {
 
     public boolean hasValidPubKey() { return hasValidPubKey; }
     public void setValidPubkey(boolean valid) { this.hasValidPubKey = valid; }
+
+    public String getFilterValue() { return this.name; }
 
     @Override
     public String toString() { return name; }

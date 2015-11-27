@@ -52,7 +52,7 @@ public class MessageActivity extends AppCompatActivity {
             messageList = new ArrayList<>();
         }
 
-        dataAdapter = new MessageAdapter(this, R.layout.rowlayout_message, messageList);
+        dataAdapter = new MessageAdapter(this, messageList);
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(dataAdapter);
         listView.setTextFilterEnabled(true);
@@ -65,7 +65,8 @@ public class MessageActivity extends AppCompatActivity {
                 if (contact != null) {
                     Message message = new Message(textSend.getText().toString());
                     datasource.insertMessage(contact,message);
-                    dataAdapter.replace(contact.getMessages());
+                    dataAdapter.notifyDataSetChanged();
+                    //dataAdapter.replace(contact.getMessages());
                     textSend.getText().clear();
                 }
             }

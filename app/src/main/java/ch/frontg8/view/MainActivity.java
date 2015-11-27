@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -29,13 +30,11 @@ import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
 import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.data.DataService;
-import ch.frontg8.lib.dbstore.ContactsDataSource;
 import ch.frontg8.view.model.ContactAdapter;
 
 public class MainActivity extends AppCompatActivity {
     private Context thisActivity = this;
     private ContactAdapter dataAdapter = null;
-    private ContactsDataSource datasource = new ContactsDataSource(this);
 
     // Messenger to get Contacts
     final Messenger mMessenger = new Messenger(new IncomingHandler());
@@ -69,9 +68,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case DataService.MessageTypes.MSG_UPDATE:
-                    HashMap<UUID, Contact> contacts = (HashMap<UUID, Contact>) msg.obj;
-                    for (Contact c: contacts.values()) {
+                case DataService.MessageTypes.MSG_BULK_UPDATE:
+                    ArrayList<Contact> contacts = new ArrayList<Contact>(((HashMap<UUID, Contact>) msg.obj).values());
+                    for (Contact c: contacts) {
+                        dataAdapter.add(c);
                         Log.d("Debug", "got contact " + c.getName()
                         + " " + c.getSurname()
                         + " " + c.hasValidPubKey());
@@ -88,9 +88,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        datasource.open();
-
-        dataAdapter = new ContactAdapter(this, R.layout.rowlayout_contact, datasource.getAllContacts());
+        dataAdapter = new ContactAdapter(this, new ArrayList<Contact>());
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(dataAdapter);
         listView.setTextFilterEnabled(true);
@@ -180,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        datasource.close();
         unbindService(mConnection);
     }
 
