@@ -13,9 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -123,7 +120,7 @@ public class DeveloperActivity extends AppCompatActivity {
                     textViewLog.append("Contact: "
                             + c.getName() + " "
                             + c.getSurname() + " "
-                            + c.hasValidPubKey()
+                            + c.hasValidPubKey() + "\n"
                             );
                 }
 
