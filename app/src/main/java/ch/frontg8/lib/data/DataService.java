@@ -101,6 +101,7 @@ public class DataService extends Service {
             switch (msg.what) {
                 case ConnectionService.MessageTypes.MSG_MSG:
                     byte[] msgBytes = (byte[]) msg.obj;
+                    Log.e("DS","MSGBytes: " + new String (msgBytes));
                     if (msgBytes != null) {
                         try {
                             List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(msgBytes));
@@ -152,7 +153,7 @@ public class DataService extends Service {
             switch (msg.what) {
                 case MessageTypes.MSG_GET_CONTACTS:
                     try {
-                        msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_UPDATE, contacts));
+                        msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, contacts));
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -201,7 +202,7 @@ public class DataService extends Service {
                     uuid = (UUID) msg.obj;
                     contact = contacts.get(uuid);
                     try {
-                        msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_UPDATE, contact.getMessages()));
+                        msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, contact.getMessages()));
                         mMessageClients.add(msg.replyTo);
                     } catch (RemoteException e) {
                         e.printStackTrace();
@@ -283,7 +284,9 @@ public class DataService extends Service {
 
         public static final int MSG_UPDATE = 30;
 
-        public static final int MSG_ERROR = 31;
+        public static final int MSG_BULK_UPDATE = 31;
+
+        public static final int MSG_ERROR = 32;
 
     }
 }
