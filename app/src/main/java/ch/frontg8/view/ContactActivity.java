@@ -2,8 +2,8 @@ package ch.frontg8.view;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,9 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.spec.InvalidKeySpecException;
+import java.security.InvalidKeyException;
 import java.util.UUID;
 
 import ch.frontg8.R;
@@ -43,8 +41,8 @@ public class ContactActivity extends AppCompatActivity {
         Button deleteButton = (Button) findViewById(R.id.buttonDelete);
         Button loadButton = (Button) findViewById(R.id.buttonLoadKey);
 
-        Intent intent=this.getIntent();
-        Bundle bundle=intent.getExtras();
+        Intent intent = this.getIntent();
+        Bundle bundle = intent.getExtras();
 
         datasource.open();
 
@@ -53,7 +51,7 @@ public class ContactActivity extends AppCompatActivity {
             contact = new Contact();
             datasource.createContact(contact);
         } else {
-            UUID contactId=(UUID)bundle.getSerializable("contactid");
+            UUID contactId = (UUID) bundle.getSerializable("contactid");
             contact = datasource.getContactByUUID(contactId);
             title.append(" " + contact.getName() + " (" + contact.getContactId().toString() + ")");
         }
@@ -74,7 +72,7 @@ public class ContactActivity extends AppCompatActivity {
                 if (!contact.getPublicKeyString().isEmpty()) {
                     try {
                         LibCrypto.negotiateSessionKeys(contact.getContactId(), publicKey.getText().toString().getBytes(), new KeystoreHandler(thisContext), thisContext);
-                    } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+                    } catch (InvalidKeyException e) {
                         e.printStackTrace();
                     }
                 }

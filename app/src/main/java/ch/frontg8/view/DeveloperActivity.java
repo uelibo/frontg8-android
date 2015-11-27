@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
@@ -86,7 +87,7 @@ public class DeveloperActivity extends AppCompatActivity {
                     a.setValidPubkey(true);
                     a.incrementUnreadMessageCounter();
                     datasource.updateContact(a);
-                } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidKeySpecException f) {
+                } catch (InvalidKeyException f) {
                     f.printStackTrace();
                 }
 

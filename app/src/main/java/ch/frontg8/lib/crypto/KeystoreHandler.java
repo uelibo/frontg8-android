@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -139,7 +140,7 @@ public class KeystoreHandler {
         }
     }
 
-    public byte[] negotiateSessionKeys(PublicKey publicKey, Context context) throws KeyNotFoundException {
+    public byte[] negotiateSessionKeys(PublicKey publicKey, Context context) throws InvalidKeyException {
         PrivateKey privateKey = getMyPrivateKey(context);
         byte[] sessionKey = new byte[]{};
         try {
@@ -147,7 +148,7 @@ public class KeystoreHandler {
             kA.init(privateKey);
             kA.doPhase(publicKey, true);
             sessionKey = kA.generateSecret();
-        } catch (Exception e) {
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             e.printStackTrace();
         }
         return sessionKey;

@@ -11,6 +11,7 @@ import org.spongycastle.util.Arrays;
 import org.spongycastle.util.encoders.Base64;
 import org.spongycastle.util.encoders.DecoderException;
 
+import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -181,17 +182,17 @@ public class LibCrypto {
         return ksHandler.getMyPublicKeyBytes(context);
     }
 
-    public static void negotiateSessionKeys(@NonNull UUID uuid, byte[] pubKey, @NonNull KeystoreHandler ksHandler, @NonNull Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public static void negotiateSessionKeys(@NonNull UUID uuid, byte[] pubKey, @NonNull KeystoreHandler ksHandler, @NonNull Context context) throws InvalidKeyException {
         negotiateSessionKeys(uuid, createPubKey(pubKey), ksHandler, context);
     }
 
-    public static void negotiateSessionKeys(@NonNull UUID uuid, @NonNull PublicKey pubKey, @NonNull KeystoreHandler ksHandler, @NonNull Context context) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeySpecException {
-        byte[] sessionKey = new byte[0];
-        try {
-            sessionKey = ksHandler.negotiateSessionKeys(pubKey,context);
-        } catch (KeyNotFoundException e) {
-            e.printStackTrace();
-        }
+    public static void negotiateSessionKeys(@NonNull UUID uuid, @NonNull String pubKey, @NonNull KeystoreHandler ksHandler, @NonNull Context context) throws InvalidKeyException {
+        negotiateSessionKeys(uuid, createPubKey(pubKey.getBytes()), ksHandler, context);
+    }
+
+    public static void negotiateSessionKeys(@NonNull UUID uuid, @NonNull PublicKey pubKey, @NonNull KeystoreHandler ksHandler, @NonNull Context context) throws InvalidKeyException {
+        byte[] sessionKey;
+        sessionKey = ksHandler.negotiateSessionKeys(pubKey, context);
 
         // TODO: check for invalid Pubkey
 
@@ -206,16 +207,20 @@ public class LibCrypto {
         ksHandler.setSKS(uuid, sks, context);
     }
 
-    private static PublicKey createPubKey(@NonNull byte[] pubKey) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
-        KeyFactory factory = KeyFactory.getInstance("ECDSA", BC);
+    private static PublicKey createPubKey(@NonNull byte[] pubKey) {
         try {
-            return factory.generatePublic(new X509EncodedKeySpec(Base64.decode(pubKey)));
-        } catch (DecoderException e ) {
+            return KeyFactory.getInstance("ECDSA", BC).generatePublic(new X509EncodedKeySpec(Base64.decode(pubKey)));
+        } catch (DecoderException e) {
+            e.printStackTrace();
+            throw new NullPointerException();
+        } catch (Exception e) {
+            //TODO chatch wrong or empty pubkey
+            e.printStackTrace();
             throw new NullPointerException();
         }
     }
 
-    public static void generateNewKeys(@NonNull KeystoreHandler ksHandler, Context context){
+    public static void generateNewKeys(@NonNull KeystoreHandler ksHandler, Context context) {
         ksHandler.genAndSetMyKeys(context);
     }
 

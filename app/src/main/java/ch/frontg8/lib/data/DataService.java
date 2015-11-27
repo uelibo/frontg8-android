@@ -12,6 +12,10 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +25,7 @@ import ch.frontg8.bl.Contact;
 import ch.frontg8.lib.connection.ConnectionService;
 import ch.frontg8.lib.crypto.KeystoreHandler;
 import ch.frontg8.lib.crypto.LibCrypto;
+import ch.frontg8.lib.dbstore.ContactsDataSource;
 import ch.frontg8.lib.helper.Tuple;
 import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
@@ -29,10 +34,10 @@ import ch.frontg8.lib.protobuf.Frontg8Client.Data;
 
 public class DataService extends Service {
 
-    //TODO make observable
     private HashMap<UUID, Contact> contacts = new HashMap<>();
     private Context thisContext;
     private KeystoreHandler ksHandler;
+    private ContactsDataSource datasource = new ContactsDataSource(this);
 
     protected final Messenger mConMessenger = new Messenger(new ConIncomingHandler());
     protected final Messenger mDataMessenger = new Messenger(new DataIncomingHandler());
@@ -79,10 +84,14 @@ public class DataService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.e("DService", "Create");
-        thisContext=this;
+        thisContext = this;
         // Create ksHandler
         ksHandler = new KeystoreHandler(this);
-        //TODO load contacts
+        // Load contacts
+        datasource.open();
+        for (Contact contact : datasource.getAllContacts()) {
+            contacts.put(contact.getContactId(), contact);
+        }
 
         Intent intent = new Intent(this, ConnectionService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -163,10 +172,27 @@ public class DataService extends Service {
                 case MessageTypes.MSG_UPDATE_CONTACT:
                     //TODO implement logic
                     //TODO check
+                    contact = (Contact) msg.obj;
+                    uuid = contact.getContactId();
+                    String pubkey = contact.getPublicKeyString();
+                    if (!contacts.get(uuid).getPublicKeyString().equals(pubkey)) {
+
+                        try {
+                            LibCrypto.negotiateSessionKeys(uuid, pubkey, ksHandler, thisContext);
+                        } catch (InvalidKeyException e) {
+                            e.printStackTrace();
+                            try {
+                                msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_ERROR, e));
+                            } catch (RemoteException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    }
+                    //TODO actualize, store and notify
                     break;
                 case MessageTypes.MSG_CONTAINS_SK:
                     try {
-                        msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_UPDATE, LibCrypto.containsSKSandSKC((UUID)msg.obj, ksHandler)));
+                        msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_UPDATE, LibCrypto.containsSKSandSKC((UUID) msg.obj, ksHandler)));
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -219,6 +245,8 @@ public class DataService extends Service {
     public void onDestroy() {
         Log.e("DService", "Destroy");
         super.onDestroy();
+        datasource.close();
+        unbindService(mConnection);
         // TODO remove stuff
     }
 
@@ -254,6 +282,8 @@ public class DataService extends Service {
         // Outgoing
 
         public static final int MSG_UPDATE = 30;
+
+        public static final int MSG_ERROR = 31;
 
     }
 }
