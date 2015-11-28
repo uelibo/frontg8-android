@@ -113,6 +113,7 @@ public class ContactActivity extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
 
         if (bundle == null) {
+            // Create new Contact
             contact = new Contact();
             title.setText("New Contact");
             name.setText(contact.getName());
@@ -124,32 +125,35 @@ public class ContactActivity extends AppCompatActivity {
 
         saveButton.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-                Toast toast = Toast.makeText(thisContext, "Contact saved", Toast.LENGTH_SHORT);
-                toast.show();
+                // Update Contact
                 contact.setName(name.getText().toString());
                 contact.setSurname(surname.getText().toString());
                 contact.setPublicKeyString(publicKey.getText().toString());
-                // TODO: UPDATE
-                //datasource.updateContact(contact);
-                // TODO: Handle invalid Publickey
-                if (!contact.getPublicKeyString().isEmpty()) {
-                    try {
-                        LibCrypto.negotiateSessionKeys(contact.getContactId(), publicKey.getText().toString().getBytes(), new KeystoreHandler(thisContext), thisContext);
-                    } catch (InvalidKeyException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_UPDATE_CONTACT, contact);
+                    msg.replyTo = mMessenger;
+                    mService.send(msg);
+                    Toast toast = Toast.makeText(thisContext, "Contact saved", Toast.LENGTH_SHORT);
+                    toast.show();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });
 
         deleteButton.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-                // TODO: DELETE
-                //datasource.deleteContact(contact);
-                Toast toast = Toast.makeText(thisContext, "Contact deleted", Toast.LENGTH_SHORT);
-                toast.show();
-                // TODO: How to go back to MainActivity?
-                //finish();
+                // Delete Contact
+                try {
+                    android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_REMOVE_CONTACT, contact);
+                    msg.replyTo = mMessenger;
+                    mService.send(msg);
+                    Toast toast = Toast.makeText(thisContext, "Contact deleted", Toast.LENGTH_SHORT);
+                    toast.show();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                finish();
             }
         });
 

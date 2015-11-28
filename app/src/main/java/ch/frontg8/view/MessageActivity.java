@@ -124,6 +124,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (contactId != null) {
                     try {
+                        // Send Message
                         Frontg8Client.Data message = MessageHelper.buildDataMessage(textSend.getText().toString().getBytes(), "0".getBytes(), 0);
                         Tuple<UUID, Frontg8Client.Data> content = new Tuple<>(contactId, message);
                         android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_SEND_MSG, content);

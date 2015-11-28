@@ -43,9 +43,23 @@ abstract public class CustomAdapter<T extends Filtertext> extends BaseAdapter im
             TextView textView;
         }
 
+        public void addAll(List<T> list) {
+            for (T element: list) {
+                arrayList.add(element);
+                mOriginalValues.add(element);
+            }
+            notifyDataSetChanged();
+        }
+
         public void add(T element) {
             arrayList.add(element);
             mOriginalValues.add(element);
+            notifyDataSetChanged();
+        }
+
+        public void clear() {
+            arrayList.clear();
+            mOriginalValues.clear();
             notifyDataSetChanged();
         }
 

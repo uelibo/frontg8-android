@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("Debug", "MainActivity Resumed");
 
         // bind again to DataService:
+        dataAdapter.clear();
         Intent intent = new Intent(this, DataService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
