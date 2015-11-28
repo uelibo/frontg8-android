@@ -24,16 +24,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
 import ch.frontg8.bl.Message;
 import ch.frontg8.lib.data.DataService;
-import ch.frontg8.lib.dbstore.ContactsDataSource;
 import ch.frontg8.lib.helper.Tuple;
-import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 import ch.frontg8.view.model.MessageAdapter;
@@ -42,7 +39,6 @@ public class MessageActivity extends AppCompatActivity {
     private MessageAdapter dataAdapter = null;
     private UUID contactId;
     private String contactName;
-    private ContactsDataSource datasource = new ContactsDataSource(this);
 
     // Messenger to get Contacts
     final Messenger mMessenger = new Messenger(new IncomingHandler());
@@ -82,11 +78,13 @@ public class MessageActivity extends AppCompatActivity {
                     ArrayList<Message> messages =  (ArrayList<Message>) msg.obj;
                     for (Message m: messages) {
                         Log.d("Debug", "got message " + m.getMessage());
+                        dataAdapter.add(m);
                     }
                     break;
                 case DataService.MessageTypes.MSG_UPDATE:
                     Frontg8Client.Data message = (Frontg8Client.Data) msg.obj;
-                    Log.d("Debug", "got message " + message.getMessageData().toStringUtf8());
+                    Log.d("Debug", "got message (update): " + message.getMessageData().toStringUtf8());
+                    dataAdapter.add(new Message(message));
                     break;
                 default:
                     super.handleMessage(msg);
@@ -107,19 +105,14 @@ public class MessageActivity extends AppCompatActivity {
         contactId=(UUID)bundle.getSerializable("contactid");
         contactName=(String)bundle.getSerializable("contactname");
 
-        datasource.open();
-        contact = datasource.getContactByUUID(contactId);
-
         TextView title = (TextView) findViewById(R.id.textViewTitle);
-        if (contact != null) {
+        if (contactName != null) {
             title.append(" of " + contactName);
-            messageList = contact.getMessages();
         } else {
             // TODO: Handle invalid contact
-            messageList = new ArrayList<>();
         }
 
-        dataAdapter = new MessageAdapter(this, messageList);
+        dataAdapter = new MessageAdapter(this, new ArrayList<Message>());
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(dataAdapter);
         listView.setTextFilterEnabled(true);
@@ -129,21 +122,14 @@ public class MessageActivity extends AppCompatActivity {
 
         buttonSend.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-                if (contact != null) {
-                    Message message = new Message(textSend.getText().toString());
-                    datasource.insertMessage(contact,message);
-                    dataAdapter.notifyDataSetChanged();
-                    //dataAdapter.replace(contact.getMessages());
-                    textSend.getText().clear();
-                }
                 if (contactId != null) {
                     try {
-                        Frontg8Client.Data message = null;
-                        message = MessageHelper.buildDataMessage(textSend.getText().toString().getBytes(), "0".getBytes(), 0);
+                        Frontg8Client.Data message = MessageHelper.buildDataMessage(textSend.getText().toString().getBytes(), "0".getBytes(), 0);
                         Tuple<UUID, Frontg8Client.Data> content = new Tuple<>(contactId, message);
                         android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_SEND_MSG, content);
                         msg.replyTo = mMessenger;
                         mService.send(msg);
+                        textSend.getText().clear();
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -193,7 +179,6 @@ public class MessageActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         Log.d("Debug", "MessageActivity Resumed");
-        //dataAdapter.replace(datasource.getAllContacts());
 
         // bind again to DataService:
         Intent intent = new Intent(this, DataService.class);
@@ -204,7 +189,6 @@ public class MessageActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         unbindService(mConnection);
-        datasource.close();
     }
 
 }
