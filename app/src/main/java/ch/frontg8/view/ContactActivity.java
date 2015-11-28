@@ -157,7 +157,7 @@ public class ContactActivity extends AppCompatActivity {
         loadButton.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
                 // Valid PublicKey
-                String keyA = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBf72KrjMTpU60csP6cVefgJocZpj+OOTF8sNueIPU8krHCycTozNoycoguqLkI6jU66pTXtnx/nxgXprVqg6bEyMBB5oCXoPNQSrb8GBkL5p764is9dn27q57cJ/Mw1zp1W/cNKJj2uWtuyFxXcwEhjVh8Vja47BaJCbFg7drjrzTxZM=";
+                String keyA = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBFtpl2EvgxipnLi2jd46vNX817wiiYg2dOlx0KoKgM2vP/xVdRb0+c3Km7noz/GEnWpm5Gkf0kGvC2bWMIv0+wkYALTEW8eTOaMDgN5SqQ3xykOaSZxMLNqGt6UGRLd8QRGc7y+cOkjklD4vsv1Sfg4jwoQW87x3FeonlL16wM5wLPl0=";
                 publicKey.setText(keyA);
             }
         });
