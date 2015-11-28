@@ -178,6 +178,8 @@ public class DataService extends Service {
                     if (contacts.get(uuid) == null || !contacts.get(uuid).getPublicKeyString().equals(pubkey)) {
                         try {
                             LibCrypto.negotiateSessionKeys(uuid, pubkey, ksHandler, thisContext);
+                            Log.d("Crypto", "negotiated new Key");
+                            contact.setValidPubkey(true);
                         } catch (InvalidKeyException e) {
                             e.printStackTrace();
                             try {
