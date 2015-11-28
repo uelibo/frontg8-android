@@ -1,5 +1,7 @@
 package ch.frontg8.lib.message;
 
+import android.content.Context;
+
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import ch.frontg8.bl.Message;
 import ch.frontg8.lib.connection.NotConnectedException;
 import ch.frontg8.lib.connection.TlsClient;
 import ch.frontg8.lib.crypto.KeyNotFoundException;
@@ -17,7 +20,6 @@ import ch.frontg8.lib.helper.Tuple;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class MessageHelper {
-
 
     // Build messages from content
 
@@ -89,7 +91,6 @@ public class MessageHelper {
         return fullMessage;
     }
 
-
     // Extract content from messages
 
     public static List<Frontg8Client.Encrypted> getEncryptedMessagesFromNotification(Frontg8Client.Notification notification) {
@@ -132,27 +133,16 @@ public class MessageHelper {
         return new Tuple<>(decrypted._1, getDataMessage(decrypted._2));
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public static Message decryptMessage(Message message, Context context) {
+        try {
+            Frontg8Client.Encrypted encrypted = message.getEncryptedMessage();
+            Tuple<UUID, Frontg8Client.Data> tuple = getDecryptedContent(encrypted, new KeystoreHandler(context));
+            message.replaceMessage(tuple._2);
+        } catch (InvalidMessageException e) {
+            e.printStackTrace();
+        }
+        return message;
+    }
 
 
 
@@ -195,14 +185,5 @@ public class MessageHelper {
         // TODO: raise Exception if notification = null
         return notification;
     }
-
-//    public static Frontg8Client.Data buildDataMessage(String message, String sessionId, int timestamp) {
-//        return buildDataMessage(ByteString.copyFromUtf8(message), ByteString.copyFromUtf8(sessionId), timestamp);
-//    }
-//
-//    public static byte[] encryptAndPutInEncrypted(Frontg8Client.Data dataMessage) {
-//        return encryptAndPutInEncrypted(dataMessage.toByteString());
-//    }
-
 
 }

@@ -7,6 +7,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -145,13 +147,13 @@ public class ContactsDataSource {
     public ArrayList<Message> getMessagesByUUID(UUID contactId) {
         String[] queryArgs = { contactId.toString() };
         ArrayList<Message> messages = new ArrayList<>();
-        String[] fields = { MySQLiteHelper.COLUMN_MESSAGETEXT };
+        String[] fields = { MySQLiteHelper.COLUMN_MESSAGETEXT, MySQLiteHelper.COLUMN_MESSAGEBLOB };
         Cursor cursor = database.query(MySQLiteHelper.TABLE_MESSAGES,
                 fields, MySQLiteHelper.COLUMN_CONTACTUUID + "=?", queryArgs, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            Message message = cursorToMessage(cursor);
+            Message message = cursorToMessage(cursor, contactId);
             messages.add(message);
             cursor.moveToNext();
         }
@@ -180,9 +182,19 @@ public class ContactsDataSource {
         database.execSQL("delete from " + MySQLiteHelper.TABLE_MESSAGES);
     }
 
-    private Message cursorToMessage(Cursor cursor) {
-        Message message = new Message(cursor.getString(0));
-        return message;
+    private Message cursorToMessage(Cursor cursor, UUID contactId) {
+        String unencrypted = cursor.getString(0);
+        byte[] encrypted = cursor.getBlob(1);
+        if (encrypted != null) {
+            // message needs to be decrypted later
+            try {
+                Log.d("Database", "Created Encrypted Message");
+                return new Message(Frontg8Client.Encrypted.parseFrom(encrypted));
+            } catch (InvalidProtocolBufferException e) {
+                e.printStackTrace();
+            }
+        }
+        return new Message(unencrypted);
     }
 
 }

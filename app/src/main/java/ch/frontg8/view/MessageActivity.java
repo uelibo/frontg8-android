@@ -36,6 +36,7 @@ import ch.frontg8.lib.protobuf.Frontg8Client;
 import ch.frontg8.view.model.MessageAdapter;
 
 public class MessageActivity extends AppCompatActivity {
+    private Context thisActivity = this;
     private MessageAdapter dataAdapter = null;
     private UUID contactId;
     private String contactName;
@@ -78,6 +79,9 @@ public class MessageActivity extends AppCompatActivity {
                     ArrayList<Message> messages =  (ArrayList<Message>) msg.obj;
                     for (Message m: messages) {
                         Log.d("Debug", "got message " + m.getMessage());
+                        if (m.isEncrypted()) {
+                            m = MessageHelper.decryptMessage(m, thisActivity);
+                        }
                         dataAdapter.add(m);
                     }
                     break;
