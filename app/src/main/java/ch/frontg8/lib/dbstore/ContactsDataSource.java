@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -52,6 +53,7 @@ public class ContactsDataSource {
         values.put(MySQLiteHelper.COLUMN_UNREADMSG, unreadMessageCounter);
         int validKey = validPubKey ? 1 : 0;
         values.put(MySQLiteHelper.COLUMN_VALIDKEY, validKey);
+        Log.d("DB", "Contact insert with id: " + contactId.toString());
         long insertId = database.insert(MySQLiteHelper.TABLE_CONTACTS, null,
                 values);
         Cursor cursor = database.query(MySQLiteHelper.TABLE_CONTACTS,
@@ -73,6 +75,7 @@ public class ContactsDataSource {
         values.put(MySQLiteHelper.COLUMN_UNREADMSG, contact.getUnreadMessageCounter());
         int validKey = contact.hasValidPubKey() ? 1 : 0;
         values.put(MySQLiteHelper.COLUMN_VALIDKEY, validKey);
+        Log.d("DB", "Contact update with id: " + contact.getContactId().toString());
         database.update(MySQLiteHelper.TABLE_CONTACTS, values, MySQLiteHelper.COLUMN_UUID + "=?", queryArgs);
     }
 
@@ -82,7 +85,7 @@ public class ContactsDataSource {
 
     public void deleteContact(Contact contact) {
         String uuid = contact.getContactId().toString();
-        System.out.println("Contact deleted with id: " + uuid);
+        Log.d("DB", "Contact delete with id: " + uuid);
         database.delete(MySQLiteHelper.TABLE_CONTACTS, MySQLiteHelper.COLUMN_UUID
                 + " = '" + uuid + "'", null);
     }
