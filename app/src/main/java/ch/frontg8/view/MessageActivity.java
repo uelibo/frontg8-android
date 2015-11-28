@@ -40,6 +40,7 @@ public class MessageActivity extends AppCompatActivity {
     private MessageAdapter dataAdapter = null;
     private UUID contactId;
     private String contactName;
+    private ListView listView;
 
     // Messenger to get Contacts
     final Messenger mMessenger = new Messenger(new IncomingHandler());
@@ -89,6 +90,7 @@ public class MessageActivity extends AppCompatActivity {
                     Frontg8Client.Data message = (Frontg8Client.Data) msg.obj;
                     Log.d("Debug", "got message (update): " + message.getMessageData().toStringUtf8());
                     dataAdapter.add(new Message(message));
+                    scrollMyListViewToBottom();
                     break;
                 default:
                     super.handleMessage(msg);
@@ -117,7 +119,7 @@ public class MessageActivity extends AppCompatActivity {
         }
 
         dataAdapter = new MessageAdapter(this, new ArrayList<Message>());
-        ListView listView = (ListView) findViewById(R.id.listView);
+        listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(dataAdapter);
         listView.setTextFilterEnabled(true);
 
@@ -199,6 +201,16 @@ public class MessageActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         unbindService(mConnection);
+    }
+
+    private void scrollMyListViewToBottom() {
+        listView.post(new Runnable() {
+            @Override
+            public void run() {
+                // Select the last row so it will scroll into view...
+                listView.setSelection(dataAdapter.getCount() - 1);
+            }
+        });
     }
 
 }
