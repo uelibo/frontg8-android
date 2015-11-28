@@ -114,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         Log.d("Debug", "MainActivity Resumed");
-        //dataAdapter.replace(datasource.getAllContacts());
 
         // bind again to DataService:
         Intent intent = new Intent(this, DataService.class);
