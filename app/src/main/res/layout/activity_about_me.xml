@@ -31,4 +31,20 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="show as text"
+        android:id="@+id/buttonShowText"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/buttonCopyToClipbord" />
+
+
+    <ImageView
+        android:id="@+id/myImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/editTextMyPubkey" />
+
 </RelativeLayout>
