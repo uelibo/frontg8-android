@@ -122,11 +122,12 @@ public class DeveloperActivity extends AppCompatActivity {
                             + c.getSurname() + " "
                             + c.hasValidPubKey() + "\n"
                             );
+                    for (Message m: c.getMessages()) {
+                        textViewLog.append("- Message: " + m.getMessage() + "\n");
+                    }
                 }
-
             }
         });
-
     }
 
     @Override
