@@ -188,6 +188,11 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        try {
+            mService.send(android.os.Message.obtain(null, DataService.MessageTypes.MSG_UNREGISTER_FOR_MESSAGES));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         unbindService(mConnection);
     }
 
