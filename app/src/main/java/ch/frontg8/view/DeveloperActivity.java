@@ -83,9 +83,15 @@ public class DeveloperActivity extends AppCompatActivity {
 
                 try {
                     LibCrypto.negotiateSessionKeys(a.getContactId(), a.getPublicKeyString().getBytes(), new KeystoreHandler(thisActivity), thisActivity);
+                    LibCrypto.negotiateSessionKeys(b.getContactId(), b.getPublicKeyString().getBytes(), new KeystoreHandler(thisActivity), thisActivity);
+                    LibCrypto.negotiateSessionKeys(c.getContactId(), c.getPublicKeyString().getBytes(), new KeystoreHandler(thisActivity), thisActivity);
                     a.setValidPubkey(true);
+                    b.setValidPubkey(true);
+                    c.setValidPubkey(true);
                     a.incrementUnreadMessageCounter();
                     datasource.updateContact(a);
+                    datasource.updateContact(b);
+                    datasource.updateContact(c);
                 } catch (InvalidKeyException f) {
                     f.printStackTrace();
                 }
