@@ -20,13 +20,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.security.InvalidKeyException;
 import java.util.UUID;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
-import ch.frontg8.lib.crypto.KeystoreHandler;
-import ch.frontg8.lib.crypto.LibCrypto;
 import ch.frontg8.lib.data.DataService;
 
 public class ContactActivity extends AppCompatActivity {
@@ -154,6 +151,14 @@ public class ContactActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 finish();
+            }
+        });
+
+        loadButton.setOnClickListener(new AdapterView.OnClickListener() {
+            public void onClick(View view) {
+                // Valid PublicKey
+                String keyA = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBf72KrjMTpU60csP6cVefgJocZpj+OOTF8sNueIPU8krHCycTozNoycoguqLkI6jU66pTXtnx/nxgXprVqg6bEyMBB5oCXoPNQSrb8GBkL5p764is9dn27q57cJ/Mw1zp1W/cNKJj2uWtuyFxXcwEhjVh8Vja47BaJCbFg7drjrzTxZM=";
+                publicKey.setText(keyA);
             }
         });
 
