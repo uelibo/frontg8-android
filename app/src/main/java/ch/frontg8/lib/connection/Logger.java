@@ -22,7 +22,6 @@ public class Logger {
     @NonNull
     public void TRACE(final String log) {
         if ( log == null ) {
-            //System.err.println("String was null!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             return;
         }
         if (context == null) {

@@ -85,6 +85,7 @@ public class MessageActivity extends AppCompatActivity {
                         }
                         dataAdapter.add(m);
                     }
+                    scrollMyListViewToBottom();
                     break;
                 case DataService.MessageTypes.MSG_UPDATE:
                     Frontg8Client.Data message = (Frontg8Client.Data) msg.obj;
@@ -131,7 +132,9 @@ public class MessageActivity extends AppCompatActivity {
                 if (contactId != null) {
                     try {
                         // Send Message
-                        Frontg8Client.Data message = MessageHelper.buildDataMessage(textSend.getText().toString().getBytes(), "0".getBytes(), 0);
+                        String messageId = UUID.randomUUID().toString();
+                        int timestamp = (int) System.currentTimeMillis() / 1000;
+                        Frontg8Client.Data message = MessageHelper.buildDataMessage(textSend.getText().toString().getBytes(), messageId.getBytes(), timestamp);
                         Tuple<UUID, Frontg8Client.Data> content = new Tuple<>(contactId, message);
                         android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_SEND_MSG, content);
                         msg.replyTo = mMessenger;
