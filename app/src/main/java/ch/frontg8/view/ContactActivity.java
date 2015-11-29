@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -34,7 +35,6 @@ public class ContactActivity extends AppCompatActivity {
     private TextView name;
     private TextView surname;
     private TextView publicKey;
-
     // Messenger to get Contacts
     final Messenger mMessenger = new Messenger(new IncomingHandler());
     private Messenger mService;
@@ -47,20 +47,26 @@ public class ContactActivity extends AppCompatActivity {
             mService = new Messenger(binder);
             Toast.makeText(ContactActivity.this, "Connected", Toast.LENGTH_SHORT).show();
 
-            if (contactId != null) {
-                try {
-                    Message msg = Message.obtain(null, DataService.MessageTypes.MSG_GET_CONTACT_DETAILS, contactId);
-                    msg.replyTo = mMessenger;
-                    mService.send(msg);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+            if (contact == null) {
+                // only update if it's an existing contact and not already loaded
+                Log.d("ContactActivity", "Request Contact");
+                requestContact();
             }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName className) {
             mService = null;
+        }
+
+        private void requestContact() {
+            try {
+                Message msg = Message.obtain(null, DataService.MessageTypes.MSG_GET_CONTACT_DETAILS, contactId);
+                msg.replyTo = mMessenger;
+                mService.send(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
 
     };
@@ -75,16 +81,14 @@ public class ContactActivity extends AppCompatActivity {
             switch (msg.what) {
                 case DataService.MessageTypes.MSG_UPDATE:
                     contact = (Contact) msg.obj;
-
                     Log.d("Debug", "got contact " + contact.getName()
                             + " " + contact.getSurname()
                             + " " + contact.hasValidPubKey());
 
-                    title.append(" " + contact.getName() + " (" + contact.getContactId().toString() + ")");
+                    title.setText("Edit Contact " + contact.getName() + " (" + contact.getContactId().toString() + ")");
                     name.setText(contact.getName());
                     surname.setText(contact.getSurname());
                     publicKey.setText(contact.getPublicKeyString());
-
                     break;
                 default:
                     super.handleMessage(msg);
@@ -115,7 +119,7 @@ public class ContactActivity extends AppCompatActivity {
             title.setText("New Contact");
             name.setText(contact.getName());
             surname.setText(contact.getSurname());
-            publicKey.setText(contact.getSurname());
+            publicKey.setText(contact.getPublicKeyString());
         } else {
             contactId = (UUID) bundle.getSerializable("contactid");
         }
@@ -156,9 +160,16 @@ public class ContactActivity extends AppCompatActivity {
 
         loadButton.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-                // Valid PublicKey
-                String keyA = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBFtpl2EvgxipnLi2jd46vNX817wiiYg2dOlx0KoKgM2vP/xVdRb0+c3Km7noz/GEnWpm5Gkf0kGvC2bWMIv0+wkYALTEW8eTOaMDgN5SqQ3xykOaSZxMLNqGt6UGRLd8QRGc7y+cOkjklD4vsv1Sfg4jwoQW87x3FeonlL16wM5wLPl0=";
-                publicKey.setText(keyA);
+                // scan qr-code with external app
+                try {
+                    Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+                    intent.putExtra("SCAN_MODE", "QR_CODE_MODE"); // "PRODUCT_MODE for bar codes
+                    startActivityForResult(intent, 0);
+                } catch (Exception e) {
+                    Uri marketUri = Uri.parse("market://details?id=com.google.zxing.client.android");
+                    Intent marketIntent = new Intent(Intent.ACTION_VIEW,marketUri);
+                    startActivity(marketIntent);
+                }
             }
         });
 
@@ -170,7 +181,7 @@ public class ContactActivity extends AppCompatActivity {
         Log.d("Debug", "ContactActivity Resumed");
         //dataAdapter.replace(datasource.getAllContacts());
 
-        // bind again to DataService:
+        // bind to DataService
         Intent intent = new Intent(this, DataService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
@@ -192,6 +203,19 @@ public class ContactActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+                publicKey.setText(data.getStringExtra("SCAN_RESULT"));
+            }
+            if(resultCode == RESULT_CANCELED){
+                //handle cancel
+            }
+        }
     }
 
 }
