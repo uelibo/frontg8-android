@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
             mService = new Messenger(binder);
-            Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
 
             try {
                 Message msg = Message.obtain(null, DataService.MessageTypes.MSG_GET_CONTACTS);

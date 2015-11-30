@@ -52,7 +52,7 @@ public class MessageActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
             mService = new Messenger(binder);
-            Toast.makeText(MessageActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MessageActivity.this, "Connected", Toast.LENGTH_SHORT).show();
 
             if (contactId != null) {
                 try {

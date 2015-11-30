@@ -47,7 +47,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             for (String field : fields) {
                 EditTextPreference preference_field = (EditTextPreference) this.getPreferenceManager().findPreference(field);
-                preference_field.setSummary(preference_field.getText().toString());
+                preference_field.setSummary(preference_field.getText());
 
                 preference_field.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                     @Override
