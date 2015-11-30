@@ -11,6 +11,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class DataService extends Service {
     private HashMap<UUID, Contact> contacts = new HashMap<>();
     private Context thisContext;
     private KeystoreHandler ksHandler;
-    private ContactsDataSource datasource = new ContactsDataSource(this);
+    private ContactsDataSource dataSource = new ContactsDataSource(this);
 
     protected final Messenger mConMessenger = new Messenger(new ConIncomingHandler());
     protected final Messenger mDataMessenger = new Messenger(new DataIncomingHandler());
@@ -51,6 +52,7 @@ public class DataService extends Service {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
             mConService = new Messenger(binder);
+            Toast.makeText(DataService.this, "Connected", Toast.LENGTH_SHORT).show();
 
             try {
                 Message msg = Message.obtain(null, ConnectionService.MessageTypes.MSG_REGISTER_CLIENT);
@@ -69,7 +71,19 @@ public class DataService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return 1; //TODO implement
+        Log.e("DS", "Create");
+        thisContext = this;
+        // Create ksHandler
+        ksHandler = new KeystoreHandler(this);
+        // Load contacts
+        dataSource.open();
+        for (Contact contact : dataSource.getAllContacts()) {
+            contacts.put(contact.getContactId(), contact);
+        }
+
+        Intent mIntent = new Intent(this, ConnectionService.class);
+        bindService(mIntent, mConnection, Context.BIND_AUTO_CREATE);
+        return START_STICKY;
     }
 
     @Override
@@ -80,18 +94,7 @@ public class DataService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.e("DService", "Create");
-        thisContext = this;
-        // Create ksHandler
-        ksHandler = new KeystoreHandler(this);
-        // Load contacts
-        datasource.open();
-        for (Contact contact : datasource.getAllContacts()) {
-            contacts.put(contact.getContactId(), contact);
-        }
 
-        Intent intent = new Intent(this, ConnectionService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
     }
 
@@ -108,14 +111,10 @@ public class DataService extends Service {
 
                             Tuple<UUID, Data> decryptedMSG = MessageHelper.getDecryptedContent(message, ksHandler);
                             if (decryptedMSG._2 != null) {
-
-
                                 Contact contact = contacts.get(decryptedMSG._1);
                                 contact.addMessage(new ch.frontg8.bl.Message(decryptedMSG._2));
                                 contact.incrementUnreadMessageCounter();
-
-                                datasource.insertMessage(contact, message);
-
+                                dataSource.insertMessage(contact, message);
                                 // Send updates to interested partys
                                 for (Messenger mMessenger : mContactClients) {
                                     try {
@@ -190,16 +189,16 @@ public class DataService extends Service {
                         }
                     }
                     if (contacts.containsKey(uuid)) {
-                        datasource.updateContact(contact);
+                        dataSource.updateContact(contact);
                     } else {
-                        datasource.createContact(contact);
+                        dataSource.createContact(contact);
                     }
                     contacts.put(uuid, contact);
                     break;
                 case MessageTypes.MSG_REMOVE_CONTACT:
                     contact = (Contact) msg.obj;
                     uuid = contact.getContactId();
-                    datasource.deleteContact(contact);
+                    dataSource.deleteContact(contact);
                     contacts.remove(uuid);
                     break;
                 case MessageTypes.MSG_CONTAINS_SK:
@@ -219,7 +218,7 @@ public class DataService extends Service {
                         e.printStackTrace();
                     }
                     contact.resetUnreadMessageCounter();
-                    datasource.updateContact(contact);
+                    dataSource.updateContact(contact);
 
                     break;
                 case MessageTypes.MSG_UNREGISTER_FOR_MESSAGES:
@@ -258,7 +257,7 @@ public class DataService extends Service {
     public void onDestroy() {
         Log.e("DService", "Destroy");
         super.onDestroy();
-        datasource.close();
+        dataSource.close();
         unbindService(mConnection);
         // TODO remove stuff
     }

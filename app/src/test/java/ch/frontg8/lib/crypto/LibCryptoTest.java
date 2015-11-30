@@ -22,28 +22,29 @@ import static org.junit.Assert.assertNotEquals;
 
 public class LibCryptoTest {
     private MockContext mc = new MyMockContext();
+    private KeystoreHandler ksh = new KeystoreHandler(mc);
 
     @Test
     public void testGetKey() {
-        System.out.println(new String(LibCrypto.getMyPublicKeyBytes(mc)));
+        System.out.println(new String(LibCrypto.getMyPublicKeyBytes(ksh, mc)));
     }
 
 
     @Test
     public void testContainsSKSandSKC() throws Exception {
         UUID uuid1 = UUID.randomUUID();
-        LibCrypto.generateNewKeys(mc);
-        LibCrypto.negotiateSessionKeys(uuid1, genKeyPair().getPublic(), mc);
-        Assert.assertTrue(LibCrypto.containsSKSandSKC(uuid1, mc));
+        LibCrypto.generateNewKeys(ksh, mc);
+        LibCrypto.negotiateSessionKeys(uuid1, genKeyPair().getPublic(), ksh, mc);
+        Assert.assertTrue(LibCrypto.containsSKSandSKC(uuid1, ksh));
     }
 
 
     @Test
     public void testGenECDHKeys() throws Exception {
-        LibCrypto.generateNewKeys(mc);
-        PublicKey pk1 = LibCrypto.getMyPublicKey(mc);
-        LibCrypto.generateNewKeys(mc);
-        PublicKey pk2 = LibCrypto.getMyPublicKey(mc);
+        LibCrypto.generateNewKeys(ksh, mc);
+        PublicKey pk1 = LibCrypto.getMyPublicKey(ksh, mc);
+        LibCrypto.generateNewKeys(ksh, mc);
+        PublicKey pk2 = LibCrypto.getMyPublicKey(ksh, mc);
         assertNotEquals(pk1, pk2);
     }
 
@@ -53,32 +54,32 @@ public class LibCryptoTest {
         UUID uuid2 = UUID.randomUUID();
         UUID uuid3 = UUID.randomUUID();
 
-        LibCrypto.generateNewKeys(mc);
+        LibCrypto.generateNewKeys(ksh, mc);
 
-        LibCrypto.negotiateSessionKeys(uuid1, genKeyPair().getPublic(), mc);
-        LibCrypto.negotiateSessionKeys(uuid2, genKeyPair().getPublic(), mc);
-        LibCrypto.negotiateSessionKeys(uuid3, genKeyPair().getPublic(), mc);
+        LibCrypto.negotiateSessionKeys(uuid1, genKeyPair().getPublic(), ksh, mc);
+        LibCrypto.negotiateSessionKeys(uuid2, genKeyPair().getPublic(), ksh, mc);
+        LibCrypto.negotiateSessionKeys(uuid3, genKeyPair().getPublic(), ksh, mc);
 
-        Assert.assertTrue(LibCrypto.containsSKSandSKC(uuid1, mc));
-        Assert.assertTrue(LibCrypto.containsSKSandSKC(uuid2, mc));
-        Assert.assertTrue(LibCrypto.containsSKSandSKC(uuid3, mc));
+        Assert.assertTrue(LibCrypto.containsSKSandSKC(uuid1, ksh));
+        Assert.assertTrue(LibCrypto.containsSKSandSKC(uuid2, ksh));
+        Assert.assertTrue(LibCrypto.containsSKSandSKC(uuid3, ksh));
     }
 
     @Test
     public void testEncryptDecrypt() throws Exception {
         UUID uuid1 = UUID.randomUUID();
 
-        LibCrypto.generateNewKeys(mc);
+        LibCrypto.generateNewKeys(ksh, mc);
 
         byte[] plaintext = new byte[1024];
         new Random().nextBytes(plaintext);
 
         KeyPair kp = genKeyPair();
 
-        LibCrypto.negotiateSessionKeys(uuid1, kp.getPublic(), mc);
+        LibCrypto.negotiateSessionKeys(uuid1, kp.getPublic(), ksh, mc);
 
-        byte[] ciphertext = LibCrypto.encryptMSG(uuid1, plaintext, mc);
-        byte[] decryptedtext = LibCrypto.decryptMSG(ciphertext, mc)._2;
+        byte[] ciphertext = LibCrypto.encryptMSG(uuid1, plaintext, ksh);
+        byte[] decryptedtext = LibCrypto.decryptMSG(ciphertext, ksh)._2;
 
 
         String encoded = Base64.toBase64String(plaintext);

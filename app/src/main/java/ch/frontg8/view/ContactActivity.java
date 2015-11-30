@@ -45,7 +45,6 @@ public class ContactActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
             mService = new Messenger(binder);
-            Toast.makeText(ContactActivity.this, "Connected", Toast.LENGTH_SHORT).show();
 
             if (contact == null) {
                 // only update if it's an existing contact and not already loaded
@@ -167,7 +166,7 @@ public class ContactActivity extends AppCompatActivity {
                     startActivityForResult(intent, 0);
                 } catch (Exception e) {
                     Uri marketUri = Uri.parse("market://details?id=com.google.zxing.client.android");
-                    Intent marketIntent = new Intent(Intent.ACTION_VIEW,marketUri);
+                    Intent marketIntent = new Intent(Intent.ACTION_VIEW, marketUri);
                     startActivity(marketIntent);
                 }
             }
@@ -179,7 +178,7 @@ public class ContactActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         Log.d("Debug", "ContactActivity Resumed");
-        //dataAdapter.replace(datasource.getAllContacts());
+        //dataAdapter.replace(dataSource.getAllContacts());
 
         // bind to DataService
         Intent intent = new Intent(this, DataService.class);
@@ -212,7 +211,7 @@ public class ContactActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 publicKey.setText(data.getStringExtra("SCAN_RESULT"));
             }
-            if(resultCode == RESULT_CANCELED){
+            if (resultCode == RESULT_CANCELED) {
                 //handle cancel
             }
         }
