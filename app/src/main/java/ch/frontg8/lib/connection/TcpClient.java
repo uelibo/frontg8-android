@@ -25,7 +25,7 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
     }
 
     public void sendMessage(byte[] message) {
-        Log.e("TCP Sending", " sending");
+        Log.d("TCP Sending", " sending");
         synchronized (lock) {
             mMSG = message;
             lock.notifyAll();
@@ -38,9 +38,8 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
 
     @Override
     protected TcpClient doInBackground(byte[]... params) {
-        Log.e("TCP RUNLOOP", "startet");
         try {
-            Log.e("TCP Client", "C: Connecting...");
+            Log.d("TCP Client", "C: Connecting...");
             //TODO Handle not connected
             tlsClient.connect();
             try {
@@ -49,7 +48,7 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
                     public void run() {
                         synchronized (lock) {
                             while (mRun) {
-                                Log.e("TCP Client", "C: Sending");
+                                Log.v("TCP Client", "C: Sending");
                                 if (mMSG != null) {
                                     try {
                                         tlsClient.sendBytes(mMSG);
@@ -65,7 +64,7 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
                                     e.printStackTrace();
                                 }
                             }
-                            Log.e("TCP", "Finished sendThread");
+                            Log.d("TCP", "Finished sendThread");
                         }
                     }
                 });
@@ -76,10 +75,10 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
                     @Override
                     public void run() {
                         if (isConnected()){
-                            Log.e("TCP Client", "Connected");
+                            Log.d("TCP Client", "Connected");
                         }
                         while (mRun) {
-                            Log.e("TCP Client", "C: Receiving");
+                            Log.v("TCP Client", "C: Receiving");
                             byte[] header;
                             byte[] data = new byte[0];
                             try {
@@ -90,9 +89,9 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
                                 e.printStackTrace();
                             }
                             mMessageListener.messageReceived(data);
-                            Log.e("TCP RUNLOOP", " Message received");
+                            Log.v("TCP RUNLOOP", " Message received");
                         }
-                        Log.e("TCP", "Finished receiveThread");
+                        Log.d("TCP", "Finished receiveThread");
                     }
                 });
 
@@ -124,7 +123,7 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
         }
 
     public void stopClient() {
-        Log.e("TCP Client", " Stop Client");
+        Log.d("TCP Client", " Stop Client");
         mRun = false;
         synchronized (lock) {
             lock.notifyAll();

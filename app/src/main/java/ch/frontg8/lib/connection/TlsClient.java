@@ -54,7 +54,7 @@ public class TlsClient {
         } catch (IOException e) {
             Log.e("TLS", "factory.createSocket >> IOException", e);
         }
-        Log.e("TLS", "factory.createSocket >> successful");
+        Log.d("TLS", "factory.createSocket >> successful");
     }
 
 

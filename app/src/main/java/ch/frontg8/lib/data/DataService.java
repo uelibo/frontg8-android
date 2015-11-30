@@ -71,7 +71,7 @@ public class DataService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e("DS", "Create");
+        Log.d("DS", "Create");
         thisContext = this;
         // Create ksHandler
         ksHandler = new KeystoreHandler(this);
@@ -255,7 +255,7 @@ public class DataService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.e("DService", "Destroy");
+        Log.d("DService", "Destroy");
         super.onDestroy();
         dataSource.close();
         unbindService(mConnection);

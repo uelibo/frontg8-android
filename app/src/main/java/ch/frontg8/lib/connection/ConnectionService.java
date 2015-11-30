@@ -28,12 +28,12 @@ public class ConnectionService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.e("CService", "Create");
+        Log.d("CService", "Create");
 
         if (mTcpClient == null) {
-            Log.e("CService", "mTcpClient was null");
+            Log.d("CService", "mTcpClient was null");
         } else {
-            Log.e("CService", "mTcpClient was " + mTcpClient.toString());
+            Log.d("CService", "mTcpClient was " + mTcpClient.toString());
         }
 
         mTcpClient = new TcpClient(new TcpClient.OnMessageReceived() {
@@ -82,7 +82,7 @@ public class ConnectionService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.e("CService", "Destroy");
+        Log.d("CService", "Destroy");
         super.onDestroy();
         mTcpClient.stopClient();
         mTcpClient = null;
