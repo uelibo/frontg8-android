@@ -178,6 +178,11 @@ public class ContactsDataSource {
         return messages;
     }
 
+    public void deleteAllMessagesOfUUID(UUID contactId) {
+        String[] queryArgs = { contactId.toString() };
+        database.delete(MySQLiteHelper.TABLE_MESSAGES, MySQLiteHelper.COLUMN_CONTACTUUID + "=?", queryArgs);
+    }
+
     public void deleteAllMessages() {
         database.execSQL("delete from " + MySQLiteHelper.TABLE_MESSAGES);
     }
