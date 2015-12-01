@@ -21,13 +21,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 import ch.frontg8.R;
-import ch.frontg8.bl.Contact;
 import ch.frontg8.bl.Message;
 import ch.frontg8.lib.data.DataService;
 import ch.frontg8.lib.helper.Tuple;
@@ -52,7 +50,6 @@ public class MessageActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
             mService = new Messenger(binder);
-//            Toast.makeText(MessageActivity.this, "Connected", Toast.LENGTH_SHORT).show();
 
             if (contactId != null) {
                 try {
@@ -124,7 +121,6 @@ public class MessageActivity extends AppCompatActivity {
         final EditText textSend = (EditText) findViewById(R.id.editTextSend);
         Button buttonSend = (Button) findViewById(R.id.buttonSend);
 
-        //TODO: Disable, if ! contact.hasValidPubKey
         buttonSend.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
                 if (contactId != null) {

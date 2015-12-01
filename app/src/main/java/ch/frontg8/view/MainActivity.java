@@ -46,8 +46,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
             mService = new Messenger(binder);
-//            Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
-
             try {
                 Message msg = Message.obtain(null, DataService.MessageTypes.MSG_GET_CONTACTS);
                 msg.replyTo = mMessenger;
@@ -97,12 +95,12 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Contact contact = (Contact) parent.getItemAtPosition(position);
-                Intent intent = new Intent(thisActivity, MessageActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("contactid", contact.getContactId());
-                bundle.putSerializable("contactname", contact.getName());
-                intent.putExtras(bundle);
-                startActivity(intent);
+                if (contact.hasValidPubKey()) {
+                    openMessageActivityOfContact(contact);
+                } else {
+                    Toast toast = Toast.makeText(thisActivity, "No PublicKey for this contact", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
             }
         });
 
@@ -178,6 +176,15 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void openMessageActivityOfContact(Contact contact) {
+        Intent intent = new Intent(thisActivity, MessageActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("contactid", contact.getContactId());
+        bundle.putSerializable("contactname", contact.getName());
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     public void myContactButtonHandler(View v)
