@@ -241,8 +241,9 @@ public class DataService extends Service {
                     contact = contacts.get(uuid);
                     contact.resetUnreadMessageCounter();
                     contact.delAllMessages();
+                    dataSource.deleteAllMessagesOfUUID(uuid);
                     dataSource.updateContact(contact);
-                    notifyContactObservers(contact);
+                    //TODO: send bulk update...
                     break;
                 default:
                     super.handleMessage(msg);

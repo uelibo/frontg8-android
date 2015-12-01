@@ -74,6 +74,7 @@ public class MessageActivity extends AppCompatActivity {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case DataService.MessageTypes.MSG_BULK_UPDATE:
+                    dataAdapter.clear();
                     ArrayList<Message> messages =  (ArrayList<Message>) msg.obj;
                     for (Message m: messages) {
                         Log.d("Debug", "got message " + m.getMessage());
@@ -175,7 +176,7 @@ public class MessageActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_clear_message_history:
-
+                // TODO: send MSG_DEL_ALL_MSGS
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
