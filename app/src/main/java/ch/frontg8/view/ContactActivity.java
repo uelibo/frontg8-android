@@ -31,10 +31,12 @@ public class ContactActivity extends AppCompatActivity {
     private Context thisContext;
     private UUID contactId;
     private Contact contact;
+    private String scannedKey;
     private TextView title;
     private TextView name;
     private TextView surname;
     private TextView publicKey;
+    static final String STATE_SCANNEDKEY = "scannedKey";
     // Messenger to get Contacts
     final Messenger mMessenger = new Messenger(new IncomingHandler());
     private Messenger mService;
@@ -46,9 +48,8 @@ public class ContactActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName className, IBinder binder) {
             mService = new Messenger(binder);
 
-            if (contact == null) {
-                // only update if it's an existing contact and not already loaded
-                Log.d("ContactActivity", "Request Contact");
+            if (contactId != null) {
+                // only update if it's an existing contact
                 requestContact();
             }
         }
@@ -59,6 +60,7 @@ public class ContactActivity extends AppCompatActivity {
         }
 
         private void requestContact() {
+            Log.d("ContactActivity", "Request Contact");
             try {
                 Message msg = Message.obtain(null, DataService.MessageTypes.MSG_GET_CONTACT_DETAILS, contactId);
                 msg.replyTo = mMessenger;
@@ -80,14 +82,17 @@ public class ContactActivity extends AppCompatActivity {
             switch (msg.what) {
                 case DataService.MessageTypes.MSG_UPDATE:
                     contact = (Contact) msg.obj;
+
                     Log.d("Debug", "got contact " + contact.getName()
                             + " " + contact.getSurname()
                             + " " + contact.hasValidPubKey());
 
-                    title.setText("Edit Contact " + contact.getName() + " (" + contact.getContactId().toString() + ")");
-                    name.setText(contact.getName());
-                    surname.setText(contact.getSurname());
-                    publicKey.setText(contact.getPublicKeyString());
+                    if (scannedKey == null) {
+                        title.setText("Edit Contact " + contact.getName() + " (" + contact.getContactId().toString() + ")");
+                        name.setText(contact.getName());
+                        surname.setText(contact.getSurname());
+                        publicKey.setText(contact.getPublicKeyString());
+                    }
                     break;
                 default:
                     super.handleMessage(msg);
@@ -209,12 +214,31 @@ public class ContactActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
-                publicKey.setText(data.getStringExtra("SCAN_RESULT"));
+                scannedKey = data.getStringExtra("SCAN_RESULT");
+                publicKey.setText(scannedKey);
             }
             if (resultCode == RESULT_CANCELED) {
                 //handle cancel
             }
         }
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current state
+        savedInstanceState.putString(STATE_SCANNEDKEY, scannedKey);
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore state members from saved instance
+        scannedKey = savedInstanceState.getString(STATE_SCANNEDKEY);
+    }
+
 
 }
