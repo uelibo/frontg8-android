@@ -12,7 +12,7 @@ public class Contact implements Serializable, Filtertext {
     private String publicKeyString;
     private int unreadMessageCounter = 0;
     private boolean hasValidPubKey = false;
-    private ArrayList<Message> messages = new ArrayList<Message>();
+    private ArrayList<Message> messages = new ArrayList<>();
 
     public Contact() { this(genUUID(), "", "", "", 0, false); }
     public Contact(UUID contactId, String name, String surname, String publicKeyString, int unreadMessageCounter, boolean hasValidPubKey)
@@ -40,6 +40,7 @@ public class Contact implements Serializable, Filtertext {
     public void addMessage(Message msg) { messages.add(msg); }
     public void addMessages(ArrayList<Message> msgs) { messages.addAll(msgs); }
     public ArrayList<Message> getMessages() { return messages; }
+    public void delAllMessages() { messages.clear(); }
 
     public void incrementUnreadMessageCounter() { unreadMessageCounter++; }
     public int getUnreadMessageCounter() { return unreadMessageCounter; }

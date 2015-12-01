@@ -116,20 +116,8 @@ public class DataService extends Service {
                                 contact.incrementUnreadMessageCounter();
                                 dataSource.insertMessage(contact, message);
                                 // Send updates to interested partys
-                                for (Messenger mMessenger : mContactClients) {
-                                    try {
-                                        mMessenger.send(Message.obtain(null, MessageTypes.MSG_UPDATE, contact));
-                                    } catch (RemoteException e) {
-                                        mMessageClients.remove(mMessenger);
-                                    }
-                                }
-                                for (Messenger mMessenger : mMessageClients) {
-                                    try {
-                                        mMessenger.send(Message.obtain(null, MessageTypes.MSG_UPDATE, decryptedMSG._2));
-                                    } catch (RemoteException e) {
-                                        mMessageClients.remove(mMessenger);
-                                    }
-                                }
+                                notifyContactObservers(contact);
+                                notifyMessageObservers(decryptedMSG._2);
                             }
 
                         }
@@ -194,12 +182,14 @@ public class DataService extends Service {
                         dataSource.createContact(contact);
                     }
                     contacts.put(uuid, contact);
+                    notifyContactObservers(contact);
                     break;
                 case MessageTypes.MSG_REMOVE_CONTACT:
                     contact = (Contact) msg.obj;
                     uuid = contact.getContactId();
                     dataSource.deleteContact(contact);
                     contacts.remove(uuid);
+                    notifyContactObservers(contact);
                     break;
                 case MessageTypes.MSG_CONTAINS_SK:
                     try {
@@ -219,7 +209,7 @@ public class DataService extends Service {
                     }
                     contact.resetUnreadMessageCounter();
                     dataSource.updateContact(contact);
-
+                    notifyContactObservers(contact);
                     break;
                 case MessageTypes.MSG_UNREGISTER_FOR_MESSAGES:
                     mMessageClients.remove(msg.replyTo);
@@ -246,12 +236,40 @@ public class DataService extends Service {
                 case MessageTypes.MSG_GEN_NEW_KEYS:
                     LibCrypto.generateNewKeys(ksHandler, thisContext);
                     break;
+                case MessageTypes.MSG_DEL_ALL_MSGS:
+                    uuid = (UUID) msg.obj;
+                    contact = contacts.get(uuid);
+                    contact.resetUnreadMessageCounter();
+                    contact.delAllMessages();
+                    dataSource.updateContact(contact);
+                    notifyContactObservers(contact);
+                    break;
                 default:
                     super.handleMessage(msg);
             }
         }
     }
 
+
+    private void notifyContactObservers(Contact contact) {
+        for (Messenger mMessenger : mContactClients) {
+            try {
+                mMessenger.send(Message.obtain(null, MessageTypes.MSG_UPDATE, contact));
+            } catch (RemoteException e) {
+                mMessageClients.remove(mMessenger);
+            }
+        }
+    }
+
+    private void notifyMessageObservers(Data data){
+        for (Messenger mMessenger : mMessageClients) {
+            try {
+                mMessenger.send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
+            } catch (RemoteException e) {
+                mMessageClients.remove(mMessenger);
+            }
+        }
+    }
 
     @Override
     public void onDestroy() {
@@ -292,6 +310,8 @@ public class DataService extends Service {
         public static final int MSG_CHANGE_PW = 20;
         // - Will change my key, generate new keys for all Contacts, and delete all Messages
         public static final int MSG_GEN_NEW_KEYS = 21;
+        //obj UUID - will delete all messages for this contact
+        public static final int MSG_DEL_ALL_MSGS = 22;
 
         // Outgoing
 
