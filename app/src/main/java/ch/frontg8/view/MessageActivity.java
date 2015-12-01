@@ -127,7 +127,7 @@ public class MessageActivity extends AppCompatActivity {
                 if (contactId != null) {
                     try {
                         // Send Message
-                        String messageId = UUID.randomUUID().toString();
+                        String messageId = "0";
                         int timestamp = (int) System.currentTimeMillis() / 1000;
                         Frontg8Client.Data message = MessageHelper.buildDataMessage(textSend.getText().toString().getBytes(), messageId.getBytes(), timestamp);
                         Tuple<UUID, Frontg8Client.Data> content = new Tuple<>(contactId, message);
@@ -176,7 +176,7 @@ public class MessageActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_clear_message_history:
-                // TODO: send MSG_DEL_ALL_MSGS
+                android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_DEL_ALL_MSGS, contactId);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
