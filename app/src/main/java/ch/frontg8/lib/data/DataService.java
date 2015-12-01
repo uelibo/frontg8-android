@@ -1,5 +1,7 @@
 package ch.frontg8.lib.data;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,6 +12,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -19,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
 import ch.frontg8.lib.connection.ConnectionService;
 import ch.frontg8.lib.crypto.KeystoreHandler;
@@ -31,6 +35,22 @@ import ch.frontg8.lib.protobuf.Frontg8Client;
 import ch.frontg8.lib.protobuf.Frontg8Client.Data;
 
 public class DataService extends Service {
+//
+//    private Notification Notify(){
+//        Notification notification = new Notification.Builder(thisContext)
+//                .setAutoCancel(true)
+//                .setContentTitle("My notification")
+//                .setContentText("Look, white in Lollipop, else color!")
+//                .setSmallIcon(getNotificationIcon())
+//                .build();
+//
+//        return notification;
+//    }
+//
+//    private int getNotificationIcon() {
+////        boolean whiteIcon = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP);
+//        return R.drawable.icon;
+//    }
 
     private HashMap<UUID, Contact> contacts = new HashMap<>();
     private Context thisContext;
@@ -115,7 +135,7 @@ public class DataService extends Service {
                                 contact.addMessage(new ch.frontg8.bl.Message(decryptedMSG._2));
                                 contact.incrementUnreadMessageCounter();
                                 dataSource.insertMessage(contact, message);
-                                // Send updates to interested partys
+                                // Send updates to interested parties
                                 notifyContactObservers(contact);
                                 notifyMessageObservers(decryptedMSG._2);
                             }
