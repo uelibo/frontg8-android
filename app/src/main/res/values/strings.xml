@@ -14,6 +14,7 @@
     <string name="action_newcontact">New Contact</string>
     <string name="action_developer">Developer</string>
     <string name="action_aboutme">About Me</string>
+    <string name="action_clear_message_history">Clear</string>
     <color name="red">#FF0000</color>
     <color name="blue">#0000FF</color>
     <string name="title_activity_about_me">AboutMeActivity</string>

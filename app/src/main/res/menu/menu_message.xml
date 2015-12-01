@@ -6,6 +6,6 @@
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom"
         android:title="Search"/>
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
+    <item android:id="@+id/action_clear_message_history" android:title="@string/action_clear_message_history"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>
