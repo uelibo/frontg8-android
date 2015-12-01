@@ -143,6 +143,7 @@ public class ContactActivity extends AppCompatActivity {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
+                finish();
             }
         });
 
