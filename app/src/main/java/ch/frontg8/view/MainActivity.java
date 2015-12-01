@@ -171,10 +171,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intentAboutMe = new Intent(this, AboutMeActivity.class);
                 startActivity(intentAboutMe);
                 return true;
-            case R.id.action_connection_test:
-                Intent intentConnectionTest = new Intent(this, ConnectionTestActivity.class);
-                startActivity(intentConnectionTest);
-                return true;
             case R.id.action_developer:
                 Intent intentDeveloper = new Intent(this, DeveloperActivity.class);
                 startActivity(intentDeveloper);

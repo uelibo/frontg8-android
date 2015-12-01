@@ -52,13 +52,6 @@
                 android:value=".view.MainActivity" />
         </activity>
         <activity
-            android:name=".view.ConnectionTestActivity"
-            android:label="@string/title_activity_connection_test" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.MainActivity" />
-        </activity>
-        <activity
             android:name=".view.DeveloperActivity"
             android:label="@string/title_activity_developer"
             android:parentActivityName=".view.MainActivity" >
