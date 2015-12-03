@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">frontg8</string>
-    <string name="action_aboutme">üüUeber mich</string>
-    <string name="action_clear_message_history">Loeöschen</string>
+    <string name="action_aboutme">Über mich</string>
+    <string name="action_clear_message_history">Löschen</string>
     <string name="action_connection_test">Verbindungstest</string>
     <string name="action_developer">Entwickler</string>
     <string name="action_newcontact">Neuer Kontakt</string>
     <string name="action_settings">Einstellungen</string>
     <string name="contactlist">Kontaktliste</string>
-    <string name="editcontact">Kontakt äaendern</string>
-    <string name="hello_world">Ha,llo Welt</string>
-    <string name="messagelist"></string>
+    <string name="editcontact">Kontakt ändern</string>
+    <string name="hello_world">Hallo Welt</string>
+    <string name="messagelist">Nachrichtenliste</string>
     <string name="title_activity_message">Nachrichten</string>
     <string name="title_activity_settings">Einstellungen</string>
     <string name="title_activity_contact">Kontakt</string>
-    <string name="title_activity_developer"></string>
-    <string name="title_activity_connection_test"></string>
+    <string name="title_activity_developer">Entwickler</string>
+    <string name="title_activity_connection_test">Verbindungstest</string>
+    <string name="MessageConnected">Verbunden</string>
+    <string name="ButtonTextEdit">ändern</string>
+    <string name="ButtonTextSave">speichern</string>
+    <string name="MessageNoPublicKeyForThisContact">Keinen Public-Key für diesen Kontakt vorhanden</string>
+    <string name="buttonTextDelete">löschen</string>
+    <string name="buttonTextScanQrCode">QR-Code Scannen</string>
 </resources>

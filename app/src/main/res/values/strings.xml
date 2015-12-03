@@ -18,4 +18,10 @@
     <color name="red">#FF0000</color>
     <color name="blue">#0000FF</color>
     <string name="title_activity_about_me">AboutMeActivity</string>
+    <string name="MessageConnected">Connected</string>
+    <string name="MessageNoPublicKeyForThisContact">No PublicKey for this contact</string>
+    <string name="buttonTextScanQrCode">scan QR-code</string>
+    <string name="buttonTextDelete">delete</string>
+    <string name="ButtonTextSave">save</string>
+    <string name="ButtonTextEdit">Edit</string>
 </resources>

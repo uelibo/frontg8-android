@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 if (contact.hasValidPubKey()) {
                     openMessageActivityOfContact(contact);
                 } else {
-                    Toast toast = Toast.makeText(thisActivity, "No PublicKey for this contact", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(thisActivity, R.string.MessageNoPublicKeyForThisContact, Toast.LENGTH_SHORT);
                     toast.show();
                 }
             }

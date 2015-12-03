@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
 import ch.frontg8.lib.connection.ConnectionService;
 import ch.frontg8.lib.crypto.KeystoreHandler;
@@ -68,7 +69,7 @@ public class DataService extends Service {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
             mConService = new Messenger(binder);
-            Toast.makeText(DataService.this, "Connected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DataService.this, R.string.MessageConnected, Toast.LENGTH_SHORT).show();
 
             try {
                 Message msg = Message.obtain(null, ConnectionService.MessageTypes.MSG_REGISTER_CLIENT);
