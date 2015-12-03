@@ -64,7 +64,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ButtonTextSave"
+        android:text="@string/buttonTextSave"
         android:id="@+id/buttonSave"
         android:layout_alignTop="@+id/buttonDelete"
         android:layout_toEndOf="@+id/buttonDelete" />

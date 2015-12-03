@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">frontg8</string>
     <string name="action_aboutme">Über mich</string>
-    <string name="action_clear_message_history">Löschen</string>
+    <string name="action_clear_message_history">löschen</string>
     <string name="action_connection_test">Verbindungstest</string>
     <string name="action_developer">Entwickler</string>
     <string name="action_newcontact">Neuer Kontakt</string>
@@ -17,9 +17,13 @@
     <string name="title_activity_developer">Entwickler</string>
     <string name="title_activity_connection_test">Verbindungstest</string>
     <string name="MessageConnected">Verbunden</string>
-    <string name="ButtonTextEdit">ändern</string>
-    <string name="ButtonTextSave">speichern</string>
+    <string name="buttonTextEdit">ändern</string>
+    <string name="buttonTextSave">speichern</string>
     <string name="MessageNoPublicKeyForThisContact">Keinen Public-Key für diesen Kontakt vorhanden</string>
     <string name="buttonTextDelete">löschen</string>
     <string name="buttonTextScanQrCode">QR-Code Scannen</string>
+    <string name="MessageContactDeleted">Kontakt gelöscht</string>
+    <string name="MessageContactSaved">Kontakt gespeichert</string>
+    <string name="TitleEditContact">Kontakt ändern</string>
+    <string name="TitleNewContact">Neuer Kontakt</string>
 </resources>

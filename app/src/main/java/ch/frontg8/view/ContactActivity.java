@@ -88,7 +88,7 @@ public class ContactActivity extends AppCompatActivity {
                             + " " + contact.hasValidPubKey());
 
                     if (scannedKey == null) {
-                        title.setText("Edit Contact " + contact.getName() + " (" + contact.getContactId().toString() + ")");
+                        title.setText(getString(R.string.TitleEditContact) + " " + contact.getName() + " (" + contact.getContactId().toString() + ")");
                         name.setText(contact.getName());
                         surname.setText(contact.getSurname());
                         publicKey.setText(contact.getPublicKeyString());
@@ -120,7 +120,7 @@ public class ContactActivity extends AppCompatActivity {
         if (bundle == null) {
             // Create new Contact
             contact = new Contact();
-            title.setText("New Contact");
+            title.setText(R.string.TitleNewContact);
             name.setText(contact.getName());
             surname.setText(contact.getSurname());
             publicKey.setText(contact.getPublicKeyString());
@@ -138,7 +138,7 @@ public class ContactActivity extends AppCompatActivity {
                     android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_UPDATE_CONTACT, contact);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
-                    Toast toast = Toast.makeText(thisContext, "Contact saved", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(thisContext, R.string.MessageContactSaved, Toast.LENGTH_SHORT);
                     toast.show();
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -154,7 +154,7 @@ public class ContactActivity extends AppCompatActivity {
                     android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_REMOVE_CONTACT, contact);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
-                    Toast toast = Toast.makeText(thisContext, "Contact deleted", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(thisContext, R.string.MessageContactDeleted, Toast.LENGTH_SHORT);
                     toast.show();
                 } catch (RemoteException e) {
                     e.printStackTrace();
