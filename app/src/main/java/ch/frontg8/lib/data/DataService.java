@@ -1,7 +1,5 @@
 package ch.frontg8.lib.data;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,7 +10,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
 import ch.frontg8.lib.connection.ConnectionService;
 import ch.frontg8.lib.crypto.KeystoreHandler;
@@ -139,7 +135,6 @@ public class DataService extends Service {
                                 notifyContactObservers(contact);
                                 notifyMessageObservers(decryptedMSG._2);
                             }
-
                         }
                     } catch (RuntimeException re) {
                         Log.e("DS", "Could not construct msg!", re);
@@ -185,7 +180,7 @@ public class DataService extends Service {
                     if (contacts.get(uuid) == null || !contacts.get(uuid).getPublicKeyString().equals(pubkey)) {
                         try {
                             LibCrypto.negotiateSessionKeys(uuid, pubkey, ksHandler, thisContext);
-                            Log.d("Crypto", "negotiated new Key");
+                            Log.d("DS", "negotiated new Key");
                             contact.setValidPubkey(true);
                         } catch (InvalidKeyException e) {
                             e.printStackTrace();
@@ -263,7 +258,13 @@ public class DataService extends Service {
                     contact.delAllMessages();
                     dataSource.deleteAllMessagesOfUUID(uuid);
                     dataSource.updateContact(contact);
-                    //TODO: send bulk update...
+                    for (Messenger mMessenger : mMessageClients) {
+                        try {
+                            mMessenger.send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, contact.getMessages()));
+                        } catch (RemoteException e) {
+                            mMessageClients.remove(mMessenger);
+                        }
+                    }
                     break;
                 default:
                     super.handleMessage(msg);
@@ -282,7 +283,7 @@ public class DataService extends Service {
         }
     }
 
-    private void notifyMessageObservers(Data data){
+    private void notifyMessageObservers(Data data) {
         for (Messenger mMessenger : mMessageClients) {
             try {
                 mMessenger.send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
@@ -294,7 +295,7 @@ public class DataService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d("DService", "Destroy");
+        Log.d("DS", "Destroy");
         super.onDestroy();
         dataSource.close();
         unbindService(mConnection);
