@@ -28,4 +28,8 @@
     <string name="MessageContactSaved">Contact saved</string>
     <string name="TitleEditContact">"Edit Contact "</string>
     <string name="TitleNewContact">New Contact</string>
+    <string name="ButtonShowAsQrCode">show as qr code</string>
+    <string name="ButtonShowAsText">show as text</string>
+    <string name="ButtonCopyToClipbord">Copy to clipbord</string>
+    <string name="MessageMessagesDeleted">Messages deleted</string>
 </resources>

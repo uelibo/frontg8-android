@@ -26,4 +26,8 @@
     <string name="MessageContactSaved">Kontakt gespeichert</string>
     <string name="TitleEditContact">Kontakt ändern</string>
     <string name="TitleNewContact">Neuer Kontakt</string>
+    <string name="ButtonCopyToClipbord">In die Zwischenablage kopieren</string>
+    <string name="ButtonShowAsQrCode">Als QR-Code anzeigen</string>
+    <string name="ButtonShowAsText">Als Text anzeigen</string>
+    <string name="MessageMessagesDeleted">Nachrichten gelöscht</string>
 </resources>

@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -176,7 +177,13 @@ public class MessageActivity extends AppCompatActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_clear_message_history:
-                android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_DEL_ALL_MSGS, contactId);
+                try {
+                    mService.send(android.os.Message.obtain(null, DataService.MessageTypes.MSG_DEL_ALL_MSGS, contactId));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                Toast toast = Toast.makeText(thisActivity, R.string.MessageMessagesDeleted, Toast.LENGTH_SHORT);
+                toast.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
