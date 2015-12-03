@@ -3,6 +3,8 @@ package ch.frontg8.lib.config;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.io.IOException;
+
 import ch.frontg8.R;
 
 public class LibConfig {
@@ -24,6 +26,16 @@ public class LibConfig {
 
     public static String getUsername(Context context) {
         return getSharedPrefs(context).getString("edittext_preference_username", "paul");
+    }
+
+    public static byte[] getLastMessageHash(Context context) {
+        return (getSharedPrefs(context).getString("last_message_hash", "0")).getBytes();
+    }
+
+    public static void setLastMessageHash(Context context, byte[] hash) {
+        SharedPreferences.Editor editor = getSharedPrefs(context).edit();
+        editor.putString("last_message_hash", hash.toString());
+        editor.commit();
     }
 
 }
