@@ -1,8 +1,5 @@
 package ch.frontg8.lib.data;
 
-/**
- * Created by tstauber on 12/4/15.
- */
 public class MessageTypes {
 
             // Incoming

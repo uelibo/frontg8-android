@@ -14,7 +14,6 @@
     <string name="buttonTextEdit">ändern</string>
     <string name="buttonTextSave">speichern</string>
     <string name="buttonTextScanQrCode">QR-Code Scannen</string>
-    <string name="contactlist">Kontaktliste</string>
     <string name="dialogPleaseEnterHostname">Bitte Hostname eingeben</string>
     <string name="dialogPleaseEnterPort">Bitte Port eingeben</string>
     <string name="dialogPleaseEnterUsername">Bitte Benutzername eingeben</string>
@@ -26,7 +25,6 @@
     <string name="messageConnected">Verbunden</string>
     <string name="messageContactDeleted">Kontakt gelöscht</string>
     <string name="messageContactSaved">Kontakt gespeichert</string>
-    <string name="messagelist">Nachrichtenliste</string>
     <string name="messageMessagesDeleted">Nachrichten gelöscht</string>
     <string name="messageNoPublicKeyForThisContact">Keinen Public-Key für diesen Kontakt vorhanden</string>
     <string name="title_activity_about_me">Über mich</string>
@@ -35,6 +33,8 @@
     <string name="title_activity_developer">Entwickler</string>
     <string name="title_activity_message">Nachrichten</string>
     <string name="title_activity_settings">Einstellungen</string>
+    <string name="titleContactlist">Kontaktliste von</string>
+    <string name="titleMessagelist">Nachrichtenliste von</string>
     <string name="titleEditContact">Kontakt ändern</string>
     <string name="titleHostname">Hostname</string>
     <string name="titleNewContact">Neuer Kontakt</string>

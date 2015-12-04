@@ -109,7 +109,7 @@ public class MessageActivity extends AppCompatActivity {
 
         TextView title = (TextView) findViewById(R.id.textViewTitle);
         if (contactName != null) {
-            title.append(" of " + contactName);
+            title.append(" " + contactName);
         } else {
             // TODO: Handle invalid contact
         }

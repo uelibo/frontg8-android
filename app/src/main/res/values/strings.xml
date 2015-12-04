@@ -15,7 +15,6 @@
     <string name="buttonTextEdit">edit</string>
     <string name="buttonTextSave">save</string>
     <string name="buttonTextScanQrCode">scan QR-code</string>
-    <string name="contactlist">Contact List</string>
     <string name="dialogPleaseEnterHostname">Please enter server hostname</string>
     <string name="dialogPleaseEnterPort">Please enter port</string>
     <string name="dialogPleaseEnterUsername">Please enter username</string>
@@ -27,7 +26,6 @@
     <string name="messageConnected">Connected</string>
     <string name="messageContactDeleted">Contact deleted</string>
     <string name="messageContactSaved">Contact saved</string>
-    <string name="messagelist">Message List</string>
     <string name="messageMessagesDeleted">Messages deleted</string>
     <string name="messageNoPublicKeyForThisContact">No PublicKey for this contact</string>
     <string name="title_activity_about_me">About Me</string>
@@ -36,7 +34,9 @@
     <string name="title_activity_developer">Developer</string>
     <string name="title_activity_message">Messages</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="titleEditContact">"Edit Contact "</string>
+    <string name="titleContactlist">Contactlist of</string>
+    <string name="titleMessagelist">Message List of</string>
+    <string name="titleEditContact">Edit Contact</string>
     <string name="titleHostname">Hostname</string>
     <string name="titleNewContact">New Contact</string>
     <string name="titlePersonalSettings">Personal settings</string>
