@@ -97,7 +97,11 @@ public class DeveloperActivity extends AppCompatActivity {
 
         buttonClearDB.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-                android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_RESET);
+                try {
+                    mService.send(android.os.Message.obtain(null, DataService.MessageTypes.MSG_RESET));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
                 //datasource.deleteAllContacts();
                 //datasource.deleteAllMessages();
                 Toast toast = Toast.makeText(thisActivity, "all data deleted", Toast.LENGTH_SHORT);
