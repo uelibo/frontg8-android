@@ -144,7 +144,7 @@ public class DataService extends Service {
                                 dataSource.insertMessage(contact, message);
                                 // Send updates to interested parties
                                 notifyContactObservers(contact);
-                                notifyMessageObservers(decryptedMSG._2);
+                                notifyMessageObservers(new ch.frontg8.bl.Message(decryptedMSG._2));
                             }
                         }
                         if (message != null) {
@@ -280,7 +280,7 @@ public class DataService extends Service {
                     contact.delAllMessages();
                     dataSource.deleteAllMessagesOfUUID(uuid);
                     dataSource.updateContact(contact);
-                    notifyBulkMessageObservers(new ArrayList<Data>());
+                    notifyBulkMessageObservers(new ArrayList<ch.frontg8.bl.Message>());
                     break;
                 case MessageTypes.MSG_RESET:
                     Log.d("DS", "ResetAll");
@@ -310,7 +310,7 @@ public class DataService extends Service {
         }
     }
 
-    private void notifyMessageObservers(Data data) {
+    private void notifyMessageObservers(ch.frontg8.bl.Message data) {
         Iterator<Messenger> iter = mMessageClients.iterator();
         while (iter.hasNext()) {
             try {
@@ -321,7 +321,7 @@ public class DataService extends Service {
         }
     }
 
-    private void notifyBulkMessageObservers(ArrayList<Data> al) {
+    private void notifyBulkMessageObservers(ArrayList<ch.frontg8.bl.Message> al) {
         Iterator<Messenger> iter = mMessageClients.iterator();
         while (iter.hasNext()) {
             try {
