@@ -39,4 +39,7 @@
     <string name="dialogPleaseEnterUsername">Bitte Benutzername eingeben</string>
     <string name="titlePersonalSettings">Persönliche Einstellungen</string>
     <string name="titleServerSettings">Server Einstellungen</string>
+    <string name="hintName">Name</string>
+    <string name="hintSurname">Nachname</string>
+    <string name="hitPublicKey">Public Key</string>
 </resources>

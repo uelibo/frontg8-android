@@ -13,7 +13,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
+        android:text=""
+        android:hint="@string/hintName"
         android:ems="10"
         android:id="@+id/editPersonName"
         android:layout_below="@+id/textViewTitle"
@@ -25,7 +26,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Surname"
+        android:text=""
+        android:hint="@string/hintSurname"
         android:ems="10"
         android:id="@+id/editPersonSurname"
         android:layout_below="@+id/editPersonName"
@@ -40,6 +42,7 @@
         android:layout_alignParentStart="true"
         android:ems="7"
         android:text=""
+        android:hint="@string/hitPublicKey"
         android:layout_marginTop="6dp"
         android:layout_alignParentEnd="true" />
 

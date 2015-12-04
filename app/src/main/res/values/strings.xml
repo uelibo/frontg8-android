@@ -40,4 +40,7 @@
     <string name="dialogPleaseEnterPort">Please enter port</string>
     <string name="titlePersonalSettings">Personal settings</string>
     <string name="titleServerSettings">Server settings</string>
+    <string name="hintName">Name</string>
+    <string name="hintSurname">Surname</string>
+    <string name="hitPublicKey">PublicKey</string>
 </resources>
