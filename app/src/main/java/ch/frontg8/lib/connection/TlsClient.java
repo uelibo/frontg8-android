@@ -6,25 +6,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
-import java.security.cert.Certificate;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSocket;
-
-import ch.frontg8.lib.message.MessageHelper;
 
 public class TlsClient {
     private String hostname;
     private int port;
-    private Logger log;
     private SSLContext sslContext;
     private SSLSocket socket = null;
 
-    public TlsClient(String hostname, int port, Logger Log, SSLContext sslContext) {
+    public TlsClient(String hostname, int port, SSLContext sslContext) {
         this.hostname = hostname;
         this.port = port;
-        this.log = Log;
         this.sslContext = sslContext;
     }
 
@@ -36,14 +30,17 @@ public class TlsClient {
         if (isConnected()) {
             return true;
         } else {
-            throw new NotConnectedException("not Connected");
+            connect();
+            if (!isConnected()) {
+                throw new NotConnectedException("not Connected");
+            }
+            return true;
         }
     }
 
     public void connect() throws NotConnectedException {
         getSocket(sslContext);
         tlsHandshake();
-        listCerts(); // TODO: remove debugstuff
     }
 
     private void getSocket(SSLContext sslContext) {
@@ -63,57 +60,31 @@ public class TlsClient {
             try {
                 socket.startHandshake();
             } catch (IOException e) {
-                log.TRACE("socket.startHandshake >> IOException");
-                log.TRACE(e.getMessage());
-
-            }
-            log.TRACE("Handshaking Complete");
-        }
-    }
-
-    private void listCerts() throws NotConnectedException {
-        if (throwExceptionIfNotConnected()) {
-            Certificate[] serverCerts;
-            try {
-                serverCerts = socket.getSession().getPeerCertificates();
-                log.TRACE("Retreived Server's Certificate Chain");
-                log.TRACE(serverCerts.length + "Certifcates Found\n\n\n");
-                for (int i = 0; i < serverCerts.length; i++) {
-                    Certificate myCert = serverCerts[i];
-                    log.TRACE("====Certificate:" + (i + 1) + "====");
-                    log.TRACE("-Public Key-\n" + myCert.getPublicKey());
-                    log.TRACE("-Certificate Type-\n " + myCert.getType());
-                    log.TRACE("");
-                }
-            } catch (SSLPeerUnverifiedException e) {
-                log.TRACE(" socket.getSession().getPeerCertificates >> SSLPeerUnverifiedException");
+                throw new NotConnectedException("Could not complete Handshake");
             }
         }
     }
 
     public void sendBytes(byte[] packet) throws NotConnectedException {
         if (throwExceptionIfNotConnected()) {
-            log.TRACE("sending packet ");
+            Log.v("TLS", "sending packet ");
             try {
                 socket.getOutputStream().write(packet);
                 socket.getOutputStream().flush();
-                log.TRACE("sending packet succeeded");
+                Log.v("TLS", "sending packet succeeded");
             } catch (IOException e1) {
-                log.TRACE("socket.getOutputStream().write >> IOException");
+                Log.v("TLS", "socket.getOutputStream().write >> IOException");
             }
         }
     }
 
     public byte[] getBytes(int length) throws NotConnectedException {
         byte[] recv = new byte[length];
-        if (throwExceptionIfNotConnected()) {
-            log.TRACE("recving packet");
-            try {
-                int recvLen = socket.getInputStream().read(recv, 0, recv.length);
-                log.TRACE(MessageHelper.byteArrayAsHexString(recv) + " (" + recvLen + ")");
-            } catch (IOException e1) {
-                log.TRACE("socket.getInputStream().read >> IOException");
-            }
+        Log.v("TLS", "recving packet");
+        if (throwExceptionIfNotConnected()) try {
+            socket.getInputStream().read(recv, 0, recv.length);
+        } catch (IOException e1) {
+            Log.v("TLS", "socket.getInputStream().read >> IOException");
         }
         return recv;
     }
@@ -129,11 +100,11 @@ public class TlsClient {
     public void close() {
         if (isConnected()) {
             try {
-                log.TRACE("closing socket");
+                Log.v("TLS", "closing socket");
                 socket.close();
-                log.TRACE("socket closed");
+                Log.v("TLS", "socket closed");
             } catch (IOException e) {
-                log.TRACE("socket.close >> IOException");
+                Log.v("TLS", "socket.close >> IOException");
             }
         }
     }

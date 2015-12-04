@@ -13,7 +13,6 @@ import ch.frontg8.lib.crypto.LibSSLContext;
 import ch.frontg8.lib.helper.Tuple;
 import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
-import ch.frontg8.lib.message.MessageType;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class TlsTest {
@@ -30,7 +29,7 @@ public class TlsTest {
         int serverPort = LibConfig.getServerPort(context);
 
         SSLContext sslContext = LibSSLContext.getSSLContext("root", context);
-        TlsClient tlsClient = new TlsClient(serverName, serverPort, Log, sslContext);
+        TlsClient tlsClient = new TlsClient(serverName, serverPort, sslContext);
         try {
             tlsClient.connect();
         } catch (NotConnectedException e) {
@@ -89,7 +88,7 @@ public class TlsTest {
             String text = null;
             try {
                 Tuple<UUID, Frontg8Client.Data> mes = MessageHelper.getDecryptedContent(message, new KeystoreHandler(context));
-                text = mes._1.toString() + mes._2.getMessageData().toStringUtf8();
+                text = mes._2 != null && mes._2.getMessageData() != null? mes._1.toString() + "\n\t" + mes._2.getMessageData().toStringUtf8() : "Undecryptable";
             } catch (InvalidMessageException e) {
                 Log.TRACE("WARNING: Could not decrypt message");
                 try {

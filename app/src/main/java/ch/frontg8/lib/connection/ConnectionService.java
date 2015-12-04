@@ -9,7 +9,6 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -18,12 +17,7 @@ import ch.frontg8.lib.crypto.LibSSLContext;
 
 public class ConnectionService extends Service {
 
-    public ConnectionService() {
-    }
-    //TODO test for connection lost
-
     private TcpClient mTcpClient = null;
-    private Logger logger = new Logger();
     final Messenger mMessenger = new Messenger(new IncomingHandler());
     HashSet<Messenger> mClients = new HashSet<>();
 
@@ -42,7 +36,7 @@ public class ConnectionService extends Service {
             @Override
             public void messageReceived(byte[] message) {
                 Iterator<Messenger> iter = mClients.iterator();
-                while(iter.hasNext()) {
+                while (iter.hasNext()) {
                     try {
                         iter.next().send(Message.obtain(null, MessageTypes.MSG_MSG, message));
                     } catch (RemoteException e) {
@@ -50,7 +44,7 @@ public class ConnectionService extends Service {
                     }
                 }
             }
-        }, LibConfig.getServerName(this), LibConfig.getServerPort(this), logger, LibSSLContext.getSSLContext("root", this));
+        }, LibConfig.getServerName(this), LibConfig.getServerPort(this), LibSSLContext.getSSLContext("root", this));
         mTcpClient.execute();
     }
 
