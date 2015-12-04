@@ -128,8 +128,10 @@ public class DataService extends Service {
                     try {
                         List<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(msgBytes));
 
-                        for (Frontg8Client.Encrypted message : messages) {
-
+                        Iterator<Frontg8Client.Encrypted> it = messages.iterator();
+                        Frontg8Client.Encrypted message = null;
+                        while (it.hasNext()) {
+                            message = it.next();
                             Tuple<UUID, Data> decryptedMSG = MessageHelper.getDecryptedContent(message, ksHandler);
                             if (decryptedMSG._2 != null) {
                                 Contact contact = contacts.get(decryptedMSG._1);
@@ -140,6 +142,9 @@ public class DataService extends Service {
                                 notifyContactObservers(contact);
                                 notifyMessageObservers(decryptedMSG._2);
                             }
+                        }
+                        if (message != null) {
+                            LibConfig.setLastMessageHash(thisContext, LibCrypto.getSHA256Hash(message.toByteArray()));
                         }
                     } catch (RuntimeException re) {
                         Log.e("DS", "Could not construct msg!", re);
@@ -182,7 +187,7 @@ public class DataService extends Service {
                     contact = (Contact) msg.obj;
                     uuid = contact.getContactId();
                     String pubkey = contact.getPublicKeyString();
-                    if (contacts.get(uuid) == null || !contacts.get(uuid).getPublicKeyString().equals(pubkey)) {
+                    if (pubkey != null && (contacts.get(uuid) == null || !contacts.get(uuid).getPublicKeyString().equals(pubkey))) {
                         try {
                             LibCrypto.negotiateSessionKeys(uuid, pubkey, ksHandler, thisContext);
                             Log.d("DS", "negotiated new Key");
