@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
@@ -18,12 +19,13 @@ import java.util.UUID;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
-import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.connection.ConnectionService;
 import ch.frontg8.lib.crypto.KeystoreHandler;
 import ch.frontg8.lib.crypto.LibCrypto;
 import ch.frontg8.lib.dbstore.ContactsDataSource;
+import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
+import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class DataService extends Service {
 
@@ -50,10 +52,10 @@ public class DataService extends Service {
                 msg1.replyTo = mConMessenger;
                 mConService.send(msg1);
 
-                byte[] requestMSG = MessageHelper.buildMessageRequestMessage(LibConfig.getLastMessageHash(thisContext));
-                Message msg2 = Message.obtain(null, ConnectionService.MessageTypes.MSG_MSG, requestMSG);
-                msg1.replyTo = mConMessenger;
-                mConService.send(msg2);
+//                byte[] requestMSG = MessageHelper.buildMessageRequestMessage(LibConfig.getLastMessageHash(thisContext));
+//                Message msg2 = Message.obtain(null, ConnectionService.MessageTypes.MSG_MSG, requestMSG);
+//                msg1.replyTo = mConMessenger;
+//                mConService.send(msg2);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -81,8 +83,10 @@ public class DataService extends Service {
         for (Contact contact : dataSource.getAllContacts()) {
             UUID uuid = contact.getContactId();
             contacts.put(uuid, contact);
-            contact.addMessages(LibCrypto.decryptMSGs(uuid, dataSource.getEncryptedMessagesByUUID(uuid), ksHandler));
+
+            new Encrypting().execute(uuid);
         }
+
 
         // Start ConnectionService
         Intent mIntent = new Intent(this, ConnectionService.class);
@@ -108,5 +112,20 @@ public class DataService extends Service {
         super.onDestroy();
         dataSource.close();
         unbindService(mConnection);
+    }
+
+    private class Encrypting extends AsyncTask<UUID, UUID, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(UUID... uuids) {
+            for (Frontg8Client.Encrypted enc : dataSource.getEncryptedMessagesByUUID(uuids[0])) {
+                try {
+                    contacts.get(uuids[0]).addMessage( new ch.frontg8.bl.Message(MessageHelper.getDataMessage(LibCrypto.decryptMSG( enc.getEncryptedData().toByteArray(), uuids[0],  ksHandler )._2)) );
+                } catch (InvalidMessageException e) {
+                    e.printStackTrace();
+                }
+            }
+            return true;
+        }
     }
 }
