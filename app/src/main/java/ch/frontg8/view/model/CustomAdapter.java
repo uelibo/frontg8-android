@@ -91,7 +91,7 @@ abstract public class CustomAdapter<T extends Filtertext> extends BaseAdapter im
                         constraint = constraint.toString().toLowerCase();
                         for (int i = 0; i < mOriginalValues.size(); i++) {
                             T data = mOriginalValues.get(i);
-                            if (data.getFilterValue().toLowerCase().startsWith(constraint.toString())) {
+                            if (data.getFilterValue().toLowerCase().contains(constraint.toString())) {
                                 FilteredArrList.add(data);
                             }
                         }

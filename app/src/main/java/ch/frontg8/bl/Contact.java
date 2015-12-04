@@ -48,7 +48,7 @@ public class Contact implements Serializable, Filtertext {
     public boolean hasValidPubKey() { return hasValidPubKey; }
     public void setValidPubkey(boolean valid) { this.hasValidPubKey = valid; }
 
-    public String getFilterValue() { return this.name; }
+    public String getFilterValue() { return this.name + " " + this.surname; }
 
     @Override
     public String toString() { return name; }
