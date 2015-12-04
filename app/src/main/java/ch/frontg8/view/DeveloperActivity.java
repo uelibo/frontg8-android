@@ -1,9 +1,18 @@
 package ch.frontg8.view;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,12 +31,42 @@ import ch.frontg8.bl.Message;
 import ch.frontg8.lib.connection.TlsTest;
 import ch.frontg8.lib.crypto.KeystoreHandler;
 import ch.frontg8.lib.crypto.LibCrypto;
+import ch.frontg8.lib.data.DataService;
 import ch.frontg8.lib.dbstore.ContactsDataSource;
 
 public class DeveloperActivity extends AppCompatActivity {
     private Activity thisActivity;
     private ContactsDataSource datasource = new ContactsDataSource(this);
     private TextView textViewLog;
+    // Messenger to get Contacts
+    final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private Messenger mService;
+
+    // Connection to DataService
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder binder) {
+            mService = new Messenger(binder);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            mService = null;
+        }
+
+    };
+
+    // Handler for Messages from DataService
+    class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                default:
+                    super.handleMessage(msg);
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +97,9 @@ public class DeveloperActivity extends AppCompatActivity {
 
         buttonClearDB.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-                datasource.deleteAllContacts();
-                datasource.deleteAllMessages();
+                android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_RESET);
+                //datasource.deleteAllContacts();
+                //datasource.deleteAllMessages();
                 Toast toast = Toast.makeText(thisActivity, "all data deleted", Toast.LENGTH_SHORT);
                 toast.show();
             }
@@ -154,7 +194,18 @@ public class DeveloperActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        unbindService(mConnection);
         datasource.close();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("Debug", "DeveloperActivity Resumed");
+
+        // bind to DataService
+        Intent intent = new Intent(this, DataService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
 }
