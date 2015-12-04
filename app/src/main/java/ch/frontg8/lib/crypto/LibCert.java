@@ -28,9 +28,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-/**
- * Created by tstauber on 03.11.15.
- */
 public class LibCert {
     private static final String BC = BouncyCastleProvider.PROVIDER_NAME;
 

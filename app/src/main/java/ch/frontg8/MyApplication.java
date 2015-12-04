@@ -5,9 +5,6 @@ import android.content.Intent;
 
 import ch.frontg8.lib.data.DataService;
 
-/**
- * Created by tstauber on 11/30/15.
- */
 public class MyApplication extends Application {
     Intent intent;
 
