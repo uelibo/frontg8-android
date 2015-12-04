@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -224,9 +223,9 @@ public class DataService extends Service {
                     contact = contacts.get(uuid);
                     try {
                         ArrayList<Data> al = new ArrayList<>();
-                        for(ch.frontg8.bl.Message m : contact.getMessages()){
+                        for (ch.frontg8.bl.Message m : contact.getMessages()) {
                             Frontg8Client.Encrypted enc = m.getEncryptedMessage();
-                            if ( enc != null) {
+                            if (enc != null) {
                                 Tuple<UUID, byte[]> tup = LibCrypto.decryptMSG(enc.getEncryptedData().toByteArray(), uuid, ksHandler);
                                 if (tup._2 != null) {
                                     Data dat = MessageHelper.getDataMessage(tup._2);
@@ -286,8 +285,10 @@ public class DataService extends Service {
                     notifyBulkMessageObservers(new ArrayList<Data>());
                     break;
                 case MessageTypes.MSG_RESET:
+                    Log.d("DS", "ResetAll");
                     dataSource.deleteAllContacts();
                     dataSource.deleteAllMessages();
+                    contacts.clear();
                     ksHandler.resetOther();
                     Toast toast = Toast.makeText(thisContext, "All data deleted", Toast.LENGTH_SHORT);
                     toast.show();
@@ -301,7 +302,7 @@ public class DataService extends Service {
 
     private void notifyContactObservers(Contact contact) {
         Iterator<Messenger> iter = mContactClients.iterator();
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             try {
                 iter.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, contact));
             } catch (RemoteException e) {
@@ -312,7 +313,7 @@ public class DataService extends Service {
 
     private void notifyMessageObservers(Data data) {
         Iterator<Messenger> iter = mMessageClients.iterator();
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             try {
                 iter.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
             } catch (RemoteException e) {
@@ -321,9 +322,9 @@ public class DataService extends Service {
         }
     }
 
-    private void notifyBulkMessageObservers(ArrayList<Data> al){
+    private void notifyBulkMessageObservers(ArrayList<Data> al) {
         Iterator<Messenger> iter = mMessageClients.iterator();
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             try {
                 iter.next().send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, al));
             } catch (RemoteException e) {
