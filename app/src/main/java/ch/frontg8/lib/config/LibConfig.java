@@ -3,8 +3,6 @@ package ch.frontg8.lib.config;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.io.IOException;
-
 import ch.frontg8.R;
 
 public class LibConfig {

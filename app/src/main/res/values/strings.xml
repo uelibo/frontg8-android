@@ -32,4 +32,12 @@
     <string name="ButtonShowAsText">show as text</string>
     <string name="ButtonCopyToClipbord">Copy to clipbord</string>
     <string name="MessageMessagesDeleted">Messages deleted</string>
+    <string name="titleUsername">Username</string>
+    <string name="titleHostname">Hostname</string>
+    <string name="titlePort">Port</string>
+    <string name="dialogPleaseEnterUsername">Please enter username</string>
+    <string name="dialogPleaseEnterHostname">Please enter server hostname</string>
+    <string name="dialogPleaseEnterPort">Please enter port</string>
+    <string name="titlePersonalSettings">Personal settings</string>
+    <string name="titleServerSettings">Server settings</string>
 </resources>

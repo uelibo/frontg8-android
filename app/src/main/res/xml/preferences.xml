@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="Personal settings">
+    <PreferenceCategory android:title="@string/titlePersonalSettings">
         <EditTextPreference
             android:key="edittext_preference_username"
-            android:title="Username"
+            android:title="@string/titleUsername"
             android:summary="Your username"
-            android:dialogTitle="Please enter username"
+            android:dialogTitle="@string/dialogPleaseEnterUsername"
             android:defaultValue="John" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="Server settings">
+    <PreferenceCategory android:title="@string/titleServerSettings">
         <EditTextPreference
             android:key="edittext_preference_hostname"
-            android:title="Hostname"
+            android:title="@string/titleHostname"
             android:summary="Hostname to connect to"
-            android:dialogTitle="Please enter server hostname"
+            android:dialogTitle="@string/dialogPleaseEnterHostname"
             android:defaultValue="server.frontg8.ch" />
         <EditTextPreference
             android:key="edittext_preference_port"
-            android:title="Port"
+            android:title="@string/titlePort"
             android:summary="Port to connect to"
-            android:dialogTitle="Please enter port"
+            android:dialogTitle="@string/dialogPleaseEnterPort"
             android:defaultValue="40001"
             android:numeric="integer"
             android:maxLength="5"/>

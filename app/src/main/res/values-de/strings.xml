@@ -30,4 +30,13 @@
     <string name="ButtonShowAsQrCode">Als QR-Code anzeigen</string>
     <string name="ButtonShowAsText">Als Text anzeigen</string>
     <string name="MessageMessagesDeleted">Nachrichten gelöscht</string>
+    <string name="titleUsername">Benutzername</string>
+    <string name="title_activity_about_me">Über mich</string>
+    <string name="titlePort">Port</string>
+    <string name="titleHostname">Hostname</string>
+    <string name="dialogPleaseEnterHostname">Bitte Hostname eingeben</string>
+    <string name="dialogPleaseEnterPort">Bitte Port eingeben</string>
+    <string name="dialogPleaseEnterUsername">Bitte Benutzername eingeben</string>
+    <string name="titlePersonalSettings">Persönliche Einstellungen</string>
+    <string name="titleServerSettings">Server Einstellungen</string>
 </resources>
