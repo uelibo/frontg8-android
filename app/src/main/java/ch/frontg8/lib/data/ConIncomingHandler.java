@@ -21,9 +21,6 @@ import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
-/**
- * Created by tstauber on 12/4/15.
- */
 public class ConIncomingHandler extends Handler {
     private final WeakReference<DataService> mService;
 
@@ -63,7 +60,7 @@ public class ConIncomingHandler extends Handler {
                     } catch (RuntimeException re) {
                         Log.e("DS", "Could not construct msg!", re);
                     } catch (InvalidMessageException e) {
-                        Log.e("DS", "Could not construct msg from decryptet content!", e);
+                        Log.e("DS", "Could not construct msg from decrypted content!", e);
                     }
                     break;
                 default:
@@ -73,23 +70,23 @@ public class ConIncomingHandler extends Handler {
     }
 
     private void notifyContactObservers(Contact contact, HashSet<Messenger> messengers) {
-        Iterator<Messenger> iter = messengers.iterator();
-        while (iter.hasNext()) {
+        Iterator<Messenger> iterator = messengers.iterator();
+        while (iterator.hasNext()) {
             try {
-                iter.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, contact));
+                iterator.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, contact));
             } catch (RemoteException e) {
-                iter.remove();
+                iterator.remove();
             }
         }
     }
 
     private void notifyMessageObservers(ch.frontg8.bl.Message data, HashSet<Messenger> messengers) {
-        Iterator<Messenger> iter = messengers.iterator();
-        while (iter.hasNext()) {
+        Iterator<Messenger> iterator = messengers.iterator();
+        while (iterator.hasNext()) {
             try {
-                iter.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
+                iterator.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
             } catch (RemoteException e) {
-                iter.remove();
+                iterator.remove();
             }
         }
     }

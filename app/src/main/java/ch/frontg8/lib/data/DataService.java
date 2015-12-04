@@ -61,11 +61,14 @@ public class DataService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("DS", "Create");
+
         mConMessenger = new Messenger(new ConIncomingHandler(this));
         mDataMessenger = new Messenger(new DataIncomingHandler(this));
         thisContext = this;
+
         // Create ksHandler
         ksHandler = new KeystoreHandler(this);
+
         // Load contacts
         dataSource.open();
         for (Contact contact : dataSource.getAllContacts()) {
@@ -74,6 +77,7 @@ public class DataService extends Service {
             contact.addMessages(LibCrypto.decryptMSGs(uuid, dataSource.getEncryptedMessagesByUUID(uuid), ksHandler));
         }
 
+        // Start ConnectionService
         Intent mIntent = new Intent(this, ConnectionService.class);
         bindService(mIntent, mConnection, Context.BIND_AUTO_CREATE);
         return START_NOT_STICKY;
@@ -84,11 +88,10 @@ public class DataService extends Service {
         return mDataMessenger.getBinder();
     }
 
+
     @Override
     public void onCreate() {
         super.onCreate();
-
-
     }
 
 
@@ -98,7 +101,5 @@ public class DataService extends Service {
         super.onDestroy();
         dataSource.close();
         unbindService(mConnection);
-        // TODO remove stuff
     }
-
 }

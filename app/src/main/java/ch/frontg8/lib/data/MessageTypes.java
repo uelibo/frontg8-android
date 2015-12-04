@@ -5,7 +5,7 @@ package ch.frontg8.lib.data;
  */
 public class MessageTypes {
 
-            // Incomming
+            // Incoming
 
             //- Will add you to a List of active Clients for contact-updates
             public static final int MSG_GET_CONTACTS = 10;
@@ -25,7 +25,7 @@ public class MessageTypes {
             public static final int MSG_REGISTER_FOR_MESSAGES = 16;
             // - Will remove you from the list of active clients for message-updates
             public static final int MSG_UNREGISTER_FOR_MESSAGES = 17;
-            //obj Tuple<UUID, new Frontg8.Data>
+            //obj Tuple<UUID, new Frontg8Client.Data>
             public static final int MSG_SEND_MSG = 18;
             // - Will return array of Frontg8Client.Data
             public static final int MSG_REQUEST_MSG = 19;
@@ -36,7 +36,7 @@ public class MessageTypes {
             // - Will change my key, generate new keys for all Contacts, and delete all Messages
             public static final int MSG_GEN_NEW_KEYS = 22;
             //obj UUID - will delete all messages for this contact
-            public static final int MSG_DEL_ALL_MSGS = 23;
+            public static final int MSG_DEL_ALL_MSG = 23;
             // - Will reset keystore, database and contacts.
             public static final int MSG_RESET = 24;
 

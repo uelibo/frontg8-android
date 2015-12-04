@@ -21,10 +21,6 @@ import ch.frontg8.lib.helper.Tuple;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
-/**
- * Created by tstauber on 12/4/15.
- */
-
 public class DataIncomingHandler extends Handler {
     private final WeakReference<DataService> mService;
 
@@ -76,7 +72,7 @@ public class DataIncomingHandler extends Handler {
                 case MessageTypes.MSG_GEN_NEW_KEYS:
                     LibCrypto.generateNewKeys(service.ksHandler, service.thisContext);
                     break;
-                case MessageTypes.MSG_DEL_ALL_MSGS:
+                case MessageTypes.MSG_DEL_ALL_MSG:
                     deleteAllMessages(msg, service);
                     break;
                 case MessageTypes.MSG_RESET:
@@ -106,12 +102,16 @@ public class DataIncomingHandler extends Handler {
         contact.delAllMessages();
         service.dataSource.deleteAllMessagesOfUUID(uuid);
         service.dataSource.updateContact(contact);
-        Iterator<Messenger> iter3 = service.mMessageClients.iterator();
-        while (iter3.hasNext()) {
+        sendToAll(service);
+    }
+
+    private void sendToAll(DataService service) {
+        Iterator<Messenger> iterator = service.mMessageClients.iterator();
+        while (iterator.hasNext()) {
             try {
-                iter3.next().send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, new ArrayList<ch.frontg8.bl.Message>()));
+                iterator.next().send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, new ArrayList<ch.frontg8.bl.Message>()));
             } catch (RemoteException e) {
-                iter3.remove();
+                iterator.remove();
             }
         }
     }
@@ -125,6 +125,7 @@ public class DataIncomingHandler extends Handler {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void sendMessage(Message msg, DataService service) {
         try {
             Tuple<UUID, Frontg8Client.Data> content = (Tuple<UUID, Frontg8Client.Data>) msg.obj;
@@ -146,12 +147,16 @@ public class DataIncomingHandler extends Handler {
         }
         contact1.resetUnreadMessageCounter();
         service.dataSource.updateContact(contact1);
-        Iterator<Messenger> iter = service.mContactClients.iterator();
-        while (iter.hasNext()) {
+        sendToContactSubscriptors(service, contact1);
+    }
+
+    private void sendToContactSubscriptors(DataService service, Contact contact1) {
+        Iterator<Messenger> iterator = service.mContactClients.iterator();
+        while (iterator.hasNext()) {
             try {
-                iter.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, contact1));
+                iterator.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, contact1));
             } catch (RemoteException e2) {
-                iter.remove();
+                iterator.remove();
             }
         }
     }
@@ -169,23 +174,16 @@ public class DataIncomingHandler extends Handler {
         UUID uuid2 = contact2.getContactId();
         service.dataSource.deleteContact(contact2);
         service.contacts.remove(uuid2);
-        Iterator<Messenger> iter1 = service.mContactClients.iterator();
-        while (iter1.hasNext()) {
-            try {
-                iter1.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, contact2));
-            } catch (RemoteException e3) {
-                iter1.remove();
-            }
-        }
+        sendToContactSubscriptors(service, contact2);
     }
 
     private void updateContact(Message msg, DataService service) {
         Contact contact3 = (Contact) msg.obj;
         UUID uuid3 = contact3.getContactId();
-        String pubkey = contact3.getPublicKeyString();
-        if (pubkey != null && (service.contacts.get(uuid3) == null || !service.contacts.get(uuid3).getPublicKeyString().equals(pubkey))) {
+        String publicKey = contact3.getPublicKeyString();
+        if (publicKey != null && (service.contacts.get(uuid3) == null || !service.contacts.get(uuid3).getPublicKeyString().equals(publicKey))) {
             try {
-                LibCrypto.negotiateSessionKeys(uuid3, pubkey, service.ksHandler, service.thisContext);
+                LibCrypto.negotiateSessionKeys(uuid3, publicKey, service.ksHandler, service.thisContext);
                 Log.d("DS", "negotiated new Key");
                 contact3.setValidPubkey(true);
             } catch (InvalidKeyException e3) {
@@ -203,14 +201,7 @@ public class DataIncomingHandler extends Handler {
             service.dataSource.createContact(contact3);
         }
         service.contacts.put(uuid3, contact3);
-        Iterator<Messenger> iter2 = service.mContactClients.iterator();
-        while (iter2.hasNext()) {
-            try {
-                iter2.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, contact3));
-            } catch (RemoteException e4) {
-                iter2.remove();
-            }
-        }
+        sendToContactSubscriptors(service, contact3);
     }
 
     private void getContactDetails(Message msg, DataService service) {

@@ -52,9 +52,8 @@ public class LibCrypto {
     public static byte[] encryptMSG(UUID uuid, byte[] plainBytes, KeystoreHandler ksHandler) throws KeyNotFoundException {
         byte[] encryptedBytes;
         byte[] iv = genIV();
-        IvParameterSpec ivspec = new IvParameterSpec(iv);
 
-        Cipher cipher = getEncryptCipher(ksHandler.getSKC(uuid), ivspec);
+        Cipher cipher = getEncryptCipher(ksHandler.getSKC(uuid), new IvParameterSpec(iv));
         try {
             encryptedBytes = cipher.doFinal(plainBytes);
         } catch (IllegalBlockSizeException | BadPaddingException e) {
@@ -63,7 +62,6 @@ public class LibCrypto {
 
         byte[] hmac = getHMAC(ksHandler.getSKS(uuid), encryptedBytes);
         return concat(iv, encryptedBytes, hmac);
-        // TODO: what to do if uuid does not have a sessionkey?
     }
 
     @NonNull
@@ -194,8 +192,6 @@ public class LibCrypto {
     // HMAC Helpers
 
     private static boolean verifyHMAC(SecretKey sks, byte[] msg, byte[] hmac) {
-        System.out.println("-----\n" + Base64.toBase64String(hmac));
-        System.out.println(Base64.toBase64String(getHMAC(sks, msg)) + "\n+++++");
         return Arrays.areEqual(hmac, getHMAC(sks, msg));
     }
 
@@ -230,8 +226,6 @@ public class LibCrypto {
         byte[] sessionKey;
         sessionKey = ksHandler.negotiateSessionKeys(pubKey, context);
 
-        // TODO: check for invalid Pubkey
-
         byte[] skcBytes = Arrays.copyOfRange(sessionKey, 0, KEYSIZE);
         byte[] sksBytes = Arrays.copyOfRange(sessionKey, sessionKey.length - KEYSIZE, sessionKey.length);
 
@@ -258,7 +252,6 @@ public class LibCrypto {
 
 
     // Session Key Handling
-
     public static boolean containsSKSandSKC(@NonNull UUID uuid, @NonNull KeystoreHandler ksHandler) {
         return ksHandler.containsSKSandSKC(uuid);
     }

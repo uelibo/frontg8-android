@@ -177,7 +177,7 @@ public class MessageActivity extends AppCompatActivity {
         switch (id) {
             case R.id.action_clear_message_history:
                 try {
-                    mService.send(android.os.Message.obtain(null, MessageTypes.MSG_DEL_ALL_MSGS, contactId));
+                    mService.send(android.os.Message.obtain(null, MessageTypes.MSG_DEL_ALL_MSG, contactId));
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
