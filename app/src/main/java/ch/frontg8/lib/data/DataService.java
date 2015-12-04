@@ -119,7 +119,9 @@ public class DataService extends Service {
     }
 
     //TODO speedup by passing msghandler directly
+    //TODO make static
     class ConIncomingHandler extends Handler {
+
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {

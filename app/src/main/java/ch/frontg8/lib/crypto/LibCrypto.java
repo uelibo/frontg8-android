@@ -6,21 +6,17 @@ import android.support.annotation.NonNull;
 import org.spongycastle.crypto.digests.SHA256Digest;
 import org.spongycastle.crypto.macs.HMac;
 import org.spongycastle.crypto.params.KeyParameter;
-import org.spongycastle.jcajce.provider.digest.SHA256;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.util.Arrays;
 import org.spongycastle.util.encoders.Base64;
-import org.spongycastle.util.encoders.DecoderException;
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Random;
@@ -44,9 +40,6 @@ public class LibCrypto {
 
     private static final int KEYSIZE = 32;
     private static final int IVSIZE = 16;
-
-//    private static KeystoreHandler ksHandler;
-
 
     // Encryption / Decryption
 
@@ -108,7 +101,6 @@ public class LibCrypto {
         try {
             encryptedBytes = Arrays.copyOfRange(encryptedMSG, IVSIZE, (encryptedMSG.length - KEYSIZE));
             hmacBytes = Arrays.copyOfRange(encryptedMSG, (encryptedMSG.length - KEYSIZE), encryptedMSG.length);
-
 
             SecretKey sks = ksHandler.getSKS(uuid);
             SecretKey skc = ksHandler.getSKC(uuid);
@@ -213,12 +205,8 @@ public class LibCrypto {
         return ksHandler.getMyPublicKeyBytes(context);
     }
 
-    public static void negotiateSessionKeys(@NonNull UUID uuid, byte[] pubKey, @NonNull KeystoreHandler ksHandler, @NonNull Context context) throws InvalidKeyException {
-        negotiateSessionKeys(uuid, createPubKey(pubKey), ksHandler, context);
-    }
-
     public static void negotiateSessionKeys(@NonNull UUID uuid, @NonNull String pubKey, @NonNull KeystoreHandler ksHandler, @NonNull Context context) throws InvalidKeyException {
-        negotiateSessionKeys(uuid, createPubKey(pubKey.getBytes()), ksHandler, context);
+        negotiateSessionKeys(uuid, createPubKey(pubKey), ksHandler, context);
     }
 
     public static void negotiateSessionKeys(@NonNull UUID uuid, @NonNull PublicKey pubKey, @NonNull KeystoreHandler ksHandler, @NonNull Context context) throws InvalidKeyException {
@@ -238,7 +226,7 @@ public class LibCrypto {
         ksHandler.setSKS(uuid, sks, context);
     }
 
-    private static PublicKey createPubKey(@NonNull byte[] pubKey) throws InvalidKeyException {
+    private static PublicKey createPubKey(@NonNull String pubKey) throws InvalidKeyException {
         try {
             return KeyFactory.getInstance("ECDSA", BC).generatePublic(new X509EncodedKeySpec(Base64.decode(pubKey)));
         } catch (Exception e) {
@@ -259,14 +247,8 @@ public class LibCrypto {
     }
 
 
-    // Keystore Handling
-
-    public static void setNewPassword(byte[] password) {
-        //TODO: implement
-    }
-
     // Other
-    public static byte[] getSHA256Hash(byte[] input){
+    public static byte[] getSHA256Hash(byte[] input) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(input);
@@ -275,13 +257,4 @@ public class LibCrypto {
             throw new Error();
         }
     }
-
-
-    // Execute before every public call
-
-//    private static void loadKSH(Context context) {
-//        if (ksHandler == null) {
-//            ksHandler = new KeystoreHandler(context);
-//        }
-//    }
 }
