@@ -18,10 +18,12 @@ import java.util.UUID;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
+import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.connection.ConnectionService;
 import ch.frontg8.lib.crypto.KeystoreHandler;
 import ch.frontg8.lib.crypto.LibCrypto;
 import ch.frontg8.lib.dbstore.ContactsDataSource;
+import ch.frontg8.lib.message.MessageHelper;
 
 public class DataService extends Service {
 
@@ -44,9 +46,14 @@ public class DataService extends Service {
             Toast.makeText(DataService.this, R.string.messageConnected, Toast.LENGTH_SHORT).show();
 
             try {
-                Message msg = Message.obtain(null, ConnectionService.MessageTypes.MSG_REGISTER_CLIENT);
-                msg.replyTo = mConMessenger;
-                mConService.send(msg);
+                Message msg1 = Message.obtain(null, ConnectionService.MessageTypes.MSG_REGISTER_CLIENT);
+                msg1.replyTo = mConMessenger;
+                mConService.send(msg1);
+
+                byte[] requestMSG = MessageHelper.buildMessageRequestMessage(LibConfig.getLastMessageHash(thisContext));
+                Message msg2 = Message.obtain(null, ConnectionService.MessageTypes.MSG_MSG, requestMSG);
+                msg1.replyTo = mConMessenger;
+                mConService.send(msg2);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
