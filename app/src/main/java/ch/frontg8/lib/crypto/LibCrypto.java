@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import org.spongycastle.crypto.digests.SHA256Digest;
 import org.spongycastle.crypto.macs.HMac;
 import org.spongycastle.crypto.params.KeyParameter;
+import org.spongycastle.jcajce.provider.digest.SHA256;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.util.Arrays;
 import org.spongycastle.util.encoders.Base64;
@@ -13,6 +14,7 @@ import org.spongycastle.util.encoders.DecoderException;
 
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
@@ -261,6 +263,17 @@ public class LibCrypto {
 
     public static void setNewPassword(byte[] password) {
         //TODO: implement
+    }
+
+    // Other
+    public static byte[] getSHA256Hash(byte[] input){
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(input);
+            return md.digest();
+        } catch (NoSuchAlgorithmException e) {
+            throw new Error();
+        }
     }
 
 
