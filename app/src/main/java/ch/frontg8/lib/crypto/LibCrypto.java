@@ -124,10 +124,12 @@ public class LibCrypto {
     public static ArrayList<Message> decryptMSGs(UUID uuid, ArrayList<Frontg8Client.Encrypted> messages, KeystoreHandler ksHandler) {
         ArrayList<Message> results = new ArrayList<>();
         for (Frontg8Client.Encrypted enc : messages) {
-            try {
-                results.add(new Message(MessageHelper.getDataMessage(decryptMSG(enc.getEncryptedData().toByteArray(), uuid, ksHandler)._2)));
-            } catch (InvalidMessageException e) {
-                e.printStackTrace();
+            if (enc != null) {
+                try {
+                    results.add(new Message(MessageHelper.getDataMessage(decryptMSG(enc.getEncryptedData().toByteArray(), uuid, ksHandler)._2)));
+                } catch (InvalidMessageException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return results;
