@@ -236,16 +236,12 @@ public class LibCrypto {
         ksHandler.setSKS(uuid, sks, context);
     }
 
-    private static PublicKey createPubKey(@NonNull byte[] pubKey) {
+    private static PublicKey createPubKey(@NonNull byte[] pubKey) throws InvalidKeyException {
         try {
             return KeyFactory.getInstance("ECDSA", BC).generatePublic(new X509EncodedKeySpec(Base64.decode(pubKey)));
-        } catch (DecoderException e) {
-            e.printStackTrace();
-            throw new NullPointerException();
         } catch (Exception e) {
-            //TODO chatch wrong or empty pubkey
             e.printStackTrace();
-            throw new NullPointerException();
+            throw new InvalidKeyException();
         }
     }
 

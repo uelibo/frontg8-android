@@ -191,7 +191,7 @@ public class DataService extends Service {
                             e.printStackTrace();
                             try {
                                 msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_ERROR, e));
-                            } catch (RemoteException e1) {
+                            } catch (RemoteException | NullPointerException e1) {
                                 e1.printStackTrace();
                             }
                         }
