@@ -289,6 +289,7 @@ public class DataService extends Service {
                     dataSource.deleteAllContacts();
                     dataSource.deleteAllMessages();
                     contacts.clear();
+                    Log.d("DS", "contacts should be empty");
                     ksHandler.resetOther();
                     Toast toast = Toast.makeText(thisContext, "All data deleted", Toast.LENGTH_SHORT);
                     toast.show();
