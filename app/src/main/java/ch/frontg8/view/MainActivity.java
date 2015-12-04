@@ -30,6 +30,7 @@ import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
 import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.data.DataService;
+import ch.frontg8.lib.data.MessageTypes;
 import ch.frontg8.view.model.ContactAdapter;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName className, IBinder binder) {
             mService = new Messenger(binder);
             try {
-                Message msg = Message.obtain(null, DataService.MessageTypes.MSG_GET_CONTACTS);
+                Message msg = Message.obtain(null, MessageTypes.MessageTypes.MSG_GET_CONTACTS);
                 msg.replyTo = mMessenger;
                 mService.send(msg);
             } catch (RemoteException e) {
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case DataService.MessageTypes.MSG_BULK_UPDATE:
+                case MessageTypes.MSG_BULK_UPDATE:
                     ArrayList<Contact> contacts =
                             new ArrayList<Contact>(((HashMap<UUID, Contact>) msg.obj).values());
                     for (Contact c: contacts) {

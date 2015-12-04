@@ -26,6 +26,7 @@ import java.util.UUID;
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
 import ch.frontg8.lib.data.DataService;
+import ch.frontg8.lib.data.MessageTypes;
 
 public class ContactActivity extends AppCompatActivity {
     private Context thisActivity;
@@ -62,7 +63,7 @@ public class ContactActivity extends AppCompatActivity {
         private void requestContact() {
             Log.d("ContactActivity", "Request Contact");
             try {
-                Message msg = Message.obtain(null, DataService.MessageTypes.MSG_GET_CONTACT_DETAILS, contactId);
+                Message msg = Message.obtain(null, MessageTypes.MessageTypes.MSG_GET_CONTACT_DETAILS, contactId);
                 msg.replyTo = mMessenger;
                 mService.send(msg);
             } catch (RemoteException e) {
@@ -80,7 +81,7 @@ public class ContactActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case DataService.MessageTypes.MSG_UPDATE:
+                case MessageTypes.MSG_UPDATE:
                     contact = (Contact) msg.obj;
 
                     Log.d("Debug", "got contact " + contact.getName()
@@ -135,7 +136,7 @@ public class ContactActivity extends AppCompatActivity {
                 contact.setSurname(surname.getText().toString());
                 contact.setPublicKeyString(publicKey.getText().toString());
                 try {
-                    android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_UPDATE_CONTACT, contact);
+                    android.os.Message msg = android.os.Message.obtain(null, MessageTypes.MessageTypes.MSG_UPDATE_CONTACT, contact);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
                     Toast toast = Toast.makeText(thisActivity, R.string.messageContactSaved, Toast.LENGTH_SHORT);
@@ -151,7 +152,7 @@ public class ContactActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Delete Contact
                 try {
-                    android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_REMOVE_CONTACT, contact);
+                    android.os.Message msg = android.os.Message.obtain(null, MessageTypes.MessageTypes.MSG_REMOVE_CONTACT, contact);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
                     Toast toast = Toast.makeText(thisActivity, R.string.messageContactDeleted, Toast.LENGTH_SHORT);

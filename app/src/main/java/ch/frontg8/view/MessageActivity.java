@@ -29,6 +29,7 @@ import java.util.UUID;
 import ch.frontg8.R;
 import ch.frontg8.bl.Message;
 import ch.frontg8.lib.data.DataService;
+import ch.frontg8.lib.data.MessageTypes;
 import ch.frontg8.lib.helper.Tuple;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
@@ -54,7 +55,7 @@ public class MessageActivity extends AppCompatActivity {
 
             if (contactId != null) {
                 try {
-                    android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_REGISTER_FOR_MESSAGES, contactId);
+                    android.os.Message msg = android.os.Message.obtain(null, MessageTypes.MessageTypes.MSG_REGISTER_FOR_MESSAGES, contactId);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
                 } catch (RemoteException e) {
@@ -74,7 +75,7 @@ public class MessageActivity extends AppCompatActivity {
         @Override
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
-                case DataService.MessageTypes.MSG_BULK_UPDATE:
+                case MessageTypes.MSG_BULK_UPDATE:
                     dataAdapter.clear();
                     ArrayList<Message> messages =  (ArrayList<Message>) msg.obj;
                     for (Message m: messages) {
@@ -84,7 +85,7 @@ public class MessageActivity extends AppCompatActivity {
                     }
                     scrollMyListViewToBottom();
                     break;
-                case DataService.MessageTypes.MSG_UPDATE:
+                case MessageTypes.MSG_UPDATE:
                     Message m = (Message) msg.obj;
                     Log.d(thisActivity.getClass().getSimpleName(), "got message (update): " + m.getMessage());
                     dataAdapter.add(m);
@@ -130,7 +131,7 @@ public class MessageActivity extends AppCompatActivity {
                         int timestamp = (int) System.currentTimeMillis() / 1000;
                         Frontg8Client.Data message = MessageHelper.buildDataMessage(textSend.getText().toString().getBytes(), messageId.getBytes(), timestamp);
                         Tuple<UUID, Frontg8Client.Data> content = new Tuple<>(contactId, message);
-                        android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_SEND_MSG, content);
+                        android.os.Message msg = android.os.Message.obtain(null, MessageTypes.MessageTypes.MSG_SEND_MSG, content);
                         msg.replyTo = mMessenger;
                         mService.send(msg);
                         textSend.getText().clear();
@@ -176,7 +177,7 @@ public class MessageActivity extends AppCompatActivity {
         switch (id) {
             case R.id.action_clear_message_history:
                 try {
-                    mService.send(android.os.Message.obtain(null, DataService.MessageTypes.MSG_DEL_ALL_MSGS, contactId));
+                    mService.send(android.os.Message.obtain(null, MessageTypes.MessageTypes.MSG_DEL_ALL_MSGS, contactId));
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -202,7 +203,7 @@ public class MessageActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         try {
-            mService.send(android.os.Message.obtain(null, DataService.MessageTypes.MSG_UNREGISTER_FOR_MESSAGES));
+            mService.send(android.os.Message.obtain(null, MessageTypes.MessageTypes.MSG_UNREGISTER_FOR_MESSAGES));
         } catch (RemoteException e) {
             e.printStackTrace();
         }

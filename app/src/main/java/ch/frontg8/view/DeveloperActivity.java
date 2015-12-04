@@ -21,7 +21,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -32,6 +31,7 @@ import ch.frontg8.lib.connection.TlsTest;
 import ch.frontg8.lib.crypto.KeystoreHandler;
 import ch.frontg8.lib.crypto.LibCrypto;
 import ch.frontg8.lib.data.DataService;
+import ch.frontg8.lib.data.MessageTypes;
 import ch.frontg8.lib.dbstore.ContactsDataSource;
 
 public class DeveloperActivity extends AppCompatActivity {
@@ -98,7 +98,7 @@ public class DeveloperActivity extends AppCompatActivity {
         buttonClearDB.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
                 try {
-                    mService.send(android.os.Message.obtain(null, DataService.MessageTypes.MSG_RESET));
+                    mService.send(android.os.Message.obtain(null, MessageTypes.MessageTypes.MSG_RESET));
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -123,7 +123,7 @@ public class DeveloperActivity extends AppCompatActivity {
 
                 try {
                     for (Contact c: contacts) {
-                        mService.send(android.os.Message.obtain(null, DataService.MessageTypes.MSG_UPDATE_CONTACT, c));
+                        mService.send(android.os.Message.obtain(null, MessageTypes.MessageTypes.MSG_UPDATE_CONTACT, c));
                     }
                 } catch (RemoteException e) {
                     e.printStackTrace();
