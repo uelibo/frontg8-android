@@ -226,9 +226,13 @@ public class DataService extends Service {
                         ArrayList<Data> al = new ArrayList<>();
                         for(ch.frontg8.bl.Message m : contact.getMessages()){
                             Frontg8Client.Encrypted enc = m.getEncryptedMessage();
-                            Tuple<UUID, byte[]> tup = LibCrypto.decryptMSG(enc.getEncryptedData().toByteArray(), uuid, ksHandler);
-                            Data dat = MessageHelper.getDataMessage(tup._2);
-                            al.add(dat);
+                            if ( enc != null) {
+                                Tuple<UUID, byte[]> tup = LibCrypto.decryptMSG(enc.getEncryptedData().toByteArray(), uuid, ksHandler);
+                                if (tup._2 != null) {
+                                    Data dat = MessageHelper.getDataMessage(tup._2);
+                                    al.add(dat);
+                                }
+                            }
                         }
                         msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, al));
                         mMessageClients.add(msg.replyTo);
@@ -253,7 +257,7 @@ public class DataService extends Service {
                     break;
                 case MessageTypes.MSG_REQUEST_MSG:
                     try {
-                        byte[] requestMSG = MessageHelper.buildMessageRequestMessage(LibConfig.getLastMessageHash());
+                        byte[] requestMSG = MessageHelper.buildMessageRequestMessage(LibConfig.getLastMessageHash(thisContext));
                         mConService.send(Message.obtain(null, ConnectionService.MessageTypes.MSG_MSG, requestMSG));
                     } catch (RemoteException e) {
                         e.printStackTrace();

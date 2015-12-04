@@ -72,7 +72,7 @@ public class TlsTest {
         }
 
         // SEND Message Request Message
-        byte[] requestMessage = MessageHelper.addMessageHeader(MessageHelper.buildMessageRequestMessage("0").toByteArray(), MessageType.MessageRequest);
+        byte[] requestMessage = MessageHelper.buildMessageRequestMessage("0".getBytes());
         Log.TRACE("---\n" + MessageHelper.byteArrayAsHexString(requestMessage));
         try {
             tlsClient.sendBytes(requestMessage);

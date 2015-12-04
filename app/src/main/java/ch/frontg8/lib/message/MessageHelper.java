@@ -23,11 +23,11 @@ public class MessageHelper {
 
     // Build messages from content
 
-    public static Frontg8Client.MessageRequest buildMessageRequestMessage(String hash) {
-        return Frontg8Client.MessageRequest
+    public static byte[] buildMessageRequestMessage(byte[] hash) {
+        return addMessageHeader(Frontg8Client.MessageRequest
                 .newBuilder()
-                .setHash(ByteString.copyFromUtf8(hash))
-                .build();
+                .setHash(ByteString.copyFrom(hash))
+                .build().toByteArray(), MessageType.MessageRequest);
     }
 
     public static Frontg8Client.Data buildDataMessage(byte[] message, byte[] sessionId, int timestamp) {
