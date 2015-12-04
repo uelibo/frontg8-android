@@ -102,8 +102,6 @@ public class DeveloperActivity extends AppCompatActivity {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-                //datasource.deleteAllContacts();
-                //datasource.deleteAllMessages();
                 Toast toast = Toast.makeText(thisActivity, "all data deleted", Toast.LENGTH_SHORT);
                 toast.show();
             }
@@ -128,13 +126,6 @@ public class DeveloperActivity extends AppCompatActivity {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-
-//                datasource.insertMessage(a, new Message("bla"));
-//                datasource.insertMessage(b, new Message("blb"));
-//                datasource.insertMessage(c, new Message("blc"));
-//                datasource.insertMessage(d, new Message("bld"));
-//                datasource.insertMessage(d, new Message("bld"));
-
                 Toast toast = Toast.makeText(thisActivity, "demo data inserted", Toast.LENGTH_SHORT);
                 toast.show();
             }
@@ -167,9 +158,6 @@ public class DeveloperActivity extends AppCompatActivity {
                             + c.getSurname() + " "
                             + c.hasValidPubKey() + "\n"
                             );
-                    for (Message m: c.getMessages()) {
-                        textViewLog.append("- Message: " + m.getMessage() + "\n");
-                    }
                 }
             }
         });
