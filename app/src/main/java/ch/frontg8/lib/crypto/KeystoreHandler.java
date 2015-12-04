@@ -264,6 +264,17 @@ public class KeystoreHandler {
 
     // Others
 
+    public void resetOther() {
+        for (String s : getBothKeyMap().keySet()) {
+            try {
+                ks.deleteEntry(s + SUFFIXSESSIONKEYSIGN);
+                ks.deleteEntry(s + SUFFIXSESSIONKEYCRYPTO);
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void changePassword(String password, Context context) {
         ksPassword = password.toCharArray();
         try {

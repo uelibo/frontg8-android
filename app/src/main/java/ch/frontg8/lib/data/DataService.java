@@ -285,6 +285,13 @@ public class DataService extends Service {
                     dataSource.updateContact(contact);
                     notifyBulkMessageObservers(new ArrayList<Data>());
                     break;
+                case MessageTypes.MSG_RESET:
+                    dataSource.deleteAllContacts();
+                    dataSource.deleteAllMessages();
+                    ksHandler.resetOther();
+                    Toast toast = Toast.makeText(thisContext, "All data deleted", Toast.LENGTH_SHORT);
+                    toast.show();
+                    break;
                 default:
                     super.handleMessage(msg);
             }
@@ -368,6 +375,8 @@ public class DataService extends Service {
         public static final int MSG_GEN_NEW_KEYS = 22;
         //obj UUID - will delete all messages for this contact
         public static final int MSG_DEL_ALL_MSGS = 23;
+        // - Will reset keystore, database and contacts.
+        public static final int MSG_RESET = 24;
 
         // Outgoing
 
