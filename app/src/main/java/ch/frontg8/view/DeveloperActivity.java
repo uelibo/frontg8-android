@@ -26,7 +26,6 @@ import java.util.UUID;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
-import ch.frontg8.bl.Message;
 import ch.frontg8.lib.connection.TlsTest;
 import ch.frontg8.lib.crypto.KeystoreHandler;
 import ch.frontg8.lib.crypto.LibCrypto;

@@ -7,9 +7,9 @@
     <string name="action_developer">Entwickler</string>
     <string name="action_newcontact">Neuer Kontakt</string>
     <string name="action_settings">Einstellungen</string>
-    <string name="buttonCopyToClipbord">In die Zwischenablage kopieren</string>
-    <string name="buttonShowAsQrCode">Als QR-Code anzeigen</string>
-    <string name="buttonShowAsText">Als Text anzeigen</string>
+    <string name="buttonCopyToClipbord">In Zwischenablage kopieren</string>
+    <string name="buttonShowAsQrCode">QR-Code zeigen</string>
+    <string name="buttonShowAsText">Text zeigen</string>
     <string name="buttonTextDelete">löschen</string>
     <string name="buttonTextEdit">ändern</string>
     <string name="buttonTextSave">speichern</string>
