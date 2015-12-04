@@ -79,17 +79,15 @@ public class MessageActivity extends AppCompatActivity {
                     ArrayList<Message> messages =  (ArrayList<Message>) msg.obj;
                     for (Message m: messages) {
                         Log.d(thisActivity.getClass().getSimpleName(), "got message " + m.getMessage());
-                        if (m.isEncrypted()) {
-                            m = MessageHelper.decryptMessage(m, thisActivity);
-                        }
+
                         dataAdapter.add(m);
                     }
                     scrollMyListViewToBottom();
                     break;
                 case DataService.MessageTypes.MSG_UPDATE:
-                    Frontg8Client.Data message = (Frontg8Client.Data) msg.obj;
-                    Log.d(thisActivity.getClass().getSimpleName(), "got message (update): " + message.getMessageData().toStringUtf8());
-                    dataAdapter.add(new Message(message));
+                    Message m = (Message) msg.obj;
+                    Log.d(thisActivity.getClass().getSimpleName(), "got message (update): " + m.getMessage());
+                    dataAdapter.add(m);
                     scrollMyListViewToBottom();
                     break;
                 default:
