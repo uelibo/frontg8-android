@@ -10,6 +10,8 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.crypto.LibSSLContext;
@@ -23,7 +25,7 @@ public class ConnectionService extends Service {
     private TcpClient mTcpClient = null;
     private Logger logger = new Logger();
     final Messenger mMessenger = new Messenger(new IncomingHandler());
-    ArrayList<Messenger> mClients = new ArrayList<>();
+    HashSet<Messenger> mClients = new HashSet<>();
 
     @Override
     public void onCreate() {
@@ -39,11 +41,12 @@ public class ConnectionService extends Service {
         mTcpClient = new TcpClient(new TcpClient.OnMessageReceived() {
             @Override
             public void messageReceived(byte[] message) {
-                for (int i = mClients.size() - 1; i >= 0; i--) {
+                Iterator<Messenger> iter = mClients.iterator();
+                while(iter.hasNext()) {
                     try {
-                        mClients.get(i).send(Message.obtain(null, MessageTypes.MSG_MSG, message));
+                        iter.next().send(Message.obtain(null, MessageTypes.MSG_MSG, message));
                     } catch (RemoteException e) {
-                        mClients.remove(i);
+                        iter.remove();
                     }
                 }
             }
@@ -70,10 +73,6 @@ public class ConnectionService extends Service {
                 case MessageTypes.MSG_MSG:
                     mTcpClient.sendMessage((byte[]) msg.obj);
                     break;
-                case MessageTypes.MSG_GET_ALL:
-                    byte[] hash = (byte[]) msg.obj;
-                    //TODO: handle
-                    break;
                 default:
                     super.handleMessage(msg);
             }
@@ -92,8 +91,7 @@ public class ConnectionService extends Service {
     public static class MessageTypes {
         public static final int MSG_REGISTER_CLIENT = 1;
         public static final int MSG_UNREGISTER_CLIENT = 2;
-        public static final int MSG_GET_ALL = 3;
-        public static final int MSG_MSG = 4;
+        public static final int MSG_MSG = 3;
     }
 }
 

@@ -15,12 +15,16 @@ import android.widget.Toast;
 
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
+import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.connection.ConnectionService;
 import ch.frontg8.lib.crypto.KeystoreHandler;
 import ch.frontg8.lib.crypto.LibCrypto;
@@ -56,8 +60,8 @@ public class DataService extends Service {
 
     protected final Messenger mConMessenger = new Messenger(new ConIncomingHandler());
     protected final Messenger mDataMessenger = new Messenger(new DataIncomingHandler());
-    protected ArrayList<Messenger> mContactClients = new ArrayList<>();
-    protected ArrayList<Messenger> mMessageClients = new ArrayList<>();
+    protected HashSet<Messenger> mContactClients = new HashSet<>();
+    protected HashSet<Messenger> mMessageClients = new HashSet<>();
 
     private Messenger mConService;
 
@@ -115,6 +119,7 @@ public class DataService extends Service {
 
     }
 
+    //TODO speedup by passing msghandler directly
     class ConIncomingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -218,9 +223,16 @@ public class DataService extends Service {
                     uuid = (UUID) msg.obj;
                     contact = contacts.get(uuid);
                     try {
-                        msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, contact.getMessages()));
+                        ArrayList<Data> al = new ArrayList<>();
+                        for(ch.frontg8.bl.Message m : contact.getMessages()){
+                            Frontg8Client.Encrypted enc = m.getEncryptedMessage();
+                            Tuple<UUID, byte[]> tup = LibCrypto.decryptMSG(enc.getEncryptedData().toByteArray(), uuid, ksHandler);
+                            Data dat = MessageHelper.getDataMessage(tup._2);
+                            al.add(dat);
+                        }
+                        msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, al));
                         mMessageClients.add(msg.replyTo);
-                    } catch (RemoteException e) {
+                    } catch (RemoteException | InvalidMessageException e) {
                         e.printStackTrace();
                     }
                     contact.resetUnreadMessageCounter();
@@ -235,6 +247,14 @@ public class DataService extends Service {
                         Tuple<UUID, Data> content = (Tuple<UUID, Data>) msg.obj;
                         byte[] encryptedMSG = MessageHelper.encryptAndPutInEncrypted(content._2, content._1, ksHandler);
                         mConService.send(Message.obtain(null, ConnectionService.MessageTypes.MSG_MSG, encryptedMSG));
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case MessageTypes.MSG_REQUEST_MSG:
+                    try {
+                        byte[] requestMSG = MessageHelper.buildMessageRequestMessage(LibConfig.getLastMessageHash());
+                        mConService.send(Message.obtain(null, ConnectionService.MessageTypes.MSG_MSG, requestMSG));
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -259,13 +279,7 @@ public class DataService extends Service {
                     contact.delAllMessages();
                     dataSource.deleteAllMessagesOfUUID(uuid);
                     dataSource.updateContact(contact);
-                    for (Messenger mMessenger : mMessageClients) {
-                        try {
-                            mMessenger.send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, contact.getMessages()));
-                        } catch (RemoteException e) {
-                            mMessageClients.remove(mMessenger);
-                        }
-                    }
+                    notifyBulkMessageObservers(new ArrayList<Data>());
                     break;
                 default:
                     super.handleMessage(msg);
@@ -275,21 +289,34 @@ public class DataService extends Service {
 
 
     private void notifyContactObservers(Contact contact) {
-        for (Messenger mMessenger : mContactClients) {
+        Iterator<Messenger> iter = mContactClients.iterator();
+        while(iter.hasNext()) {
             try {
-                mMessenger.send(Message.obtain(null, MessageTypes.MSG_UPDATE, contact));
+                iter.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, contact));
             } catch (RemoteException e) {
-                mMessageClients.remove(mMessenger);
+                iter.remove();
             }
         }
     }
 
     private void notifyMessageObservers(Data data) {
-        for (Messenger mMessenger : mMessageClients) {
+        Iterator<Messenger> iter = mMessageClients.iterator();
+        while(iter.hasNext()) {
             try {
-                mMessenger.send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
+                iter.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
             } catch (RemoteException e) {
-                mMessageClients.remove(mMessenger);
+                iter.remove();
+            }
+        }
+    }
+
+    private void notifyBulkMessageObservers(ArrayList<Data> al){
+        Iterator<Messenger> iter = mMessageClients.iterator();
+        while(iter.hasNext()) {
+            try {
+                iter.next().send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, al));
+            } catch (RemoteException e) {
+                iter.remove();
             }
         }
     }
@@ -327,14 +354,16 @@ public class DataService extends Service {
         public static final int MSG_UNREGISTER_FOR_MESSAGES = 17;
         //obj Tuple<UUID, new Frontg8.Data>
         public static final int MSG_SEND_MSG = 18;
+        // - Will return array of Frontg8Client.Data
+        public static final int MSG_REQUEST_MSG = 19;
         // - Will respond with a Base64 String
-        public static final int MSG_GET_KEY = 19;
+        public static final int MSG_GET_KEY = 20;
         //obj String (new Password)
-        public static final int MSG_CHANGE_PW = 20;
+        public static final int MSG_CHANGE_PW = 21;
         // - Will change my key, generate new keys for all Contacts, and delete all Messages
-        public static final int MSG_GEN_NEW_KEYS = 21;
+        public static final int MSG_GEN_NEW_KEYS = 22;
         //obj UUID - will delete all messages for this contact
-        public static final int MSG_DEL_ALL_MSGS = 22;
+        public static final int MSG_DEL_ALL_MSGS = 23;
 
         // Outgoing
 

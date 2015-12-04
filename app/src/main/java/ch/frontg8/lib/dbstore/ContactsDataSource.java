@@ -127,6 +127,7 @@ public class ContactsDataSource {
 
     /* Table Messages */
 
+    @Deprecated
     public Contact insertMessage(Contact contact, Message message){
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_CONTACTUUID, contact.getContactId().toString());

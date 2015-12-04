@@ -95,6 +95,35 @@ public class LibCrypto {
         return new Tuple<>(decryptUUID, decodedBytes);
     }
 
+    @NonNull
+    public static Tuple<UUID, byte[]> decryptMSG(byte[] encryptedMSG, UUID uuid, KeystoreHandler ksHandler) {
+
+        byte[] decodedBytes = null;
+        byte[] iv = Arrays.copyOfRange(encryptedMSG, 0, IVSIZE);
+        IvParameterSpec ivspec = new IvParameterSpec(iv);
+        byte[] encryptedBytes;
+        byte[] hmacBytes;
+        try {
+            encryptedBytes = Arrays.copyOfRange(encryptedMSG, IVSIZE, (encryptedMSG.length - KEYSIZE));
+            hmacBytes = Arrays.copyOfRange(encryptedMSG, (encryptedMSG.length - KEYSIZE), encryptedMSG.length);
+
+
+            SecretKey sks = ksHandler.getSKS(uuid);
+            SecretKey skc = ksHandler.getSKC(uuid);
+
+            if (verifyHMAC(sks, encryptedBytes, hmacBytes)) {
+                decodedBytes = decrypt(encryptedBytes, skc, ivspec);
+            }
+        } catch (KeyNotFoundException e) {
+            System.err.println("Key not found");
+            return new Tuple<>(null, new byte[]{});
+        } catch (Throwable e) {
+            System.err.println("Undecryptable MSG");
+            return new Tuple<>(null, new byte[]{});
+        }
+        return new Tuple<>(uuid, decodedBytes);
+    }
+
 
     // Crypto Helpers
 
