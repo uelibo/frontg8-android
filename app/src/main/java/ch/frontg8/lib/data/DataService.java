@@ -72,7 +72,7 @@ public class DataService extends Service {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
             mConService = new Messenger(binder);
-            Toast.makeText(DataService.this, R.string.MessageConnected, Toast.LENGTH_SHORT).show();
+            Toast.makeText(DataService.this, R.string.messageConnected, Toast.LENGTH_SHORT).show();
 
             try {
                 Message msg = Message.obtain(null, ConnectionService.MessageTypes.MSG_REGISTER_CLIENT);

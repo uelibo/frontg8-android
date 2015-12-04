@@ -182,7 +182,7 @@ public class MessageActivity extends AppCompatActivity {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-                Toast toast = Toast.makeText(thisActivity, R.string.MessageMessagesDeleted, Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(thisActivity, R.string.messageMessagesDeleted, Toast.LENGTH_SHORT);
                 toast.show();
                 return true;
             default:

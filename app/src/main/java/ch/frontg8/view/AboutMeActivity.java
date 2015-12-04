@@ -65,12 +65,12 @@ public class AboutMeActivity extends AppCompatActivity {
                 if (showAsText == false) {
                     textViewMyPubkey.setVisibility(View.VISIBLE);
                     imageView.setVisibility(View.GONE);
-                    buttonShowText.setText(R.string.ButtonShowAsQrCode);
+                    buttonShowText.setText(R.string.buttonShowAsQrCode);
                     showAsText = true;
                 } else {
                     textViewMyPubkey.setVisibility(View.GONE);
                     imageView.setVisibility(View.VISIBLE);
-                    buttonShowText.setText(R.string.ButtonShowAsText);
+                    buttonShowText.setText(R.string.buttonShowAsText);
                     showAsText = false;
                 }
             }
