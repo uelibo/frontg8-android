@@ -133,19 +133,6 @@ public class MessageHelper {
         return new Tuple<>(decrypted._1, getDataMessage(decrypted._2));
     }
 
-    public static Message decryptMessage(Message message, Context context) {
-        try {
-            Frontg8Client.Encrypted encrypted = message.getEncryptedMessage();
-            Tuple<UUID, Frontg8Client.Data> tuple = getDecryptedContent(encrypted, new KeystoreHandler(context));
-            message.replaceMessage(tuple._2);
-        } catch (InvalidMessageException e) {
-            e.printStackTrace();
-        }
-        return message;
-    }
-
-
-
 
     // Deprecated, remove as soon as possible
 

@@ -18,6 +18,7 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
@@ -29,7 +30,11 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import ch.frontg8.bl.Message;
 import ch.frontg8.lib.helper.Tuple;
+import ch.frontg8.lib.message.InvalidMessageException;
+import ch.frontg8.lib.message.MessageHelper;
+import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class LibCrypto {
     private static final String BC = BouncyCastleProvider.PROVIDER_NAME;
@@ -116,6 +121,18 @@ public class LibCrypto {
             return new Tuple<>(null, new byte[]{});
         }
         return new Tuple<>(uuid, decodedBytes);
+    }
+
+    public static ArrayList<Message> decryptMSGs(UUID uuid, ArrayList<Frontg8Client.Encrypted> messages, KeystoreHandler ksHandler) {
+        ArrayList<Message> results = new ArrayList<>();
+        for (Frontg8Client.Encrypted enc : messages) {
+            try {
+                results.add(new Message(MessageHelper.getDataMessage(decryptMSG(enc.getEncryptedData().toByteArray(), uuid, ksHandler)._2)));
+            } catch (InvalidMessageException e) {
+                e.printStackTrace();
+            }
+        }
+        return results;
     }
 
 

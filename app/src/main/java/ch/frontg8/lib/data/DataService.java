@@ -98,7 +98,9 @@ public class DataService extends Service {
         // Load contacts
         dataSource.open();
         for (Contact contact : dataSource.getAllContacts()) {
-            contacts.put(contact.getContactId(), contact);
+            UUID uuid = contact.getContactId();
+            contacts.put(uuid, contact);
+            contact.addMessages(LibCrypto.decryptMSGs(uuid, dataSource.getEncryptedMessagesByUUID(uuid), ksHandler));
         }
 
         Intent mIntent = new Intent(this, ConnectionService.class);
@@ -229,20 +231,9 @@ public class DataService extends Service {
                     uuid = (UUID) msg.obj;
                     contact = contacts.get(uuid);
                     try {
-                        ArrayList<Data> al = new ArrayList<>();
-                        for (ch.frontg8.bl.Message m : contact.getMessages()) {
-                            Frontg8Client.Encrypted enc = m.getEncryptedMessage();
-                            if (enc != null) {
-                                Tuple<UUID, byte[]> tup = LibCrypto.decryptMSG(enc.getEncryptedData().toByteArray(), uuid, ksHandler);
-                                if (tup._2 != null) {
-                                    Data dat = MessageHelper.getDataMessage(tup._2);
-                                    al.add(dat);
-                                }
-                            }
-                        }
-                        msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, al));
+                        msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, contact.getMessages()));
                         mMessageClients.add(msg.replyTo);
-                    } catch (RemoteException | InvalidMessageException e) {
+                    } catch (RemoteException e) {
                         e.printStackTrace();
                     }
                     contact.resetUnreadMessageCounter();

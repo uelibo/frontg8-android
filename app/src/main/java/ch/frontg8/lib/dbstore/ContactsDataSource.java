@@ -97,13 +97,11 @@ public class ContactsDataSource {
         Cursor cursor = database.query(MySQLiteHelper.TABLE_CONTACTS,
                 allColumns, MySQLiteHelper.COLUMN_UUID + "=?", queryArgs, null, null, null);
         cursor.moveToFirst();
-        Contact contact = cursorToContact(cursor);
-        contact.addMessages(getMessagesByUUID(contact.getContactId()));
-        return contact;
+        return cursorToContact(cursor);
     }
 
     public ArrayList<Contact> getAllContacts() {
-        ArrayList<Contact> contacts = new ArrayList<Contact>();
+        ArrayList<Contact> contacts = new ArrayList<>();
 
         Cursor cursor = database.query(MySQLiteHelper.TABLE_CONTACTS,
                 allColumns, null, null, null, null, null);
@@ -111,7 +109,6 @@ public class ContactsDataSource {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Contact contact = cursorToContact(cursor);
-            contact.addMessages(getMessagesByUUID(contact.getContactId()));
             contacts.add(contact);
             cursor.moveToNext();
         }
@@ -121,21 +118,10 @@ public class ContactsDataSource {
 
     private Contact cursorToContact(Cursor cursor) {
         boolean validPubKey = cursor.getInt(6) == 1;
-        Contact contact = new Contact(UUID.fromString(cursor.getString(1)), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5), validPubKey);
-        return contact;
+        return new Contact(UUID.fromString(cursor.getString(1)), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getInt(5), validPubKey);
     }
 
     /* Table Messages */
-
-    @Deprecated
-    public Contact insertMessage(Contact contact, Message message){
-        ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.COLUMN_CONTACTUUID, contact.getContactId().toString());
-        values.put(MySQLiteHelper.COLUMN_MESSAGETEXT, message.getMessage());
-        long insertId = database.insert(MySQLiteHelper.TABLE_MESSAGES, null, values);
-        contact.addMessage(message);
-        return contact;
-    }
 
     public Contact insertMessage(Contact contact, Frontg8Client.Encrypted message){
         ContentValues values = new ContentValues();
@@ -145,16 +131,15 @@ public class ContactsDataSource {
         return contact;
     }
 
-    public ArrayList<Message> getMessagesByUUID(UUID contactId) {
+    public ArrayList<Frontg8Client.Encrypted> getEncryptedMessagesByUUID(UUID contactId) {
         String[] queryArgs = { contactId.toString() };
-        ArrayList<Message> messages = new ArrayList<>();
+        ArrayList<Frontg8Client.Encrypted> messages = new ArrayList<>();
         String[] fields = { MySQLiteHelper.COLUMN_MESSAGETEXT, MySQLiteHelper.COLUMN_MESSAGEBLOB };
         Cursor cursor = database.query(MySQLiteHelper.TABLE_MESSAGES,
                 fields, MySQLiteHelper.COLUMN_CONTACTUUID + "=?", queryArgs, null, null, null);
-
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            Message message = cursorToMessage(cursor, contactId);
+            Frontg8Client.Encrypted message = cursorToMessage(cursor);
             messages.add(message);
             cursor.moveToNext();
         }
@@ -188,19 +173,19 @@ public class ContactsDataSource {
         database.execSQL("delete from " + MySQLiteHelper.TABLE_MESSAGES);
     }
 
-    private Message cursorToMessage(Cursor cursor, UUID contactId) {
-        String unencrypted = cursor.getString(0);
+    private Frontg8Client.Encrypted cursorToMessage(Cursor cursor) {
         byte[] encrypted = cursor.getBlob(1);
         if (encrypted != null) {
             // message needs to be decrypted later
             try {
                 Log.d("Database", "Created Encrypted Message");
-                return new Message(Frontg8Client.Encrypted.parseFrom(encrypted));
+                return Frontg8Client.Encrypted.parseFrom(encrypted);
             } catch (InvalidProtocolBufferException e) {
                 e.printStackTrace();
+
             }
         }
-        return new Message(unencrypted);
+        return null;
     }
 
 }
