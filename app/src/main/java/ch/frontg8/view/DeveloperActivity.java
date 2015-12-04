@@ -114,31 +114,26 @@ public class DeveloperActivity extends AppCompatActivity {
                 String keyA = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBf72KrjMTpU60csP6cVefgJocZpj+OOTF8sNueIPU8krHCycTozNoycoguqLkI6jU66pTXtnx/nxgXprVqg6bEyMBB5oCXoPNQSrb8GBkL5p764is9dn27q57cJ/Mw1zp1W/cNKJj2uWtuyFxXcwEhjVh8Vja47BaJCbFg7drjrzTxZM=";
                 String keyB = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBGp6vB5n7L2+6QdKY5ETFnY0QhIFIUqtVW0QaSDEUYJoLceBjKLyiLiQhiYo8tANXsBlrB+F/wQPARoYbaaFKX/cBUTYioTcVWpa4r2lupMyBwZ7x3v8cznfY4aSRWcQKIOtQxpHm7sDQWnViAVmKI4Xgw50ZE0ONxgIjNBioosO3K6I=";
                 String keyC = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBRg1Zd0pBm6ST8dULpAuwWxq+llhdguXfRkuf5stzPVYOgwgjO4j3qDe6z5tgK/iS9wMSAjqYuzvr6UkQAJtAXHABEoheuPgoKp2PI3Nozn8E+zsH0RQWhKHV+XiUp4tv6TAPuyTelHVsNJYOCjS5IkzCGROQqEVzMonlyRN2HNXvaIs=";
-                Contact a = datasource.createContact(new Contact(UUID.fromString("11111111-1111-1111-1111-111111111111"), "The", "Other", keyA, 2, false));
-                Contact b = datasource.createContact(new Contact(UUID.fromString("22222222-2222-2222-2222-222222222222"), "Tobias", "Stauber", keyB, 1, false));
-                Contact c = datasource.createContact(new Contact(UUID.fromString("33333333-3333-3333-3333-333333333333"), "Ueli", "Bosshard", keyC, 1, false));
-                Contact d = datasource.createContact(new Contact(UUID.fromString("44444444-4444-4444-4444-444444444444"), "Flix", "", "", 0, false));
-                Contact e = datasource.createContact(new Contact(UUID.fromString("55555555-5555-5555-5555-555555555555"), "Benny", "", "", 0, false));
-                datasource.insertMessage(a, new Message("bla"));
-                datasource.insertMessage(b, new Message("blb"));
-                datasource.insertMessage(c, new Message("blc"));
-                datasource.insertMessage(d, new Message("bld"));
-                datasource.insertMessage(d, new Message("bld"));
+                ArrayList<Contact> contacts = new ArrayList<>();
+                contacts.add(new Contact(UUID.fromString("11111111-1111-1111-1111-111111111111"), "The", "Other", keyA, 2, false));
+                contacts.add(new Contact(UUID.fromString("22222222-2222-2222-2222-222222222222"), "Tobias", "Stauber", keyB, 1, false));
+                contacts.add(new Contact(UUID.fromString("33333333-3333-3333-3333-333333333333"), "Ueli", "Bosshard", keyC, 1, false));
+                contacts.add(new Contact(UUID.fromString("44444444-4444-4444-4444-444444444444"), "Flix", "", "", 0, false));
+                contacts.add(new Contact(UUID.fromString("55555555-5555-5555-5555-555555555555"), "Benny", "", "", 0, false));
 
                 try {
-                    LibCrypto.negotiateSessionKeys(a.getContactId(), a.getPublicKeyString().getBytes(), new KeystoreHandler(thisActivity), thisActivity);
-                    LibCrypto.negotiateSessionKeys(b.getContactId(), b.getPublicKeyString().getBytes(), new KeystoreHandler(thisActivity), thisActivity);
-                    LibCrypto.negotiateSessionKeys(c.getContactId(), c.getPublicKeyString().getBytes(), new KeystoreHandler(thisActivity), thisActivity);
-                    a.setValidPubkey(true);
-                    b.setValidPubkey(true);
-                    c.setValidPubkey(true);
-                    a.incrementUnreadMessageCounter();
-                    datasource.updateContact(a);
-                    datasource.updateContact(b);
-                    datasource.updateContact(c);
-                } catch (InvalidKeyException f) {
-                    f.printStackTrace();
+                    for (Contact c: contacts) {
+                        mService.send(android.os.Message.obtain(null, DataService.MessageTypes.MSG_UPDATE_CONTACT, c));
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
+
+//                datasource.insertMessage(a, new Message("bla"));
+//                datasource.insertMessage(b, new Message("blb"));
+//                datasource.insertMessage(c, new Message("blc"));
+//                datasource.insertMessage(d, new Message("bld"));
+//                datasource.insertMessage(d, new Message("bld"));
 
                 Toast toast = Toast.makeText(thisActivity, "demo data inserted", Toast.LENGTH_SHORT);
                 toast.show();
