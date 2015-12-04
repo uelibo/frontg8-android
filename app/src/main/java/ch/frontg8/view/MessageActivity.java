@@ -55,7 +55,7 @@ public class MessageActivity extends AppCompatActivity {
 
             if (contactId != null) {
                 try {
-                    android.os.Message msg = android.os.Message.obtain(null, MessageTypes.MessageTypes.MSG_REGISTER_FOR_MESSAGES, contactId);
+                    android.os.Message msg = android.os.Message.obtain(null, MessageTypes.MSG_REGISTER_FOR_MESSAGES, contactId);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
                 } catch (RemoteException e) {
@@ -131,7 +131,7 @@ public class MessageActivity extends AppCompatActivity {
                         int timestamp = (int) System.currentTimeMillis() / 1000;
                         Frontg8Client.Data message = MessageHelper.buildDataMessage(textSend.getText().toString().getBytes(), messageId.getBytes(), timestamp);
                         Tuple<UUID, Frontg8Client.Data> content = new Tuple<>(contactId, message);
-                        android.os.Message msg = android.os.Message.obtain(null, MessageTypes.MessageTypes.MSG_SEND_MSG, content);
+                        android.os.Message msg = android.os.Message.obtain(null, MessageTypes.MSG_SEND_MSG, content);
                         msg.replyTo = mMessenger;
                         mService.send(msg);
                         textSend.getText().clear();
@@ -177,7 +177,7 @@ public class MessageActivity extends AppCompatActivity {
         switch (id) {
             case R.id.action_clear_message_history:
                 try {
-                    mService.send(android.os.Message.obtain(null, MessageTypes.MessageTypes.MSG_DEL_ALL_MSGS, contactId));
+                    mService.send(android.os.Message.obtain(null, MessageTypes.MSG_DEL_ALL_MSGS, contactId));
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -203,7 +203,7 @@ public class MessageActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         try {
-            mService.send(android.os.Message.obtain(null, MessageTypes.MessageTypes.MSG_UNREGISTER_FOR_MESSAGES));
+            mService.send(android.os.Message.obtain(null, MessageTypes.MSG_UNREGISTER_FOR_MESSAGES));
         } catch (RemoteException e) {
             e.printStackTrace();
         }

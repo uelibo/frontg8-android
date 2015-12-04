@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName className, IBinder binder) {
             mService = new Messenger(binder);
             try {
-                Message msg = Message.obtain(null, MessageTypes.MessageTypes.MSG_GET_CONTACTS);
+                Message msg = Message.obtain(null, MessageTypes.MSG_GET_CONTACTS);
                 msg.replyTo = mMessenger;
                 mService.send(msg);
             } catch (RemoteException e) {

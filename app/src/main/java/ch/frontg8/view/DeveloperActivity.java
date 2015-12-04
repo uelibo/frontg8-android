@@ -98,7 +98,7 @@ public class DeveloperActivity extends AppCompatActivity {
         buttonClearDB.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
                 try {
-                    mService.send(android.os.Message.obtain(null, MessageTypes.MessageTypes.MSG_RESET));
+                    mService.send(android.os.Message.obtain(null, MessageTypes.MSG_RESET));
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -123,7 +123,7 @@ public class DeveloperActivity extends AppCompatActivity {
 
                 try {
                     for (Contact c: contacts) {
-                        mService.send(android.os.Message.obtain(null, MessageTypes.MessageTypes.MSG_UPDATE_CONTACT, c));
+                        mService.send(android.os.Message.obtain(null, MessageTypes.MSG_UPDATE_CONTACT, c));
                     }
                 } catch (RemoteException e) {
                     e.printStackTrace();
