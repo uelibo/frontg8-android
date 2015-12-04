@@ -78,7 +78,7 @@ public class MessageActivity extends AppCompatActivity {
                     dataAdapter.clear();
                     ArrayList<Message> messages =  (ArrayList<Message>) msg.obj;
                     for (Message m: messages) {
-                        Log.d("Debug", "got message " + m.getMessage());
+                        Log.d(thisActivity.getClass().getSimpleName(), "got message " + m.getMessage());
                         if (m.isEncrypted()) {
                             m = MessageHelper.decryptMessage(m, thisActivity);
                         }
@@ -88,7 +88,7 @@ public class MessageActivity extends AppCompatActivity {
                     break;
                 case DataService.MessageTypes.MSG_UPDATE:
                     Frontg8Client.Data message = (Frontg8Client.Data) msg.obj;
-                    Log.d("Debug", "got message (update): " + message.getMessageData().toStringUtf8());
+                    Log.d(thisActivity.getClass().getSimpleName(), "got message (update): " + message.getMessageData().toStringUtf8());
                     dataAdapter.add(new Message(message));
                     scrollMyListViewToBottom();
                     break;
@@ -193,7 +193,7 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("Debug", "MessageActivity Resumed");
+        Log.d(thisActivity.getClass().getSimpleName(), "MessageActivity Resumed");
 
         // bind again to DataService:
         Intent intent = new Intent(this, DataService.class);

@@ -28,7 +28,7 @@ import ch.frontg8.bl.Contact;
 import ch.frontg8.lib.data.DataService;
 
 public class ContactActivity extends AppCompatActivity {
-    private Context thisContext;
+    private Context thisActivity;
     private UUID contactId;
     private Contact contact;
     private String scannedKey;
@@ -104,7 +104,7 @@ public class ContactActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
-        thisContext = this;
+        thisActivity = this;
 
         title = (TextView) findViewById(R.id.textViewTitle);
         name = (TextView) findViewById(R.id.editPersonName);
@@ -138,7 +138,7 @@ public class ContactActivity extends AppCompatActivity {
                     android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_UPDATE_CONTACT, contact);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
-                    Toast toast = Toast.makeText(thisContext, R.string.MessageContactSaved, Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(thisActivity, R.string.MessageContactSaved, Toast.LENGTH_SHORT);
                     toast.show();
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -154,7 +154,7 @@ public class ContactActivity extends AppCompatActivity {
                     android.os.Message msg = android.os.Message.obtain(null, DataService.MessageTypes.MSG_REMOVE_CONTACT, contact);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
-                    Toast toast = Toast.makeText(thisContext, R.string.MessageContactDeleted, Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(thisActivity, R.string.MessageContactDeleted, Toast.LENGTH_SHORT);
                     toast.show();
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -183,7 +183,7 @@ public class ContactActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("Debug", "ContactActivity Resumed");
+        Log.d(thisActivity.getClass().getSimpleName(), "ContactActivity Resumed");
         //dataAdapter.replace(dataSource.getAllContacts());
 
         // bind to DataService

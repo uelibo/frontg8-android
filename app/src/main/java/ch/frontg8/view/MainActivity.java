@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                             new ArrayList<Contact>(((HashMap<UUID, Contact>) msg.obj).values());
                     for (Contact c: contacts) {
                         dataAdapter.add(c);
-                        Log.d("Debug", "got contact " + c.getName()
+                        Log.d(thisActivity.getClass().getSimpleName(), "got contact " + c.getName()
                         + " " + c.getSurname()
                         + " " + c.hasValidPubKey());
                     }
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("Debug", "MainActivity Resumed");
+        Log.d(thisActivity.getClass().getSimpleName(), "MainActivity Resumed");
 
         // bind again to DataService:
         dataAdapter.clear();
