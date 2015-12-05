@@ -109,15 +109,17 @@ public class DeveloperActivity extends AppCompatActivity {
 
         buttonLoadTestData.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-                String keyA = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBf72KrjMTpU60csP6cVefgJocZpj+OOTF8sNueIPU8krHCycTozNoycoguqLkI6jU66pTXtnx/nxgXprVqg6bEyMBB5oCXoPNQSrb8GBkL5p764is9dn27q57cJ/Mw1zp1W/cNKJj2uWtuyFxXcwEhjVh8Vja47BaJCbFg7drjrzTxZM=";
-                String keyB = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBGp6vB5n7L2+6QdKY5ETFnY0QhIFIUqtVW0QaSDEUYJoLceBjKLyiLiQhiYo8tANXsBlrB+F/wQPARoYbaaFKX/cBUTYioTcVWpa4r2lupMyBwZ7x3v8cznfY4aSRWcQKIOtQxpHm7sDQWnViAVmKI4Xgw50ZE0ONxgIjNBioosO3K6I=";
-                String keyC = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBRg1Zd0pBm6ST8dULpAuwWxq+llhdguXfRkuf5stzPVYOgwgjO4j3qDe6z5tgK/iS9wMSAjqYuzvr6UkQAJtAXHABEoheuPgoKp2PI3Nozn8E+zsH0RQWhKHV+XiUp4tv6TAPuyTelHVsNJYOCjS5IkzCGROQqEVzMonlyRN2HNXvaIs=";
+                String keyN = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBGp6vB5n7L2+6QdKY5ETFnY0QhIFIUqtVW0QaSDEUYJoLceBjKLyiLiQhiYo8tANXsBlrB+F/wQPARoYbaaFKX/cBUTYioTcVWpa4r2lupMyBwZ7x3v8cznfY4aSRWcQKIOtQxpHm7sDQWnViAVmKI4Xgw50ZE0ONxgIjNBioosO3K6I=";
+                String keyT = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBf72KrjMTpU60csP6cVefgJocZpj+OOTF8sNueIPU8krHCycTozNoycoguqLkI6jU66pTXtnx/nxgXprVqg6bEyMBB5oCXoPNQSrb8GBkL5p764is9dn27q57cJ/Mw1zp1W/cNKJj2uWtuyFxXcwEhjVh8Vja47BaJCbFg7drjrzTxZM=";
+                String keyU = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBRg1Zd0pBm6ST8dULpAuwWxq+llhdguXfRkuf5stzPVYOgwgjO4j3qDe6z5tgK/iS9wMSAjqYuzvr6UkQAJtAXHABEoheuPgoKp2PI3Nozn8E+zsH0RQWhKHV+XiUp4tv6TAPuyTelHVsNJYOCjS5IkzCGROQqEVzMonlyRN2HNXvaIs=";
+                String keyM = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBTEx0CPC1J9S76UNu2zXa0RcyzQMsY2Ajm4OLXTHdC20qOHYCaAFo41E76mxraVnITDrUVOA8Lugnv8U7MpGgA0QAuLbHDMz8O6hmtG9KoRz6NZKrM1eOVDQWU5B2PH2znCGn9htAO4pn1SOk0Ag91AjbvTd8JYbpuxD9EeMx4DyS3Ek=";
+                String keyV = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBotZ8vHmDtm4i1YTslt3tknPvZ/3fDDkfRC+nK4kkwBWF9CMRZgZ2PHheqCJgkED36v8K5wOcARkcuXhfuB8q0AEAyhQ6HgusnLy+HugytEfoQhNBGiE0QFlVSS1ZHzHxnm/aWdBZ58RYrkFWOun4Dnf6eDv+RFMVoYHZLREO2dRIp7w=";
                 ArrayList<Contact> contacts = new ArrayList<>();
-                contacts.add(new Contact(UUID.fromString("11111111-1111-1111-1111-111111111111"), "The", "Other", keyA, 2, false));
-                contacts.add(new Contact(UUID.fromString("22222222-2222-2222-2222-222222222222"), "Tobias", "Stauber", keyB, 1, false));
-                contacts.add(new Contact(UUID.fromString("33333333-3333-3333-3333-333333333333"), "Ueli", "Bosshard", keyC, 1, false));
-                contacts.add(new Contact(UUID.fromString("44444444-4444-4444-4444-444444444444"), "Flix", "", "", 0, false));
-                contacts.add(new Contact(UUID.fromString("55555555-5555-5555-5555-555555555555"), "Benny", "", "", 0, false));
+                contacts.add(new Contact(UUID.fromString("11111111-1111-1111-1111-111111111111"), "Mr", "Nobody", keyN, 0, false));
+                contacts.add(new Contact(UUID.fromString("22222222-2222-2222-2222-222222222222"), "Tobias", "Stauber", keyT, 0, false));
+                contacts.add(new Contact(UUID.fromString("33333333-3333-3333-3333-333333333333"), "Ueli", "Bosshard", keyU, 0, false));
+                contacts.add(new Contact(UUID.fromString("66666666-6666-6666-6666-666666666666"), "MM", "", keyM, 0, false));
+                contacts.add(new Contact(UUID.fromString("77777777-7777-7777-7777-777777777777"), "VR", "", keyV, 0, false));
 
                 try {
                     for (Contact c : contacts) {
