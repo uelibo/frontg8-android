@@ -7,6 +7,8 @@
     <string name="action_developer">Entwickler</string>
     <string name="action_newcontact">Neuer Kontakt</string>
     <string name="action_settings">Einstellungen</string>
+    <string name="action_about">Über</string>
+    <string name="action_importcerts">Zertifikat importieren</string>
     <string name="buttonCopyToClipbord">In Zwischenablage kopieren</string>
     <string name="buttonShowAsQrCode">QR-Code zeigen</string>
     <string name="buttonShowAsText">Text zeigen</string>
@@ -33,10 +35,13 @@
     <string name="title_activity_developer">Entwickler</string>
     <string name="title_activity_message">Nachrichten</string>
     <string name="title_activity_settings">Einstellungen</string>
+    <string name="title_activity_about">Über diese App</string>
+    <string name="title_activity_cert_import">Zertifikat Import</string>
     <string name="titleContactlist">Kontaktliste von</string>
     <string name="titleMessagelist">Nachrichtenliste von</string>
     <string name="titleEditContact">Kontakt ändern</string>
     <string name="titleHostname">Hostname</string>
+    <string name="titleMyPubkey">Mein öffentlicher Schlüssel</string>
     <string name="titleNewContact">Neuer Kontakt</string>
     <string name="titlePersonalSettings">Persönliche Einstellungen</string>
     <string name="titlePort">Port</string>

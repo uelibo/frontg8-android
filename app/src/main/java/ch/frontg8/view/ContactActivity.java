@@ -184,7 +184,7 @@ public class ContactActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(thisActivity.getClass().getSimpleName(), "ContactActivity Resumed");
+        Log.d(thisActivity.getClass().getSimpleName(), "onResume");
         //dataAdapter.replace(dataSource.getAllContacts());
 
         // bind to DataService

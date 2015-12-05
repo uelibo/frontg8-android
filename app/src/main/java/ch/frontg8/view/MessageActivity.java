@@ -192,7 +192,7 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(thisActivity.getClass().getSimpleName(), "MessageActivity Resumed");
+        Log.d(thisActivity.getClass().getSimpleName(), "onResume");
 
         // bind again to DataService:
         Intent intent = new Intent(this, DataService.class);

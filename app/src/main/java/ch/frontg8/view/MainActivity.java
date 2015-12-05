@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(thisActivity.getClass().getSimpleName(), "MainActivity Resumed");
+        Log.d(thisActivity.getClass().getSimpleName(), "onResume");
 
         // bind again to DataService:
         dataAdapter.clear();
@@ -170,9 +170,17 @@ public class MainActivity extends AppCompatActivity {
                 Intent intentAboutMe = new Intent(this, AboutMeActivity.class);
                 startActivity(intentAboutMe);
                 return true;
+            case R.id.action_importcerts:
+                Intent intentImportCerts = new Intent(this, CertImportActivity.class);
+                startActivity(intentImportCerts);
+                return true;
             case R.id.action_developer:
                 Intent intentDeveloper = new Intent(this, DeveloperActivity.class);
                 startActivity(intentDeveloper);
+                return true;
+            case R.id.action_about:
+                Intent intentAbout = new Intent(this, AboutActivity.class);
+                startActivity(intentAbout);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

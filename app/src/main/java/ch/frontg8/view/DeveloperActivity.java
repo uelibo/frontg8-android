@@ -32,6 +32,7 @@ import ch.frontg8.lib.crypto.LibCrypto;
 import ch.frontg8.lib.data.DataService;
 import ch.frontg8.lib.data.MessageTypes;
 import ch.frontg8.lib.dbstore.ContactsDataSource;
+import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class DeveloperActivity extends AppCompatActivity {
     private Activity thisActivity;
@@ -119,7 +120,7 @@ public class DeveloperActivity extends AppCompatActivity {
                 contacts.add(new Contact(UUID.fromString("55555555-5555-5555-5555-555555555555"), "Benny", "", "", 0, false));
 
                 try {
-                    for (Contact c: contacts) {
+                    for (Contact c : contacts) {
                         mService.send(android.os.Message.obtain(null, MessageTypes.MSG_UPDATE_CONTACT, c));
                     }
                 } catch (RemoteException e) {
@@ -151,12 +152,13 @@ public class DeveloperActivity extends AppCompatActivity {
                 textViewLog.setText("");
                 datasource.open();
                 ArrayList<Contact> contacts = datasource.getAllContacts();
-                for (Contact c: contacts) {
-                    textViewLog.append("Contact: "
-                            + c.getName() + " "
-                            + c.getSurname() + " "
-                            + c.hasValidPubKey() + "\n"
-                            );
+                for (Contact c : contacts) {
+                    ArrayList<Frontg8Client.Encrypted> messages = datasource.getEncryptedMessagesByUUID(c.getContactId());
+                    textViewLog.append(c.getName() + " "
+                            + c.getSurname() + ", "
+                            + "Key valid: " + c.hasValidPubKey() + ", "
+                            + messages.size() + " Messages"
+                            + "\n");
                 }
             }
         });
