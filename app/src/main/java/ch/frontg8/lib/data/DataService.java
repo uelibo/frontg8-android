@@ -44,8 +44,8 @@ public class DataService extends Service {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
-            mConService = new Messenger(binder);
-            Toast.makeText(DataService.this, R.string.messageConnected, Toast.LENGTH_SHORT).show();
+//            mConService = new Messenger(binder);
+//            Toast.makeText(DataService.this, R.string.messageConnected, Toast.LENGTH_SHORT).show();
 
             try {
                 Message msg1 = Message.obtain(null, ConnectionService.MessageTypes.MSG_REGISTER_CLIENT);

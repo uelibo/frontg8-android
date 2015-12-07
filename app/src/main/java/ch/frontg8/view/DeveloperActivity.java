@@ -12,6 +12,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +27,7 @@ import java.util.UUID;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
+import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.connection.TlsTest;
 import ch.frontg8.lib.crypto.KeystoreHandler;
 import ch.frontg8.lib.crypto.LibCrypto;
@@ -75,23 +77,35 @@ public class DeveloperActivity extends AppCompatActivity {
 
         thisActivity = this;
 
-        Button buttonKeyGen = (Button) findViewById(R.id.buttonKeyGen);
+//        Button buttonKeyGen = (Button) findViewById(R.id.buttonKeyGen);
+        Button buttonTlsTest = (Button) findViewById(R.id.buttonTlsTest);
+        Button buttonShowConfig = (Button) findViewById(R.id.buttonShowConfig);
         Button buttonClearDB = (Button) findViewById(R.id.buttonClearDB);
         Button buttonLoadTestData = (Button) findViewById(R.id.buttonLoadTestData);
-        Button buttonTlsTest = (Button) findViewById(R.id.buttonTlsTest);
         Button buttonShowDB = (Button) findViewById(R.id.buttonShowDB);
 
         datasource.open();
 
-        buttonKeyGen.setOnClickListener(new AdapterView.OnClickListener() {
+//        buttonKeyGen.setOnClickListener(new AdapterView.OnClickListener() {
+//            public void onClick(View view) {
+//                try {
+//                    LibCrypto.generateNewKeys(new KeystoreHandler(thisActivity), thisActivity);
+//                    Toast toast = Toast.makeText(thisActivity, "Keys generated", Toast.LENGTH_SHORT);
+//                    toast.show();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+
+        buttonShowConfig.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-                try {
-                    LibCrypto.generateNewKeys(new KeystoreHandler(thisActivity), thisActivity);
-                    Toast toast = Toast.makeText(thisActivity, "Keys generated", Toast.LENGTH_SHORT);
-                    toast.show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                textViewLog = (TextView) findViewById(R.id.textViewLog);
+                textViewLog.setText("");
+                textViewLog.append("Username: " + LibConfig.getUsername(thisActivity) + "\n");
+                textViewLog.append("Servername: " + LibConfig.getServerName(thisActivity) + "\n");
+                textViewLog.append("Serverport: " + LibConfig.getServerPort(thisActivity) + "\n");
+                textViewLog.append("Lastmessage-Hash: " + Base64.encodeToString(LibConfig.getLastMessageHash(thisActivity), Base64.DEFAULT) + "\n");
             }
         });
 
