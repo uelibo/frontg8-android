@@ -88,8 +88,7 @@ public class DeveloperActivity extends AppCompatActivity {
 //            public void onClick(View view) {
 //                try {
 //                    LibCrypto.generateNewKeys(new KeystoreHandler(thisActivity), thisActivity);
-//                    Toast toast = Toast.makeText(thisActivity, "Keys generated", Toast.LENGTH_SHORT);
-//                    toast.show();
+//                    Toast.makeText(thisActivity, "Keys generated", Toast.LENGTH_SHORT).show();
 //                } catch (Exception e) {
 //                    e.printStackTrace();
 //                }
@@ -114,8 +113,7 @@ public class DeveloperActivity extends AppCompatActivity {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-                Toast toast = Toast.makeText(thisActivity, "all data deleted", Toast.LENGTH_SHORT);
-                toast.show();
+                Toast.makeText(thisActivity, "all data deleted", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -140,8 +138,7 @@ public class DeveloperActivity extends AppCompatActivity {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-                Toast toast = Toast.makeText(thisActivity, "demo data inserted", Toast.LENGTH_SHORT);
-                toast.show();
+                Toast.makeText(thisActivity, "demo data inserted", Toast.LENGTH_SHORT).show();
             }
         });
 

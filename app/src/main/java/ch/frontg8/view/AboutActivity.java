@@ -1,9 +1,12 @@
 package ch.frontg8.view;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import ch.frontg8.R;
 
@@ -14,9 +17,21 @@ public class AboutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
-        //TextView textfield = (TextView) findViewById(R.id.textViewAbout);
         //ImageView image = (ImageView) findViewById(R.id.imageView);
+        TextView textfield = (TextView) findViewById(R.id.textViewAbout);
+        textfield.setText("");
+
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            textfield.append("frontg8 Version " + pInfo.versionName + " (" + pInfo.versionCode + ")");
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        textfield.append("\n\n" + getString(R.string.textAbout));
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -139,8 +139,7 @@ public class ContactActivity extends AppCompatActivity {
                     android.os.Message msg = android.os.Message.obtain(null, MessageTypes.MSG_UPDATE_CONTACT, contact);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
-                    Toast toast = Toast.makeText(thisActivity, R.string.messageContactSaved, Toast.LENGTH_SHORT);
-                    toast.show();
+                    Toast.makeText(thisActivity, R.string.messageContactSaved, Toast.LENGTH_SHORT).show();
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -155,8 +154,7 @@ public class ContactActivity extends AppCompatActivity {
                     android.os.Message msg = android.os.Message.obtain(null, MessageTypes.MSG_REMOVE_CONTACT, contact);
                     msg.replyTo = mMessenger;
                     mService.send(msg);
-                    Toast toast = Toast.makeText(thisActivity, R.string.messageContactDeleted, Toast.LENGTH_SHORT);
-                    toast.show();
+                    Toast.makeText(thisActivity, R.string.messageContactDeleted, Toast.LENGTH_SHORT).show();
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -184,7 +182,7 @@ public class ContactActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(thisActivity.getClass().getSimpleName(), "onResume");
+        Log.d(thisActivity.getClass().getSimpleName(), "ContactActivity Resumed");
         //dataAdapter.replace(dataSource.getAllContacts());
 
         // bind to DataService
