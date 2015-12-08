@@ -29,8 +29,6 @@ import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
 import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.connection.TlsTest;
-import ch.frontg8.lib.crypto.KeystoreHandler;
-import ch.frontg8.lib.crypto.LibCrypto;
 import ch.frontg8.lib.data.DataService;
 import ch.frontg8.lib.data.MessageTypes;
 import ch.frontg8.lib.dbstore.ContactsDataSource;

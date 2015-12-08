@@ -8,8 +8,8 @@ android {
         applicationId "ch.frontg8"
         minSdkVersion 18
         targetSdkVersion 23
-        versionCode 3
-        versionName "1.0.3"
+        versionCode 4
+        versionName "1.0.4"
     }
     buildTypes {
         release {
@@ -19,16 +19,23 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url  "http://dl.bintray.com/lukaville/maven" // "Material File Picker"
+    }
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:23.0.1'
-    compile 'com.android.support:support-v4:23.0.1'
-    compile 'junit:junit:4.12'
-    compile files('libs/core-1.52.0.0.jar')
-    compile files('libs/prov-1.52.0.0.jar')
-    compile files('libs/pkix-1.52.0.0.jar')
-    compile files('libs/pg-1.52.0.0.jar')
-    compile files('libs/protobuf-java-2.5.0.jar')
-    compile files('libs/core-3.2.1.jar')
+    compile 'com.android.support:appcompat-v7:23.0.1' // UI
+    compile 'com.android.support:support-v4:23.0.1' // UI
+    compile 'junit:junit:4.12' // jUnit Testing
+    compile files('libs/core-1.52.0.0.jar') // Spongy Castle
+    compile files('libs/prov-1.52.0.0.jar') // Spongy Castle
+    compile files('libs/pkix-1.52.0.0.jar') // Spongy Castle
+    compile files('libs/pg-1.52.0.0.jar') // Spongy Castle
+    compile files('libs/protobuf-java-2.5.0.jar') // Protobuf
+    compile files('libs/core-3.2.1.jar') // QR-Code-Gen "zxing"
+    compile 'com.nbsp:library:1.02' // "Material File Picker"
 
 }
