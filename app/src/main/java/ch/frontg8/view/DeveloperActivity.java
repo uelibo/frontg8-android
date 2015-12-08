@@ -123,7 +123,7 @@ public class DeveloperActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String keyN = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBGp6vB5n7L2+6QdKY5ETFnY0QhIFIUqtVW0QaSDEUYJoLceBjKLyiLiQhiYo8tANXsBlrB+F/wQPARoYbaaFKX/cBUTYioTcVWpa4r2lupMyBwZ7x3v8cznfY4aSRWcQKIOtQxpHm7sDQWnViAVmKI4Xgw50ZE0ONxgIjNBioosO3K6I=";
                 String keyT = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBf72KrjMTpU60csP6cVefgJocZpj+OOTF8sNueIPU8krHCycTozNoycoguqLkI6jU66pTXtnx/nxgXprVqg6bEyMBB5oCXoPNQSrb8GBkL5p764is9dn27q57cJ/Mw1zp1W/cNKJj2uWtuyFxXcwEhjVh8Vja47BaJCbFg7drjrzTxZM=";
-                String keyU = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBRg1Zd0pBm6ST8dULpAuwWxq+llhdguXfRkuf5stzPVYOgwgjO4j3qDe6z5tgK/iS9wMSAjqYuzvr6UkQAJtAXHABEoheuPgoKp2PI3Nozn8E+zsH0RQWhKHV+XiUp4tv6TAPuyTelHVsNJYOCjS5IkzCGROQqEVzMonlyRN2HNXvaIs=";
+                String keyU = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBoY1LAh30RR7bBedM6kt7qQ/dm/P0Zg1O2Pc8vuZRd6jVgnNOxYfsJ1Ry4Rbhkbr3gzLsRWkhZQbX1Fl+hRPvAisAxFhKsgP5ujOcGOPTxd+qVi+sLdJ2u79osxqRawAhNHiWPmlzVtbwLo4i1wny2tVDeCeatSqA93Dx2zRC5Qn1gtU=";
                 String keyM = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBTEx0CPC1J9S76UNu2zXa0RcyzQMsY2Ajm4OLXTHdC20qOHYCaAFo41E76mxraVnITDrUVOA8Lugnv8U7MpGgA0QAuLbHDMz8O6hmtG9KoRz6NZKrM1eOVDQWU5B2PH2znCGn9htAO4pn1SOk0Ag91AjbvTd8JYbpuxD9EeMx4DyS3Ek=";
                 String keyV = "MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBotZ8vHmDtm4i1YTslt3tknPvZ/3fDDkfRC+nK4kkwBWF9CMRZgZ2PHheqCJgkED36v8K5wOcARkcuXhfuB8q0AEAyhQ6HgusnLy+HugytEfoQhNBGiE0QFlVSS1ZHzHxnm/aWdBZ58RYrkFWOun4Dnf6eDv+RFMVoYHZLREO2dRIp7w=";
                 ArrayList<Contact> contacts = new ArrayList<>();
