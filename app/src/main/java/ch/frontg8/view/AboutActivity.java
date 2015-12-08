@@ -1,12 +1,16 @@
 package ch.frontg8.view;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import ch.frontg8.R;
 
@@ -43,11 +47,19 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_openwebsite:
+                try {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://frontg8.ch"));
+                    startActivity(browserIntent);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(this, "No application can handle this request."
+                            + " Please install a webbrowser", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 }
