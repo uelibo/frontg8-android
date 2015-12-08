@@ -9,9 +9,9 @@ import android.util.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.UUID;
 
 import ch.frontg8.bl.Contact;
@@ -37,12 +37,16 @@ public class ConIncomingHandler extends Handler {
 
             switch (msg.what) {
                 case ConnectionService.MessageTypes.MSG_MSG:
+                    Log.d("CIH", "Received message");
                     byte[] msgBytes = (byte[]) msg.obj;
                     try {
                         ArrayList<Frontg8Client.Encrypted> messages = MessageHelper.getEncryptedMessagesFromNotification(MessageHelper.getNotificationMessage(msgBytes));
-                        new Decrypting().execute(messages);
+                        Log.d("CIH", "Starting Decrypting");
+                        Decrypting decrypting = new Decrypting();
+                        Frontg8Client.Encrypted[] messagesArray = messages.toArray(new Frontg8Client.Encrypted[messages.size()]);
+                        decrypting.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, messagesArray);
                     } catch (RuntimeException re) {
-                        Log.e("DS", "Could not construct msg!", re);
+                        Log.e("CIH", "Could not construct msg!", re);
                     }
                     break;
                 default:
@@ -73,15 +77,16 @@ public class ConIncomingHandler extends Handler {
         }
     }
 
-    private class Decrypting extends AsyncTask<ArrayList<Frontg8Client.Encrypted>, UUID, Boolean> {
+    private class Decrypting extends AsyncTask<Frontg8Client.Encrypted, UUID, Boolean> {
         DataService service = mService.get();
 
         @Override
-        protected Boolean doInBackground(ArrayList<Frontg8Client.Encrypted>... messages) {
-
-            Iterator<Frontg8Client.Encrypted> it = messages[0].iterator();
+        protected Boolean doInBackground(final Frontg8Client.Encrypted... messages) {
+//            android.os.Debug.waitForDebugger();
+            Iterator<Frontg8Client.Encrypted> it = Arrays.asList(messages).iterator();
             Frontg8Client.Encrypted message;
             while (it.hasNext()) {
+                Log.d("CIH", "Handling message");
                 message = it.next();
                 Tuple<UUID, Frontg8Client.Data> decryptedMSG;
                 try {
@@ -93,11 +98,12 @@ public class ConIncomingHandler extends Handler {
                         contact.incrementUnreadMessageCounter();
                         service.dataSource.insertMessage(contact, message);
                         // Send updates to interested parties
+                        Log.d("CIH", "Notifying");
                         notifyContactObservers(contact, service.mContactClients);
                         notifyMessageObservers(new ch.frontg8.bl.Message(decryptedMSG._2), service.mMessageClients);
                     }
                 } catch (InvalidMessageException ignore) {
-                    Log.d("DS", "Could not construct msg from decrypted content!");
+                    Log.d("CIH", "Could not construct msg from decrypted content!");
                 }
                 if (message != null) {
                     LibConfig.setLastMessageHash(service.thisContext, LibCrypto.getSHA256Hash(message.toByteArray()));

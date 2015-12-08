@@ -11,13 +11,12 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.UUID;
 
-import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
 import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.connection.ConnectionService;
@@ -85,7 +84,7 @@ public class DataService extends Service {
             UUID uuid = contact.getContactId();
             contacts.put(uuid, contact);
 
-            new Encrypting().execute(uuid);
+            new Decrypting().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, uuid);
         }
 
 
@@ -115,13 +114,23 @@ public class DataService extends Service {
         unbindService(mConnection);
     }
 
-    private class Encrypting extends AsyncTask<UUID, UUID, Boolean> {
+    private class Decrypting extends AsyncTask<UUID, UUID, Boolean> {
 
         @Override
         protected Boolean doInBackground(UUID... uuids) {
+            Log.d("DS","Loading messages for contacts now!");
             for (Frontg8Client.Encrypted enc : dataSource.getEncryptedMessagesByUUID(uuids[0])) {
                 try {
-                    contacts.get(uuids[0]).addMessage( new ch.frontg8.bl.Message(MessageHelper.getDataMessage(LibCrypto.decryptMSG( enc.getEncryptedData().toByteArray(), uuids[0],  ksHandler )._2)) );
+                    ch.frontg8.bl.Message data = new ch.frontg8.bl.Message(MessageHelper.getDataMessage(LibCrypto.decryptMSG(enc.getEncryptedData().toByteArray(), uuids[0], ksHandler)._2));
+                    contacts.get(uuids[0]).addMessage(data);
+                    Iterator<Messenger> iterator = mMessageClients.iterator();
+                    while (iterator.hasNext()) {
+                        try {
+                            iterator.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
+                        } catch (RemoteException e) {
+                            iterator.remove();
+                        }
+                    }
                 } catch (InvalidMessageException e) {
                     e.printStackTrace();
                 }
