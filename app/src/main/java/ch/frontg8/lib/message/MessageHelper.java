@@ -93,8 +93,8 @@ public class MessageHelper {
 
     // Extract content from messages
 
-    public static List<Frontg8Client.Encrypted> getEncryptedMessagesFromNotification(Frontg8Client.Notification notification) {
-        List<Frontg8Client.Encrypted> encrypted = new ArrayList<>();
+    public static ArrayList<Frontg8Client.Encrypted> getEncryptedMessagesFromNotification(Frontg8Client.Notification notification) {
+        ArrayList<Frontg8Client.Encrypted> encrypted = new ArrayList<>();
         if (notification != null) {
             for (int i = 0; i < notification.getCount(); i++) {
                 encrypted.add(notification.getBundle(i));

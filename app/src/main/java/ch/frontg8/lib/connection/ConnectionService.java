@@ -9,22 +9,25 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
+import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Iterator;
 
 import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.crypto.LibSSLContext;
+import ch.frontg8.lib.data.DataService;
 
 public class ConnectionService extends Service {
 
     private TcpClient mTcpClient = null;
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private Messenger mMessenger;
     HashSet<Messenger> mClients = new HashSet<>();
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d("CService", "Create");
+        mMessenger = new Messenger(new IncomingHandler(this));
 
         if (mTcpClient == null) {
             Log.d("CService", "mTcpClient was null");
@@ -54,18 +57,25 @@ public class ConnectionService extends Service {
     }
 
 
-    class IncomingHandler extends Handler {
+    static class IncomingHandler extends Handler {
+        private final WeakReference<ConnectionService> mService;
+
+        public IncomingHandler(ConnectionService service) {
+            mService = new WeakReference<>(service);
+        }
+
         @Override
         public void handleMessage(Message msg) {
+            ConnectionService service = mService.get();
             switch (msg.what) {
                 case MessageTypes.MSG_REGISTER_CLIENT:
-                    mClients.add(msg.replyTo);
+                    service.mClients.add(msg.replyTo);
                     break;
                 case MessageTypes.MSG_UNREGISTER_CLIENT:
-                    mClients.remove(msg.replyTo);
+                    service.mClients.remove(msg.replyTo);
                     break;
                 case MessageTypes.MSG_MSG:
-                    mTcpClient.sendMessage((byte[]) msg.obj);
+                    service.mTcpClient.sendMessage((byte[]) msg.obj);
                     break;
                 default:
                     super.handleMessage(msg);

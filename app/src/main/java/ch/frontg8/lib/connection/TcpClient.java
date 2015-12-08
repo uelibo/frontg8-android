@@ -84,10 +84,14 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
                                 int length = getLengthFromHeader(header);
                                 data = tlsClient.getBytes(length);
                             } catch (NotConnectedException e) {
+                                mRun = false;
+                                //TODO message about connection broken and stop
                                 e.printStackTrace();
                             }
-                            mMessageListener.messageReceived(data);
-                            Log.v("TCP RUNLOOP", " Message received");
+                            if (data != null && data.length > 0) {
+                                mMessageListener.messageReceived(data);
+                                Log.v("TCP RUNLOOP", " Message received");
+                            }
                         }
                         Log.d("TCP", "Finished receiveThread");
                     }

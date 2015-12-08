@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
+import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.connection.ConnectionService;
 import ch.frontg8.lib.crypto.KeystoreHandler;
 import ch.frontg8.lib.crypto.LibCrypto;
@@ -52,10 +53,10 @@ public class DataService extends Service {
                 msg1.replyTo = mConMessenger;
                 mConService.send(msg1);
 
-//                byte[] requestMSG = MessageHelper.buildMessageRequestMessage(LibConfig.getLastMessageHash(thisContext));
-//                Message msg2 = Message.obtain(null, ConnectionService.MessageTypes.MSG_MSG, requestMSG);
-//                msg1.replyTo = mConMessenger;
-//                mConService.send(msg2);
+                byte[] requestMSG = MessageHelper.buildMessageRequestMessage(LibConfig.getLastMessageHash(thisContext));
+                Message msg2 = Message.obtain(null, ConnectionService.MessageTypes.MSG_MSG, requestMSG);
+                msg1.replyTo = mConMessenger;
+                mConService.send(msg2);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
