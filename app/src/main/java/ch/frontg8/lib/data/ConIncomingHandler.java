@@ -8,9 +8,9 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.UUID;
@@ -67,14 +67,14 @@ public class ConIncomingHandler extends Handler {
         }
     }
 
-    private void notifyMessageObservers(ch.frontg8.bl.Message data, HashSet<Messenger> messengers) {
-        Iterator<Messenger> iterator = messengers.iterator();
-        while (iterator.hasNext()) {
-            try {
-                iterator.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
-            } catch (RemoteException e) {
-                iterator.remove();
+    private void notifyMessageObservers(ch.frontg8.bl.Message data, HashMap<UUID, Messenger> messengers, UUID uuid) {
+        try {
+            Messenger messenger = messengers.get(uuid);
+            if ( messenger != null) {
+                messenger.send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
             }
+        } catch (RemoteException e) {
+            messengers.remove(uuid);
         }
     }
 
@@ -83,35 +83,43 @@ public class ConIncomingHandler extends Handler {
 
         @Override
         protected Boolean doInBackground(final Frontg8Client.Encrypted... messages) {
-//            android.os.Debug.waitForDebugger();
-            Iterator<Frontg8Client.Encrypted> it = Arrays.asList(messages).iterator();
-            Frontg8Client.Encrypted message;
-            while (it.hasNext()) {
-                Log.d("CIH", "Handling message");
-                message = it.next();
-                Tuple<UUID, Frontg8Client.Data> decryptedMSG;
-                try {
-                    decryptedMSG = MessageHelper.getDecryptedContent(message, service.ksHandler);
+            if (service !=null) {
+                Iterator<Frontg8Client.Encrypted> it = Arrays.asList(messages).iterator();
+                Frontg8Client.Encrypted message;
+                while (it.hasNext()) {
+                    Log.d("CIH", "Handling message");
+                    message = it.next();
+                    Tuple<UUID, Frontg8Client.Data> decryptedMSG;
+                    try {
+                        decryptedMSG = MessageHelper.getDecryptedContent(message, service.ksHandler);
 
-                    if (decryptedMSG._2 != null) {
-                        Contact contact = service.contacts.get(decryptedMSG._1);
-                        contact.addMessage(new ch.frontg8.bl.Message(decryptedMSG._2));
-                        contact.incrementUnreadMessageCounter();
-                        service.dataSource.insertMessage(contact, message);
-                        // Send updates to interested parties
-                        Log.d("CIH", "Notifying");
-                        notifyContactObservers(contact, service.mContactClients);
-                        notifyMessageObservers(new ch.frontg8.bl.Message(decryptedMSG._2), service.mMessageClients);
+                        if (decryptedMSG._2 != null) {
+                            Contact contact = service.contacts.get(decryptedMSG._1);
+                            contact.addMessage(new ch.frontg8.bl.Message(decryptedMSG._2));
+                            contact.incrementUnreadMessageCounter();
+                            service.dataSource.insertMessage(contact, message);
+                            // Send updates to interested parties
+                            Log.d("CIH", "Notifying");
+                            notifyContactObservers(contact, service.mContactClients);
+                            notifyMessageObservers(new ch.frontg8.bl.Message(decryptedMSG._2), service.mMessageClients, decryptedMSG._1);
+                        }
+                    } catch (InvalidMessageException ignore) {
+                        Log.d("CIH", "Could not construct msg from decrypted content!");
                     }
-                } catch (InvalidMessageException ignore) {
-                    Log.d("CIH", "Could not construct msg from decrypted content!");
+                    if (message != null) {
+                        //TODO ascii string speichern und senden
+                        byte[] hash = LibCrypto.getSHA256Hash(message.getEncryptedData().toByteArray());
+                        final StringBuilder builder = new StringBuilder();
+                        for (byte b : hash) {
+                            builder.append(String.format("%02x", b));
+                        }
+                        String hashString = builder.toString();
+                        LibConfig.setLastMessageHash(service.thisContext, hashString);
+                    }
                 }
-                if (message != null) {
-                    //TODO ascii string speichern und senden
-                    LibConfig.setLastMessageHash(service.thisContext, new String(LibCrypto.getSHA256Hash(message.getEncryptedData().toByteArray())));
-                }
-            }
             return true;
+            }
+            return false;
         }
     }
 }

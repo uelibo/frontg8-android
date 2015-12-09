@@ -14,7 +14,6 @@ import android.util.Log;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.UUID;
 
 import ch.frontg8.bl.Contact;
@@ -37,7 +36,7 @@ public class DataService extends Service {
     protected Messenger mConMessenger;
     protected Messenger mDataMessenger;
     protected HashSet<Messenger> mContactClients = new HashSet<>();
-    protected HashSet<Messenger> mMessageClients = new HashSet<>();
+    protected HashMap<UUID, Messenger> mMessageClients = new HashMap<>();
 
     Messenger mConService;
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -45,7 +44,6 @@ public class DataService extends Service {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
             mConService = new Messenger(binder);
-//            Toast.makeText(DataService.this, R.string.messageConnected, Toast.LENGTH_SHORT).show();
 
             try {
                 Message msg1 = Message.obtain(null, ConnectionService.MessageTypes.MSG_REGISTER_CLIENT);
@@ -53,7 +51,7 @@ public class DataService extends Service {
                 mConService.send(msg1);
 
                 //TODO: check why this contact is invalid
-                Log.d("DS", "Requesting messages with Hash: " + new String (LibConfig.getLastMessageHash(thisContext)));
+                Log.d("DS", "Requesting messages with Hash: " + new String(LibConfig.getLastMessageHash(thisContext)));
                 byte[] requestMSG = MessageHelper.buildMessageRequestMessage(LibConfig.getLastMessageHash(thisContext));
                 Message msg2 = Message.obtain(null, ConnectionService.MessageTypes.MSG_MSG, requestMSG);
                 msg1.replyTo = mConMessenger;
@@ -120,18 +118,19 @@ public class DataService extends Service {
 
         @Override
         protected Boolean doInBackground(UUID... uuids) {
-            Log.d("DS","Loading messages for contacts now!");
+            Log.d("DS", "Loading messages for contacts now!");
             for (Frontg8Client.Encrypted enc : dataSource.getEncryptedMessagesByUUID(uuids[0])) {
                 try {
                     ch.frontg8.bl.Message data = new ch.frontg8.bl.Message(MessageHelper.getDataMessage(LibCrypto.decryptMSG(enc.getEncryptedData().toByteArray(), uuids[0], ksHandler)._2));
                     contacts.get(uuids[0]).addMessage(data);
-//                    Iterator<Messenger> iterator = mMessageClients.iterator();
-//                    while (iterator.hasNext()) {
-//                        try {
-//                            iterator.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
-//                        } catch (RemoteException e) {
-//                            iterator.remove();
+                    //TODO check concurrency
+//                    Messenger messenger = mMessageClients.get(uuids[0]);
+//                    try {
+//                        if (messenger != null) {
+//                            messenger.send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
 //                        }
+//                    } catch (RemoteException e) {
+//                        mMessageClients.remove(uuids[0]);
 //                    }
                 } catch (InvalidMessageException e) {
                     e.printStackTrace();

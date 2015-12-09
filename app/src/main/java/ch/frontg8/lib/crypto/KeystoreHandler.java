@@ -3,12 +3,25 @@ package ch.frontg8.lib.crypto;
 import android.content.Context;
 
 import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.spongycastle.openssl.PEMKeyPair;
+import org.spongycastle.openssl.PEMParser;
+import org.spongycastle.openssl.PEMWriter;
+import org.spongycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.spongycastle.openssl.jcajce.JcaPEMWriter;
 import org.spongycastle.util.encoders.Base64;
+import org.spongycastle.util.io.pem.PemObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -282,6 +295,36 @@ public class KeystoreHandler {
             loadFromFile(context);
         } catch (KeyStoreException | IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void exportMyKey(File path, Context context) throws IOException {
+        PrivateKey privateKey = getMyPrivateKey(context);
+        PublicKey publicKey = getMyPublicKey(context);
+        KeyPair pair = new KeyPair(publicKey, privateKey);
+        JcaPEMWriter writer = openPEMResourceWrite(path.toString(), context);
+        writer.writeObject(pair);
+        writer.flush();
+    }
+
+    public void importMyKey(File path, Context context) throws IOException {
+        PEMParser pemRd = openPEMResourceRead(path.toString(), context);
+        PEMKeyPair pemPair = (PEMKeyPair) pemRd.readObject();
+        KeyPair pair = new JcaPEMKeyConverter().setProvider(PN).getKeyPair(pemPair);
+        setMyKey(pair, context);
+    }
+
+    private PEMParser openPEMResourceRead(String fileName, Context context) throws IOException {
+        try (InputStream res = context.openFileInput(fileName)) {
+            Reader fRd = new BufferedReader(new InputStreamReader(res));
+            return new PEMParser(fRd);
+        }
+    }
+
+    private JcaPEMWriter openPEMResourceWrite(String fileName, Context context) throws IOException {
+        try (OutputStream os = context.openFileOutput(fileName, Context.MODE_PRIVATE)) {
+            Writer fWt = new BufferedWriter(new OutputStreamWriter(os));
+            return new JcaPEMWriter(fWt);
         }
     }
 

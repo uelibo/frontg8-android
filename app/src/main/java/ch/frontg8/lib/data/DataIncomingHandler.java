@@ -55,7 +55,8 @@ public class DataIncomingHandler extends Handler {
                     registerForMessages(msg, service);
                     break;
                 case MessageTypes.MSG_UNREGISTER_FOR_MESSAGES:
-                    service.mMessageClients.remove(msg.replyTo);
+                    //TODO implement better unregister
+//                    service.mMessageClients.remove(msg.replyTo);
                     break;
                 case MessageTypes.MSG_SEND_MSG:
                     sendMessage(msg, service);
@@ -111,17 +112,17 @@ public class DataIncomingHandler extends Handler {
         contact.delAllMessages();
         service.dataSource.deleteAllMessagesOfUUID(uuid);
         service.dataSource.updateContact(contact);
-        sendToAll(service);
+        sendToAll(service, uuid);
     }
 
-    private void sendToAll(DataService service) {
-        Iterator<Messenger> iterator = service.mMessageClients.iterator();
-        while (iterator.hasNext()) {
-            try {
-                iterator.next().send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, new ArrayList<ch.frontg8.bl.Message>()));
-            } catch (RemoteException e) {
-                iterator.remove();
+    private void sendToAll(DataService service, UUID uuid) {
+        try {
+            Messenger messenger = service.mMessageClients.get(uuid);
+            if (messenger != null) {
+                messenger.send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, new ArrayList<ch.frontg8.bl.Message>()));
             }
+        } catch (RemoteException e) {
+            service.mMessageClients.remove(uuid);
         }
     }
 
@@ -150,7 +151,7 @@ public class DataIncomingHandler extends Handler {
         Contact contact1 = service.contacts.get(uuid1);
         try {
             msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, contact1.getMessages()));
-            service.mMessageClients.add(msg.replyTo);
+            service.mMessageClients.put(uuid1, msg.replyTo);
         } catch (RemoteException e2) {
             e2.printStackTrace();
         }
