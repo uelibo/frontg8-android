@@ -77,8 +77,8 @@ public class MessageActivity extends AppCompatActivity {
             switch (msg.what) {
                 case MessageTypes.MSG_BULK_UPDATE:
                     dataAdapter.clear();
-                    ArrayList<Message> messages =  (ArrayList<Message>) msg.obj;
-                    for (Message m: messages) {
+                    ArrayList<Message> messages = (ArrayList<Message>) msg.obj;
+                    for (Message m : messages) {
                         Log.d(thisActivity.getClass().getSimpleName(), "got message " + m.getMessage());
 
                         dataAdapter.add(m);
@@ -102,10 +102,10 @@ public class MessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
-        Intent intent=this.getIntent();
-        Bundle bundle=intent.getExtras();
-        contactId=(UUID)bundle.getSerializable("contactid");
-        contactName=(String)bundle.getSerializable("contactname");
+        Intent intent = this.getIntent();
+        Bundle bundle = intent.getExtras();
+        contactId = (UUID) bundle.getSerializable("contactid");
+        contactName = (String) bundle.getSerializable("contactname");
 
         TextView title = (TextView) findViewById(R.id.textViewTitle);
         if (contactName != null) {

@@ -70,7 +70,7 @@ public class ConIncomingHandler extends Handler {
     private void notifyMessageObservers(ch.frontg8.bl.Message data, HashMap<UUID, Messenger> messengers, UUID uuid) {
         try {
             Messenger messenger = messengers.get(uuid);
-            if ( messenger != null) {
+            if (messenger != null) {
                 messenger.send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
             }
         } catch (RemoteException e) {
@@ -83,7 +83,7 @@ public class ConIncomingHandler extends Handler {
 
         @Override
         protected Boolean doInBackground(final Frontg8Client.Encrypted... messages) {
-            if (service !=null) {
+            if (service != null) {
                 Iterator<Frontg8Client.Encrypted> it = Arrays.asList(messages).iterator();
                 Frontg8Client.Encrypted message;
                 while (it.hasNext()) {
@@ -117,7 +117,7 @@ public class ConIncomingHandler extends Handler {
                         LibConfig.setLastMessageHash(service.thisContext, hashString);
                     }
                 }
-            return true;
+                return true;
             }
             return false;
         }

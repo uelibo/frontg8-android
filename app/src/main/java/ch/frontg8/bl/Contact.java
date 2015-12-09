@@ -13,9 +13,11 @@ public class Contact implements Serializable, Filtertext {
     private boolean hasValidPubKey = false;
     private ArrayList<Message> messages = new ArrayList<>();
 
-    public Contact() { this(genUUID(), "", "", "", 0, false); }
-    public Contact(UUID contactId, String name, String surname, String publicKeyString, int unreadMessageCounter, boolean hasValidPubKey)
-    {
+    public Contact() {
+        this(genUUID(), "", "", "", 0, false);
+    }
+
+    public Contact(UUID contactId, String name, String surname, String publicKeyString, int unreadMessageCounter, boolean hasValidPubKey) {
         this.contactId = contactId;
         this.name = name;
         this.surname = surname;
@@ -24,31 +26,77 @@ public class Contact implements Serializable, Filtertext {
         this.hasValidPubKey = hasValidPubKey;
     }
 
-    public UUID getContactId() { return contactId; }
-    private static UUID genUUID() { return java.util.UUID.randomUUID(); }
+    public UUID getContactId() {
+        return contactId;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    private static UUID genUUID() {
+        return java.util.UUID.randomUUID();
+    }
 
-    public String getSurname() { return surname; }
-    public void setSurname(String surname) { this.surname = surname; }
+    public String getName() {
+        return name;
+    }
 
-    public String getPublicKeyString() { return publicKeyString; }
-    public void setPublicKeyString(String publicKeyString) { this.publicKeyString = publicKeyString; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public void addMessage(Message msg) { messages.add(msg); }
-    public void addMessages(ArrayList<Message> msgs) { messages.addAll(msgs); }
-    public ArrayList<Message> getMessages() { return messages; }
-    public void delAllMessages() { messages.clear(); }
+    public String getSurname() {
+        return surname;
+    }
 
-    public void incrementUnreadMessageCounter() { unreadMessageCounter++; }
-    public int getUnreadMessageCounter() { return unreadMessageCounter; }
-    public void resetUnreadMessageCounter() { unreadMessageCounter = 0; }
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
 
-    public boolean hasValidPubKey() { return hasValidPubKey; }
-    public void setValidPubkey(boolean valid) { this.hasValidPubKey = valid; }
+    public String getPublicKeyString() {
+        return publicKeyString;
+    }
 
-    public String getFilterValue() { return this.name + " " + this.surname; }
+    public void setPublicKeyString(String publicKeyString) {
+        this.publicKeyString = publicKeyString;
+    }
+
+    public void addMessage(Message msg) {
+        messages.add(msg);
+    }
+
+    public void addMessages(ArrayList<Message> msgs) {
+        messages.addAll(msgs);
+    }
+
+    public ArrayList<Message> getMessages() {
+        return messages;
+    }
+
+    public void delAllMessages() {
+        messages.clear();
+    }
+
+    public void incrementUnreadMessageCounter() {
+        unreadMessageCounter++;
+    }
+
+    public int getUnreadMessageCounter() {
+        return unreadMessageCounter;
+    }
+
+    public void resetUnreadMessageCounter() {
+        unreadMessageCounter = 0;
+    }
+
+    public boolean hasValidPubKey() {
+        return hasValidPubKey;
+    }
+
+    public void setValidPubkey(boolean valid) {
+        this.hasValidPubKey = valid;
+    }
+
+    public String getFilterValue() {
+        return this.name + " " + this.surname;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -63,6 +111,8 @@ public class Contact implements Serializable, Filtertext {
     }
 
     @Override
-    public String toString() { return name; }
+    public String toString() {
+        return name;
+    }
 
 }

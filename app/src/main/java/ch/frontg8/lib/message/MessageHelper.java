@@ -1,16 +1,12 @@
 package ch.frontg8.lib.message;
 
-import android.content.Context;
-
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-import ch.frontg8.bl.Message;
 import ch.frontg8.lib.connection.NotConnectedException;
 import ch.frontg8.lib.connection.TlsClient;
 import ch.frontg8.lib.crypto.KeyNotFoundException;
@@ -113,7 +109,7 @@ public class MessageHelper {
 
     public static Frontg8Client.Data getDataMessage(byte[] data) throws InvalidMessageException {
         //TODO: improve by length check
-        if ( data == null ) {
+        if (data == null) {
             return null;
         }
         return getDataMessage(ByteString.copyFrom(data));
