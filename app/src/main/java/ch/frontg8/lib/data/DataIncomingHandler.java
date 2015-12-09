@@ -55,8 +55,8 @@ public class DataIncomingHandler extends Handler {
                     registerForMessages(msg, service);
                     break;
                 case MessageTypes.MSG_UNREGISTER_FOR_MESSAGES:
-                    //TODO implement better unregister
-//                    service.mMessageClients.remove(msg.replyTo);
+                    UUID uuid1 = (UUID) msg.obj;
+                    service.mMessageClients.remove(uuid1);
                     break;
                 case MessageTypes.MSG_SEND_MSG:
                     sendMessage(msg, service);
@@ -80,8 +80,8 @@ public class DataIncomingHandler extends Handler {
                     resetEverything(service);
                     break;
                 case MessageTypes.MSG_RESET_UNREAD:
-                    UUID uuid = (UUID) msg.obj;
-                    service.contacts.get(uuid).resetUnreadMessageCounter();
+                    UUID uuid2 = (UUID) msg.obj;
+                    service.contacts.get(uuid2).resetUnreadMessageCounter();
                 case MessageTypes.MSG_EXPORT_KEY:
                     // TODO: implement
                     break;
