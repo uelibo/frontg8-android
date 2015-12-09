@@ -3,6 +3,8 @@ package ch.frontg8.lib.config;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.nio.charset.StandardCharsets;
+
 import ch.frontg8.R;
 
 public class LibConfig {
@@ -27,12 +29,12 @@ public class LibConfig {
     }
 
     public static byte[] getLastMessageHash(Context context) {
-        return (getSharedPrefs(context).getString("last_message_hash", "0")).getBytes();
+        return (getSharedPrefs(context).getString("last_message_hash", "0")).getBytes(StandardCharsets.US_ASCII);
     }
 
-    public static void setLastMessageHash(Context context, byte[] hash) {
+    public static void setLastMessageHash(Context context, String hash) {
         SharedPreferences.Editor editor = getSharedPrefs(context).edit();
-        editor.putString("last_message_hash", new String(hash));
+        editor.putString("last_message_hash", hash);
         editor.commit();
     }
 

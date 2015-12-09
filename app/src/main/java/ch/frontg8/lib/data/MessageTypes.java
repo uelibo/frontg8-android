@@ -36,6 +36,8 @@ public class MessageTypes {
             public static final int MSG_DEL_ALL_MSG = 23;
             // - Will reset keystore, database and contacts.
             public static final int MSG_RESET = 24;
+            // obj UUID - Will reset unreadcounter for UUID
+            public static final int MSG_RESET_UNREAD = 25;
 
             // Outgoing
 

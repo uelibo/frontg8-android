@@ -102,7 +102,7 @@ public class DeveloperActivity extends AppCompatActivity {
                 textViewLog.append("Username: " + LibConfig.getUsername(thisActivity) + "\n");
                 textViewLog.append("Servername: " + LibConfig.getServerName(thisActivity) + "\n");
                 textViewLog.append("Serverport: " + LibConfig.getServerPort(thisActivity) + "\n");
-                textViewLog.append("Lastmessage-Hash: " + Base64.encodeToString(LibConfig.getLastMessageHash(thisActivity), Base64.DEFAULT) + "\n");
+                textViewLog.append("Lastmessage-Hash: " + new String (LibConfig.getLastMessageHash(thisActivity)) + "\n");
             }
         });
 

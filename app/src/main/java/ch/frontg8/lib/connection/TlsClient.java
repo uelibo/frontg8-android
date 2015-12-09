@@ -3,8 +3,6 @@ package ch.frontg8.lib.connection;
 import android.util.Log;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.UnknownHostException;
 
 import javax.net.ssl.SSLContext;
@@ -15,6 +13,7 @@ public class TlsClient {
     private int port;
     private SSLContext sslContext;
     private SSLSocket socket = null;
+    private int autoReconnects = 0;
 
     public TlsClient(String hostname, int port, SSLContext sslContext) {
         this.hostname = hostname;
@@ -84,18 +83,39 @@ public class TlsClient {
         if (throwExceptionIfNotConnected()) try {
             socket.getInputStream().read(recv, 0, recv.length);
         } catch (IOException e1) {
-            Log.v("TLS", "socket.getInputStream().read >> IOException");
+            //TODO reconnect socket
+            Log.e("TLS", "socket.getInputStream().read >> IOException", e1);
+        }
+        boolean socketOk = false;
+        for (byte b : recv) {
+            if (b != 0x00) {
+                socketOk = true;
+                break;
+            }
+        }
+
+        if (!socketOk) {
+            if (autoReconnects <= 5) {
+                connect();
+                autoReconnects++;
+            } else {
+                //TODO pause and inform user to restart.
+                throw new RuntimeException();
+            }
+        } else {
+            autoReconnects = 0;
         }
         return recv;
     }
 
-    public InputStream getInputStream() throws IOException {
-        return socket.getInputStream();
-    }
-
-    public OutputStream getOutputStream() throws IOException {
-        return socket.getOutputStream();
-    }
+//
+//    public InputStream getInputStream() throws IOException {
+//        return socket.getInputStream();
+//    }
+//
+//    public OutputStream getOutputStream() throws IOException {
+//        return socket.getOutputStream();
+//    }
 
     public void close() {
         if (isConnected()) {

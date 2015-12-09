@@ -52,6 +52,8 @@ public class DataService extends Service {
                 msg1.replyTo = mConMessenger;
                 mConService.send(msg1);
 
+                //TODO: check why this contact is invalid
+                Log.d("DS", "Requesting messages with Hash: " + new String (LibConfig.getLastMessageHash(thisContext)));
                 byte[] requestMSG = MessageHelper.buildMessageRequestMessage(LibConfig.getLastMessageHash(thisContext));
                 Message msg2 = Message.obtain(null, ConnectionService.MessageTypes.MSG_MSG, requestMSG);
                 msg1.replyTo = mConMessenger;
@@ -123,14 +125,14 @@ public class DataService extends Service {
                 try {
                     ch.frontg8.bl.Message data = new ch.frontg8.bl.Message(MessageHelper.getDataMessage(LibCrypto.decryptMSG(enc.getEncryptedData().toByteArray(), uuids[0], ksHandler)._2));
                     contacts.get(uuids[0]).addMessage(data);
-                    Iterator<Messenger> iterator = mMessageClients.iterator();
-                    while (iterator.hasNext()) {
-                        try {
-                            iterator.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
-                        } catch (RemoteException e) {
-                            iterator.remove();
-                        }
-                    }
+//                    Iterator<Messenger> iterator = mMessageClients.iterator();
+//                    while (iterator.hasNext()) {
+//                        try {
+//                            iterator.next().send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
+//                        } catch (RemoteException e) {
+//                            iterator.remove();
+//                        }
+//                    }
                 } catch (InvalidMessageException e) {
                     e.printStackTrace();
                 }

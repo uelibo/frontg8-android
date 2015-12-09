@@ -84,7 +84,7 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
                                 int length = getLengthFromHeader(header);
                                 data = tlsClient.getBytes(length);
                             } catch (NotConnectedException e) {
-//                                mRun = false;
+                                mRun = false;
                                 //TODO message about connection broken and stop
                                 e.printStackTrace();
                             }

@@ -51,6 +51,18 @@ public class Contact implements Serializable, Filtertext {
     public String getFilterValue() { return this.name + " " + this.surname; }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Contact other = (Contact) obj;
+        return !((this.contactId == null) ? (other.contactId != null) : !this.contactId.equals(other.contactId));
+    }
+
+    @Override
     public String toString() { return name; }
 
 }

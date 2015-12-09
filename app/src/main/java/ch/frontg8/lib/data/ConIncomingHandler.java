@@ -8,6 +8,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -106,7 +107,8 @@ public class ConIncomingHandler extends Handler {
                     Log.d("CIH", "Could not construct msg from decrypted content!");
                 }
                 if (message != null) {
-                    LibConfig.setLastMessageHash(service.thisContext, LibCrypto.getSHA256Hash(message.toByteArray()));
+                    //TODO ascii string speichern und senden
+                    LibConfig.setLastMessageHash(service.thisContext, new String(LibCrypto.getSHA256Hash(message.getEncryptedData().toByteArray())));
                 }
             }
             return true;

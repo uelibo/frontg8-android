@@ -77,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
                         + " " + c.hasValidPubKey());
                     }
                     break;
+                case MessageTypes.MSG_UPDATE:
+                    Contact contact = (Contact) msg.obj;
+                    dataAdapter.replace(contact);
+                    break;
                 default:
                     super.handleMessage(msg);
             }

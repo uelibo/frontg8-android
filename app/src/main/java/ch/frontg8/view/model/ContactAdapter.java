@@ -42,5 +42,15 @@ public class ContactAdapter extends CustomAdapter<Contact> {
 
         return convertView;
     }
+
+    public boolean replace(Contact contact) {
+        int index = arrayList.indexOf(contact);
+        if (index >= 0) {
+            arrayList.set(index,contact);
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
