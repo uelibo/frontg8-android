@@ -29,11 +29,7 @@ public class TlsClient {
         if (isConnected()) {
             return true;
         } else {
-            connect();
-            if (!isConnected()) {
-                throw new NotConnectedException("not Connected");
-            }
-            return true;
+            throw new NotConnectedException("not Connected");
         }
     }
 
@@ -84,6 +80,11 @@ public class TlsClient {
             socket.getInputStream().read(recv, 0, recv.length);
         } catch (IOException e1) {
             //TODO reconnect socket
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             Log.e("TLS", "socket.getInputStream().read >> IOException", e1);
         }
         boolean socketOk = false;
@@ -99,8 +100,11 @@ public class TlsClient {
                 connect();
                 autoReconnects++;
             } else {
-                //TODO pause and inform user to restart.
-                throw new RuntimeException();
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             autoReconnects = 0;

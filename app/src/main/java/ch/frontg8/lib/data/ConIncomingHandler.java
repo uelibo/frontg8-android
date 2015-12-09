@@ -50,6 +50,9 @@ public class ConIncomingHandler extends Handler {
                         Log.e("CIH", "Could not construct msg!", re);
                     }
                     break;
+                case ConnectionService.MessageTypes.MSG_CONNECTION_LOST:
+                    //TODO implement
+                    break;
                 default:
                     super.handleMessage(msg);
             }
@@ -107,7 +110,6 @@ public class ConIncomingHandler extends Handler {
                         Log.d("CIH", "Could not construct msg from decrypted content!");
                     }
                     if (message != null) {
-                        //TODO ascii string speichern und senden
                         byte[] hash = LibCrypto.getSHA256Hash(message.getEncryptedData().toByteArray());
                         final StringBuilder builder = new StringBuilder();
                         for (byte b : hash) {
