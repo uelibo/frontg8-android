@@ -81,6 +81,11 @@ public class DataIncomingHandler extends Handler {
                 case MessageTypes.MSG_RESET_UNREAD:
                     UUID uuid = (UUID) msg.obj;
                     service.contacts.get(uuid).resetUnreadMessageCounter();
+                case MessageTypes.MSG_EXPORT_KEY:
+                    // TODO: implement
+                    break;
+                case MessageTypes.MSG_IMPORT_KEY:
+                    // TODO: implement
                     break;
                 default:
                     super.handleMessage(msg);

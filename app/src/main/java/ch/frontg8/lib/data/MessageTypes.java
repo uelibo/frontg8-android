@@ -2,7 +2,7 @@ package ch.frontg8.lib.data;
 
 public class MessageTypes {
 
-            // Incoming
+            // Incoming from GUI
 
             //- Will add you to a List of active Clients for contact-updates
             public static final int MSG_GET_CONTACTS = 10;
@@ -38,13 +38,19 @@ public class MessageTypes {
             public static final int MSG_RESET = 24;
             // obj UUID - Will reset unreadcounter for UUID
             public static final int MSG_RESET_UNREAD = 25;
+            //obj String - will export user-key to specified destination in obj
+            public static final int MSG_EXPORT_KEY = 26;
+            //obj String - will import user-key from specified destination in obj
+            public static final int MSG_IMPORT_KEY = 27;
 
-            // Outgoing
+
+    // Outgoing to GUI
 
             public static final int MSG_UPDATE = 30;
 
             public static final int MSG_BULK_UPDATE = 31;
 
             public static final int MSG_ERROR = 32;
+
 
 }
