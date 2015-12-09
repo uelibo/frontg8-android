@@ -15,7 +15,6 @@ import java.util.Iterator;
 
 import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.crypto.LibSSLContext;
-import ch.frontg8.lib.data.DataService;
 
 public class ConnectionService extends Service {
 
