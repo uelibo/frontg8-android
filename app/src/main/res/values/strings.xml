@@ -54,4 +54,8 @@
     <string name="notificationConnected">Connected</string>
     <string name="notificationDisConnected">Not connected (pull for options)</string>
     <string name="notificationButtonConnect">Connect</string>
+    <string name="titleCurrentDir">Current Dir</string>
+    <string name="titleItem">item</string>
+    <string name="titleItems">items</string>
+    <string name="titleParentDirectory">Parent Directory</string>
 </resources>
