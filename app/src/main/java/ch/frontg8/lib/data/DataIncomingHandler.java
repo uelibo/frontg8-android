@@ -7,6 +7,7 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
@@ -83,13 +84,39 @@ public class DataIncomingHandler extends Handler {
                     UUID uuid2 = (UUID) msg.obj;
                     service.contacts.get(uuid2).resetUnreadMessageCounter();
                 case MessageTypes.MSG_EXPORT_KEY:
-                    // TODO: implement
+                    exportKey(msg, service);
                     break;
                 case MessageTypes.MSG_IMPORT_KEY:
-                    // TODO: implement
+                    importKey(msg, service);
                     break;
                 default:
                     super.handleMessage(msg);
+            }
+        }
+    }
+
+    private void importKey(Message msg, DataService service) {
+        String path2 = (String) msg.obj;
+        try {
+            service.ksHandler.importMyKey(path2, service.thisContext);
+        } catch (IOException e) {
+            try {
+                msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_ERROR, e));
+            } catch (RemoteException e1) {
+                e1.printStackTrace();
+            }
+        }
+    }
+
+    private void exportKey(Message msg, DataService service) {
+        String path1 = (String) msg.obj;
+        try {
+            service.ksHandler.exportMyKey(path1, service.thisContext);
+        } catch (IOException e) {
+            try {
+                msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_ERROR, e));
+            } catch (RemoteException e1) {
+                e1.printStackTrace();
             }
         }
     }

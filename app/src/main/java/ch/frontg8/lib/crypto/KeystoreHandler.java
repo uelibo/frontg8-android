@@ -298,17 +298,17 @@ public class KeystoreHandler {
         }
     }
 
-    public void exportMyKey(File path, Context context) throws IOException {
+    public void exportMyKey(String path, Context context) throws IOException {
         PrivateKey privateKey = getMyPrivateKey(context);
         PublicKey publicKey = getMyPublicKey(context);
         KeyPair pair = new KeyPair(publicKey, privateKey);
-        JcaPEMWriter writer = openPEMResourceWrite(path.toString(), context);
+        JcaPEMWriter writer = openPEMResourceWrite(path, context);
         writer.writeObject(pair);
         writer.flush();
     }
 
-    public void importMyKey(File path, Context context) throws IOException {
-        PEMParser pemRd = openPEMResourceRead(path.toString(), context);
+    public void importMyKey(String path, Context context) throws IOException {
+        PEMParser pemRd = openPEMResourceRead(path, context);
         PEMKeyPair pemPair = (PEMKeyPair) pemRd.readObject();
         KeyPair pair = new JcaPEMKeyConverter().setProvider(PN).getKeyPair(pemPair);
         setMyKey(pair, context);
