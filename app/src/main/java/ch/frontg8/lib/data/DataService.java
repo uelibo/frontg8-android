@@ -1,23 +1,28 @@
 package ch.frontg8.lib.data;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
 
+import ch.frontg8.R;
 import ch.frontg8.bl.Contact;
-import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.connection.ConnectionService;
 import ch.frontg8.lib.crypto.KeystoreHandler;
 import ch.frontg8.lib.crypto.LibCrypto;
@@ -25,6 +30,7 @@ import ch.frontg8.lib.dbstore.ContactsDataSource;
 import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
+import ch.frontg8.view.MainActivity;
 
 public class DataService extends Service {
 
@@ -38,6 +44,9 @@ public class DataService extends Service {
     protected HashSet<Messenger> mContactClients = new HashSet<>();
     protected HashMap<UUID, Messenger> mMessageClients = new HashMap<>();
 
+    protected NotificationManager NM;
+
+
     Messenger mConService;
     private ServiceConnection mConnection = new ServiceConnection() {
 
@@ -49,13 +58,6 @@ public class DataService extends Service {
                 Message msg1 = Message.obtain(null, ConnectionService.MessageTypes.MSG_REGISTER_CLIENT);
                 msg1.replyTo = mConMessenger;
                 mConService.send(msg1);
-
-                //TODO: check why this contact is invalid
-                Log.d("DS", "Requesting messages with Hash: " + new String(LibConfig.getLastMessageHash(thisContext)));
-                byte[] requestMSG = MessageHelper.buildMessageRequestMessage(LibConfig.getLastMessageHash(thisContext));
-                Message msg2 = Message.obtain(null, ConnectionService.MessageTypes.MSG_MSG, requestMSG);
-                msg1.replyTo = mConMessenger;
-                mConService.send(msg2);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -67,9 +69,11 @@ public class DataService extends Service {
         }
     };
 
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("DS", "Create");
+        NM = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         mConMessenger = new Messenger(new ConIncomingHandler(this));
         mDataMessenger = new Messenger(new DataIncomingHandler(this));
@@ -83,10 +87,8 @@ public class DataService extends Service {
         for (Contact contact : dataSource.getAllContacts()) {
             UUID uuid = contact.getContactId();
             contacts.put(uuid, contact);
-
             new Decrypting().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, uuid);
         }
-
 
         // Start ConnectionService
         Intent mIntent = new Intent(this, ConnectionService.class);
@@ -112,6 +114,31 @@ public class DataService extends Service {
         super.onDestroy();
         dataSource.close();
         unbindService(mConnection);
+    }
+
+    void sendNotificationDisconnected() {
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        android.support.v7.app.NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.drawable.connecting64, getResources().getString(R.string.notificationButtonConnect), pi).build();
+        Notification notification = getDefaultNotificationBuilder()
+                .addAction(action)
+                .setContentText(getResources().getString(R.string.notificationDisConnected))
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC).build();
+
+        NM.notify(2, notification);
+    }
+
+    android.support.v4.app.NotificationCompat.Builder getDefaultNotificationBuilder() {
+        return new NotificationCompat.Builder(thisContext)
+                .setCategory(Notification.CATEGORY_MESSAGE) //TODO allow other notifications
+                .setContentTitle(getResources().getString(R.string.app_name))
+                .setSmallIcon(R.drawable.logo_icon)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo_icon))
+                .setAutoCancel(true);
     }
 
     private class Decrypting extends AsyncTask<UUID, UUID, Boolean> {
