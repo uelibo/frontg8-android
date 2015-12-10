@@ -11,8 +11,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.nbsp.materialfilepicker.ui.FilePickerActivity;
-
 import ch.frontg8.R;
 import ch.frontg8.lib.filechooser.FileexplorerActivity;
 
@@ -38,10 +36,10 @@ public class CertImportActivity extends AppCompatActivity {
         });
     }
 
-    public void startFilePickerActivity() {
-        Intent intent = new Intent(thisActivity, FilePickerActivity.class);
-        startActivityForResult(intent, 1);
-    }
+//    public void startFilePickerActivity() {
+//        Intent intent = new Intent(thisActivity, FilePickerActivity.class);
+//        startActivityForResult(intent, 1);
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -60,14 +58,14 @@ public class CertImportActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
-            // Do anything with file
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (requestCode == 1 && resultCode == RESULT_OK) {
+//            String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
+//            // Do anything with file
+//        }
+//    }
 
 }

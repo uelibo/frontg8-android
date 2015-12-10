@@ -8,20 +8,14 @@ android {
         applicationId "ch.frontg8"
         minSdkVersion 18
         targetSdkVersion 23
-        versionCode 5
-        versionName "1.0.5"
+        versionCode 6
+        versionName "1.0.6"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-}
-
-repositories {
-    maven {
-        url  "http://dl.bintray.com/lukaville/maven" // "Material File Picker"
     }
 }
 
@@ -36,6 +30,4 @@ dependencies {
     compile files('libs/pg-1.52.0.0.jar') // Spongy Castle
     compile files('libs/protobuf-java-2.5.0.jar') // Protobuf
     compile files('libs/core-3.2.1.jar') // QR-Code-Gen "zxing"
-    compile 'com.nbsp:library:1.02' // "Material File Picker"
-
 }
