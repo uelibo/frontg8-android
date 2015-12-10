@@ -90,9 +90,24 @@ public class DataIncomingHandler extends Handler {
                 case MessageTypes.MSG_IMPORT_KEY:
                     importKey(msg, service);
                     break;
+                case MessageTypes.MSG_CONNECT:
+                    //TODO reset notification
+                    Log.d("DS","Connecting requested");
+                    connect(service);
+                    break;
                 default:
                     super.handleMessage(msg);
             }
+        }
+    }
+
+    private void connect(DataService service) {
+        try {
+            if (service.mConService !=null) {
+                service.mConService.send(Message.obtain(null, ConnectionService.MessageTypes.MSG_CONNECT));
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 
@@ -140,10 +155,10 @@ public class DataIncomingHandler extends Handler {
         contact.delAllMessages();
         service.dataSource.deleteAllMessagesOfUUID(uuid);
         service.dataSource.updateContact(contact);
-        sendToAll(service, uuid);
+        sendToUUID(service, uuid);
     }
 
-    private void sendToAll(DataService service, UUID uuid) {
+    private void sendToUUID(DataService service, UUID uuid) {
         try {
             Messenger messenger = service.mMessageClients.get(uuid);
             if (messenger != null) {

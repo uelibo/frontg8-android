@@ -7,12 +7,14 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
 
 import ch.frontg8.lib.config.LibConfig;
 import ch.frontg8.lib.crypto.LibSSLContext;
+import ch.frontg8.lib.message.MessageHelper;
 
 public class ConnectionService extends Service {
 
@@ -25,14 +27,27 @@ public class ConnectionService extends Service {
         super.onCreate();
         Log.d("CService", "Create");
         mMessenger = new Messenger(new IncomingHandler(this));
+        connect();
+    }
 
-        if (mTcpClient == null) {
-            Log.d("CService", "mTcpClient was null");
-        } else {
-            Log.d("CService", "mTcpClient was " + mTcpClient.toString());
+    private void connect() {
+        Log.d("CS","Connecting");
+        mTcpClient = buildTCPClient();
+        mTcpClient.execute();
+        requestMessages();
+    }
+
+    private void requestMessages() {
+        byte[] hash = LibConfig.getLastMessageHash(this);
+        Log.d("DS", "Requesting messages with Hash: " + new String(hash));
+        if (mTcpClient != null) {
+            mTcpClient.sendMessage(MessageHelper.buildMessageRequestMessage(hash));
         }
+    }
 
-        mTcpClient = new TcpClient(new TcpClient.OnMessageReceived() {
+    @NonNull
+    private TcpClient buildTCPClient() {
+        return new TcpClient(new TcpClient.OnMessageReceived() {
             @Override
             public void messageReceived(byte[] message) {
                 try {
@@ -45,15 +60,19 @@ public class ConnectionService extends Service {
 
             @Override
             public void connectionLost() {
-                try {
-                    if (mClient != null)
-                        mClient.send(Message.obtain(null, MessageTypes.MSG_CONNECTION_LOST));
-                } catch (RemoteException e) {
-                    mClient = null;
-                }
+                mTcpClient = null;
+                sendConnectionLost();
             }
         }, LibConfig.getServerName(this), LibConfig.getServerPort(this), LibSSLContext.getSSLContext("root", this));
-        mTcpClient.execute();
+    }
+
+    private void sendConnectionLost() {
+        try {
+            if (mClient != null)
+                mClient.send(Message.obtain(null, MessageTypes.MSG_CONNECTION_LOST));
+        } catch (RemoteException e) {
+            mClient = null;
+        }
     }
 
     @Override
@@ -80,7 +99,22 @@ public class ConnectionService extends Service {
                     service.mClient = null;
                     break;
                 case MessageTypes.MSG_MSG:
-                    service.mTcpClient.sendMessage((byte[]) msg.obj);
+                    if (service.mTcpClient != null) {
+                        service.mTcpClient.sendMessage((byte[]) msg.obj);
+                    } else {
+                        service.connect();
+                        if (service.mTcpClient != null){
+                            service.mTcpClient.sendMessage((byte[]) msg.obj);
+                        } else {
+                            service.sendConnectionLost();
+                        }
+                    }
+                    break;
+                case MessageTypes.MSG_CONNECT:
+                    if (service.mTcpClient == null) {
+                        service.connect();
+                        Log.d("CS","Tryed to connect");
+                    }
                     break;
                 default:
                     super.handleMessage(msg);
@@ -94,7 +128,6 @@ public class ConnectionService extends Service {
         super.onDestroy();
         mTcpClient.stopClient();
         mTcpClient = null;
-        // TODO remove stuff
     }
 
     public static class MessageTypes {
@@ -102,6 +135,7 @@ public class ConnectionService extends Service {
         public static final int MSG_UNREGISTER_CLIENT = 2;
         public static final int MSG_MSG = 3;
         public static final int MSG_CONNECTION_LOST = 4;
+        public static final int MSG_CONNECT = 5;
     }
 }
 

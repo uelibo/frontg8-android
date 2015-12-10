@@ -1,10 +1,15 @@
 package ch.frontg8.lib.data;
 
+import android.app.ActivityManager;
+import android.app.Notification;
+import android.content.ComponentName;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
@@ -13,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 import ch.frontg8.bl.Contact;
@@ -35,7 +41,6 @@ public class ConIncomingHandler extends Handler {
     public void handleMessage(Message msg) {
         DataService service = mService.get();
         if (service != null) {
-
             switch (msg.what) {
                 case ConnectionService.MessageTypes.MSG_MSG:
                     Log.d("CIH", "Received message");
@@ -51,7 +56,7 @@ public class ConIncomingHandler extends Handler {
                     }
                     break;
                 case ConnectionService.MessageTypes.MSG_CONNECTION_LOST:
-                    //TODO implement
+                    service.sendNotificationDisconnected();
                     break;
                 default:
                     super.handleMessage(msg);
@@ -81,6 +86,27 @@ public class ConIncomingHandler extends Handler {
         }
     }
 
+    public boolean isInForeground() {
+        DataService service = mService.get();
+        if (service != null) {
+            String packetname = service.getPackageName();
+            ActivityManager am = (ActivityManager) service.getSystemService(service.ACTIVITY_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                final List<ActivityManager.RunningAppProcessInfo> processInfos = am.getRunningAppProcesses();
+                ActivityManager.RunningAppProcessInfo processInfo = processInfos.get(0);
+                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                    return (Arrays.asList(processInfo.pkgList).get(0)).contains(packetname);
+                }
+            } else {
+                List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
+                ComponentName componentInfo = null;
+                componentInfo = taskInfo.get(0).topActivity;
+                return componentInfo.getPackageName().contains(packetname);
+            }
+        }
+        return false;
+    }
+
     private class Decrypting extends AsyncTask<Frontg8Client.Encrypted, UUID, Boolean> {
         DataService service = mService.get();
 
@@ -103,8 +129,17 @@ public class ConIncomingHandler extends Handler {
                             service.dataSource.insertMessage(contact, message);
                             // Send updates to interested parties
                             Log.d("CIH", "Notifying");
+
                             notifyContactObservers(contact, service.mContactClients);
                             notifyMessageObservers(new ch.frontg8.bl.Message(decryptedMSG._2), service.mMessageClients, decryptedMSG._1);
+
+                            if (!isInForeground()) {
+                                Notification notification = service.getDefaultNotificationBuilder()
+                                        .setContentText(decryptedMSG._2.getMessageData().toStringUtf8())
+                                        .setVisibility(NotificationCompat.VISIBILITY_SECRET).build();
+
+                                service.NM.notify(2, notification);
+                            }
                         }
                     } catch (InvalidMessageException ignore) {
                         Log.d("CIH", "Could not construct msg from decrypted content!");

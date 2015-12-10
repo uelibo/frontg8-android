@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 Message msg = Message.obtain(null, MessageTypes.MSG_GET_CONTACTS);
                 msg.replyTo = mMessenger;
                 mService.send(msg);
+                mService.send(Message.obtain(null, MessageTypes.MSG_CONNECT));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -58,6 +59,11 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName className) {
+            try {
+                mService.send(Message.obtain(null, MessageTypes.MSG_UNREGISTER_CONTACTS));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
             mService = null;
         }
     };
