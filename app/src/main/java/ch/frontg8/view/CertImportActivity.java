@@ -1,6 +1,6 @@
 package ch.frontg8.view;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,9 +14,10 @@ import android.widget.TextView;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 
 import ch.frontg8.R;
+import ch.frontg8.lib.filechooser.FileexplorerActivity;
 
 public class CertImportActivity extends AppCompatActivity {
-    private Context thisActivity = this;
+    private Activity thisActivity = this;
 
 
     @Override
@@ -31,12 +32,15 @@ public class CertImportActivity extends AppCompatActivity {
 
         buttonImportCert.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-
-                Intent intent = new Intent(thisActivity, FilePickerActivity.class);
+                Intent intent = new Intent(thisActivity, FileexplorerActivity.class);
                 startActivityForResult(intent, 1);
-
             }
         });
+    }
+
+    public void startFilePickerActivity() {
+        Intent intent = new Intent(thisActivity, FilePickerActivity.class);
+        startActivityForResult(intent, 1);
     }
 
     @Override
