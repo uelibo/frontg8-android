@@ -39,21 +39,17 @@ public class FileArrayAdapter extends ArrayAdapter<Item>{
             v = vi.inflate(id, null);
         }
 
-               /* create a new view of my layout and inflate it in the row */
-        //convertView = ( RelativeLayout ) inflater.inflate( resource, null );
-
         final Item o = items.get(position);
         if (o != null) {
             TextView t1 = (TextView) v.findViewById(R.id.TextView01);
             TextView t2 = (TextView) v.findViewById(R.id.TextView02);
             TextView t3 = (TextView) v.findViewById(R.id.TextViewDate);
-                       /* Take the ImageView from layout and set the city's image */
-            ImageView imageCity = (ImageView) v.findViewById(R.id.fd_Icon1);
+            ImageView imageView = (ImageView) v.findViewById(R.id.fd_Icon1);
             String uri = "drawable/" + o.getImage();
             int imageResource = c.getResources().getIdentifier(uri, null, c.getPackageName());
             //Drawable image = c.getResources().getDrawable(imageResource);
             Drawable image = ContextCompat.getDrawable(c, imageResource);
-            imageCity.setImageDrawable(image);
+            imageView.setImageDrawable(image);
 
             if(t1!=null)
                 t1.setText(o.getName());

@@ -5,14 +5,22 @@ public class Item implements Comparable<Item> {
     private String data;
     private String date;
     private String path;
-    private String image;
+    private FileType fileType;
 
-    public Item(String name, String data, String date, String path, String image) {
+    public Item(FileType fileType) {
+        this("","","","", fileType);
+        if (fileType == FileType.DIR_CURRENT) {
+            this.name = ".";
+            this.data = "(Current Directory)";
+        }
+    }
+
+    public Item(String name, String data, String date, String path, FileType fileType) {
         this.name = name;
         this.data = data;
         this.date = date;
         this.path = path;
-        this.image = image;
+        this.fileType = fileType;
     }
 
     public String getName() {
@@ -31,8 +39,10 @@ public class Item implements Comparable<Item> {
         return path;
     }
 
+    public FileType getFileType() { return fileType; }
+
     public String getImage() {
-        return image;
+        return fileType.getPicName();
     }
 
     public int compareTo(Item o) {
