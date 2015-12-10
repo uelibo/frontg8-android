@@ -88,18 +88,18 @@
                 android:value="ch.frontg8.view.MainActivity" />
         </activity>
         <activity
-            android:name=".lib.filechooser.FileexplorerActivity"
+            android:name=".lib.filechooser.view.FileexplorerActivity"
             android:label="@string/title_activity_fileexplorer" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="ch.frontg8.view.MainActivity" />
+                android:value=".view.CertImportActivity" />
         </activity>
         <activity
-            android:name=".lib.filechooser.FileChooser"
+            android:name=".lib.filechooser.view.FileChooser"
             android:label="@string/title_activity_fileexplorer" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".lib.filechooser.FileexplorerActivity" />
+                android:value=".lib.filechooser.view.FileexplorerActivity" />
         </activity>
     </application>
 

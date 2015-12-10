@@ -1,17 +1,18 @@
-package ch.frontg8.lib.filechooser;
+package ch.frontg8.lib.filechooser.view;
 
 import android.os.Bundle;
-import android.app.Activity;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 
 import ch.frontg8.R;
 
-public class FileexplorerActivity extends Activity {
+public class FileexplorerActivity extends AppCompatActivity {
 
     private static final int REQUEST_PATH = 1;
     String curFileName;
+    String curDirName;
     EditText edittext;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,8 @@ public class FileexplorerActivity extends Activity {
         if (requestCode == REQUEST_PATH){
             if (resultCode == RESULT_OK) {
                 curFileName = data.getStringExtra("GetFileName");
-                edittext.setText(curFileName);
+                curDirName = data.getStringExtra("GetPath");
+                edittext.setText(curDirName + "/" + curFileName);
             }
         }
     }

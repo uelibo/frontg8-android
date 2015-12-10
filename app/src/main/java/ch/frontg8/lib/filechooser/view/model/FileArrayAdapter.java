@@ -1,8 +1,9 @@
-package ch.frontg8.lib.filechooser;
+package ch.frontg8.lib.filechooser.view.model;
 
 import java.util.List;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import ch.frontg8.R;
+import ch.frontg8.lib.filechooser.bl.Item;
 
 public class FileArrayAdapter extends ArrayAdapter<Item>{
 
@@ -49,7 +51,8 @@ public class FileArrayAdapter extends ArrayAdapter<Item>{
             ImageView imageCity = (ImageView) v.findViewById(R.id.fd_Icon1);
             String uri = "drawable/" + o.getImage();
             int imageResource = c.getResources().getIdentifier(uri, null, c.getPackageName());
-            Drawable image = c.getResources().getDrawable(imageResource);
+            //Drawable image = c.getResources().getDrawable(imageResource);
+            Drawable image = ContextCompat.getDrawable(c, imageResource);
             imageCity.setImageDrawable(image);
 
             if(t1!=null)
@@ -61,4 +64,6 @@ public class FileArrayAdapter extends ArrayAdapter<Item>{
         }
         return v;
     }
+
+
 }

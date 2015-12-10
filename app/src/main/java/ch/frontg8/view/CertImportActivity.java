@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import ch.frontg8.R;
-import ch.frontg8.lib.filechooser.FileexplorerActivity;
+import ch.frontg8.lib.filechooser.view.FileexplorerActivity;
 
 public class CertImportActivity extends AppCompatActivity {
     private Activity thisActivity = this;
