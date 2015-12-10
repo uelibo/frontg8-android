@@ -5,15 +5,12 @@ import android.content.Context;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.openssl.PEMKeyPair;
 import org.spongycastle.openssl.PEMParser;
-import org.spongycastle.openssl.PEMWriter;
 import org.spongycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.spongycastle.openssl.jcajce.JcaPEMWriter;
 import org.spongycastle.util.encoders.Base64;
-import org.spongycastle.util.io.pem.PemObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;

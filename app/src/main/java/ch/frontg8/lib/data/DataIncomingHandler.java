@@ -50,7 +50,7 @@ public class DataIncomingHandler extends Handler {
                     removeContact(msg, service);
                     break;
                 case MessageTypes.MSG_CONTAINS_SK:
-                    respondeToMSG(msg, Message.obtain(null, MessageTypes.MSG_UPDATE, LibCrypto.containsSKSandSKC((UUID) msg.obj, service.ksHandler)));
+                    respondToMSG(msg, Message.obtain(null, MessageTypes.MSG_UPDATE, LibCrypto.containsSKSandSKC((UUID) msg.obj, service.ksHandler)));
                     break;
                 case MessageTypes.MSG_REGISTER_FOR_MESSAGES:
                     registerForMessages(msg, service);
@@ -66,7 +66,7 @@ public class DataIncomingHandler extends Handler {
                     requestMessage(service);
                     break;
                 case MessageTypes.MSG_GET_KEY:
-                    respondeToMSG(msg, Message.obtain(null, MessageTypes.MSG_UPDATE, LibCrypto.getMyPublicKeyBytes(service.ksHandler, service.thisContext)));
+                    respondToMSG(msg, Message.obtain(null, MessageTypes.MSG_UPDATE, LibCrypto.getMyPublicKeyBytes(service.ksHandler, service.thisContext)));
                     break;
                 case MessageTypes.MSG_CHANGE_PW:
                     service.ksHandler.changePassword((String) msg.obj, service.thisContext);
@@ -184,10 +184,10 @@ public class DataIncomingHandler extends Handler {
         }
         contact1.resetUnreadMessageCounter();
         service.dataSource.updateContact(contact1);
-        sendToContactSubscriptors(service, contact1);
+        sendToContactSubscribers(service, contact1);
     }
 
-    private void sendToContactSubscriptors(DataService service, Contact contact1) {
+    private void sendToContactSubscribers(DataService service, Contact contact1) {
         Iterator<Messenger> iterator = service.mContactClients.iterator();
         while (iterator.hasNext()) {
             try {
@@ -198,7 +198,7 @@ public class DataIncomingHandler extends Handler {
         }
     }
 
-    private void respondeToMSG(Message msg, Message obtain) {
+    private void respondToMSG(Message msg, Message obtain) {
         try {
             msg.replyTo.send(obtain);
         } catch (RemoteException e3) {
@@ -211,7 +211,7 @@ public class DataIncomingHandler extends Handler {
         UUID uuid2 = contact2.getContactId();
         service.dataSource.deleteContact(contact2);
         service.contacts.remove(uuid2);
-        sendToContactSubscriptors(service, contact2);
+        sendToContactSubscribers(service, contact2);
     }
 
     private void updateContact(Message msg, DataService service) {
@@ -238,16 +238,16 @@ public class DataIncomingHandler extends Handler {
             service.dataSource.createContact(contact3);
         }
         service.contacts.put(uuid3, contact3);
-        sendToContactSubscriptors(service, contact3);
+        sendToContactSubscribers(service, contact3);
     }
 
     private void getContactDetails(Message msg, DataService service) {
         UUID uuid4 = (UUID) msg.obj;
-        respondeToMSG(msg, Message.obtain(null, MessageTypes.MSG_UPDATE, service.contacts.get(uuid4)));
+        respondToMSG(msg, Message.obtain(null, MessageTypes.MSG_UPDATE, service.contacts.get(uuid4)));
     }
 
     private void getContacts(Message msg, DataService service) {
-        respondeToMSG(msg, Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, service.contacts));
+        respondToMSG(msg, Message.obtain(null, MessageTypes.MSG_BULK_UPDATE, service.contacts));
         service.mContactClients.add(msg.replyTo);
     }
 
