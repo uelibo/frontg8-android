@@ -1,6 +1,7 @@
 package ch.frontg8.lib.crypto;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.openssl.PEMKeyPair;
@@ -91,7 +92,6 @@ public class KeystoreHandler {
             ks.load(is, ksPassword);
         } catch (FileNotFoundException fnfe) {
             try {
-                //TODO: create keys at first startup
                 genAndSetMyKeys(context);
                 writeStore(context);
             } catch (Exception e1) {
@@ -263,6 +263,7 @@ public class KeystoreHandler {
         return bothAliasMap;
     }
 
+    @NonNull
     private ArrayList<String> getAliasList() throws KeyStoreException {
         return Collections.list(ks.aliases());
     }
