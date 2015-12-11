@@ -95,7 +95,7 @@ public class DataIncomingHandler extends Handler {
                     break;
                 case MessageTypes.MSG_CONNECT:
                     //TODO reset notification
-                    Log.d("DS","Connecting requested");
+                    Log.d("DS", "Connecting requested");
                     connect(service);
                     break;
                 default:
@@ -106,7 +106,7 @@ public class DataIncomingHandler extends Handler {
 
     private void connect(DataService service) {
         try {
-            if (service.mConService !=null) {
+            if (service.mConService != null) {
                 service.mConService.send(Message.obtain(null, ConnectionService.MessageTypes.MSG_CONNECT));
             }
         } catch (RemoteException e) {

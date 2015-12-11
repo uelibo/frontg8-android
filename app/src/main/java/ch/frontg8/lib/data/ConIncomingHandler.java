@@ -32,8 +32,6 @@ import ch.frontg8.lib.helper.Tuple;
 import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
-import ch.frontg8.view.ContactActivity;
-import ch.frontg8.view.MainActivity;
 import ch.frontg8.view.MessageActivity;
 
 public class ConIncomingHandler extends Handler {

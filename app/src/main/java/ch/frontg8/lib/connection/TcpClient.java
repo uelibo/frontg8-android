@@ -126,7 +126,8 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
                 lock.notifyAll();
             }
             mMessageListener.connectionLost();
-            Log.d("TCP", "Connection lost");;
+            Log.d("TCP", "Connection lost");
+            ;
         }
 
         return null;
@@ -142,6 +143,7 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
 
     public interface OnMessageReceived {
         void messageReceived(byte[] message);
+
         void connectionLost();
     }
 }

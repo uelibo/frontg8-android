@@ -76,11 +76,11 @@ public class MainActivity extends AppCompatActivity {
                 case MessageTypes.MSG_BULK_UPDATE:
                     ArrayList<Contact> contacts =
                             new ArrayList<Contact>(((HashMap<UUID, Contact>) msg.obj).values());
-                    for (Contact c: contacts) {
+                    for (Contact c : contacts) {
                         dataAdapter.add(c);
                         Log.d(thisActivity.getClass().getSimpleName(), "got contact " + c.getName()
-                        + " " + c.getSurname()
-                        + " " + c.hasValidPubKey());
+                                + " " + c.getSurname()
+                                + " " + c.hasValidPubKey());
                     }
                     break;
                 case MessageTypes.MSG_UPDATE:
@@ -205,8 +205,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void myContactButtonHandler(View v)
-    {
+    public void myContactButtonHandler(View v) {
         View parentRow = (View) v.getParent();
         ListView parent = (ListView) parentRow.getParent();
         final int position = parent.getPositionForView(parentRow);

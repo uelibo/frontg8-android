@@ -46,7 +46,7 @@ public class ContactAdapter extends CustomAdapter<Contact> {
     public boolean replace(Contact contact) {
         int index = arrayList.indexOf(contact);
         if (index >= 0) {
-            arrayList.set(index,contact);
+            arrayList.set(index, contact);
             notifyDataSetChanged();
             return true;
         } else {
