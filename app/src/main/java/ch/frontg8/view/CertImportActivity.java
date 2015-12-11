@@ -133,7 +133,7 @@ public class CertImportActivity extends AppCompatActivity {
                     path = data.getStringExtra("GetPath") + "/" + data.getStringExtra("GetFileName");
                     textViewLog.setText("Import CA Cert from: " + path);
                     try {
-                        mService.send(android.os.Message.obtain(null, MessageTypes.MSG_IMPORT_KEY, path));
+                        mService.send(android.os.Message.obtain(null, MessageTypes.MSG_IMPORT_CACERT, path));
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -142,7 +142,7 @@ public class CertImportActivity extends AppCompatActivity {
                     path = data.getStringExtra("GetPath") + "/" + data.getStringExtra("GetFileName");
                     textViewLog.setText("Import Keypair from: " + path);
                     try {
-                        mService.send(android.os.Message.obtain(null, MessageTypes.MSG_EXPORT_KEY, path));
+                        mService.send(android.os.Message.obtain(null, MessageTypes.MSG_IMPORT_KEY, path));
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -151,7 +151,7 @@ public class CertImportActivity extends AppCompatActivity {
                     path = data.getStringExtra("GetPath") + "/exported-key.pem";
                     textViewLog.setText("Export Keypair to: " + path);
                     try {
-                        mService.send(android.os.Message.obtain(null, MessageTypes.MSG_IMPORT_CACERT, path));
+                        mService.send(android.os.Message.obtain(null, MessageTypes.MSG_EXPORT_KEY, path));
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
