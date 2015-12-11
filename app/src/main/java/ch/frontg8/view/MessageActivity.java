@@ -80,7 +80,6 @@ public class MessageActivity extends AppCompatActivity {
                     ArrayList<Message> messages = (ArrayList<Message>) msg.obj;
                     for (Message m : messages) {
                         Log.d(thisActivity.getClass().getSimpleName(), "got message " + m.getMessage());
-
                         dataAdapter.add(m);
                     }
                     scrollMyListViewToBottom();
@@ -118,6 +117,8 @@ public class MessageActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(dataAdapter);
         listView.setTextFilterEnabled(true);
+
+        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 
         final EditText textSend = (EditText) findViewById(R.id.editTextSend);
         Button buttonSend = (Button) findViewById(R.id.buttonSend);
@@ -216,6 +217,7 @@ public class MessageActivity extends AppCompatActivity {
             public void run() {
                 // Select the last row so it will scroll into view...
                 listView.setSelection(dataAdapter.getCount() - 1);
+//                listView.smoothScrollToPosition(listView.getCount());
             }
         });
     }
