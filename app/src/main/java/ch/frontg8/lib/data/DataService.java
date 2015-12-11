@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.Message;
@@ -127,6 +128,8 @@ public class DataService extends Service {
         Notification notification = getDefaultNotificationBuilder()
                 .setContentIntent(pi)
                 .setContentText(getResources().getString(R.string.notificationDisConnected))
+                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                .setLights(Color.RED, 3000, 3000)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC).build();
 
         NM.notify(NotificationIds.NOT_CONNECTION_LOST, notification);
