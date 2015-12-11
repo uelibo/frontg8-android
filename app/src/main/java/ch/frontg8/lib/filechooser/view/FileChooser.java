@@ -1,34 +1,48 @@
 package ch.frontg8.lib.filechooser.view;
 
 import android.app.ListActivity;
-
-import java.io.File;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.text.DateFormat;
-
-import android.os.Bundle;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 
+import java.io.File;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import ch.frontg8.R;
 import ch.frontg8.lib.filechooser.bl.FileType;
-import ch.frontg8.lib.filechooser.view.model.FileArrayAdapter;
 import ch.frontg8.lib.filechooser.bl.Item;
+import ch.frontg8.lib.filechooser.view.model.FileArrayAdapter;
 
 public class FileChooser extends ListActivity {
+    public final static String CHOOSE_DIR = "chooseDir";
+    public final static String SHOW_FILES = "showFiles";
+    public final static String FILE_EXTENSION = "fileExtension";
+    private final static String START_DIR = "sdcard";
+    private final static String START_DIR_PATH = "/" + START_DIR + "/";
 
     private File currentDir;
     private FileArrayAdapter adapter;
-    private final String START_DIR = "sdcard";
-    private final String START_DIR_PATH = "/" + START_DIR + "/";
+    private boolean chooseDir;
+    private boolean showFiles;
+//    private String fileExtension;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = this.getIntent();
+        Bundle bundle = intent.getExtras();
+        if (bundle != null) {
+            chooseDir = (boolean) bundle.getSerializable(CHOOSE_DIR);
+            showFiles = (boolean) bundle.getSerializable(SHOW_FILES);
+//            fileExtension = (String) bundle.getSerializable(FILE_EXTENSION);
+        }
+
         currentDir = new File(START_DIR_PATH);
         refreshList(currentDir);
     }
@@ -59,12 +73,16 @@ public class FileChooser extends ListActivity {
             if (currentItem.isDirectory()) {
                 dir.add(createDirItem(currentItem));
             } else {
-                fls.add(createFileItem(currentItem));
+                if (showFiles) {
+                    fls.add(createFileItem(currentItem));
+                }
             }
         }
         Collections.sort(dir);
         Collections.sort(fls);
-        dir.add(new Item(FileType.DIR_CURRENT));
+        if (chooseDir) {
+            dir.add(0, new Item(FileType.DIR_CURRENT));
+        }
         dir.addAll(fls);
         if (!isStartDir(currentDir))
             dir.add(0, new Item("..", getString(R.string.titleParentDirectory), "", currentDir.getParent(), FileType.DIR_UP));

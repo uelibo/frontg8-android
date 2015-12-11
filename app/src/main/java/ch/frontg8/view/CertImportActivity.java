@@ -12,11 +12,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import ch.frontg8.R;
-import ch.frontg8.lib.filechooser.view.FileexplorerActivity;
+import ch.frontg8.lib.filechooser.view.FileChooser;
 
 public class CertImportActivity extends AppCompatActivity {
     private Activity thisActivity = this;
-
+    private static final int REQUEST_PATH = 1;
+    private TextView textViewLog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,22 +25,38 @@ public class CertImportActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cert_import);
 
         Button buttonImportCert = (Button) findViewById(R.id.buttonImportCert);
-        TextView textViewLog = (TextView) findViewById(R.id.textViewLog);
-        textViewLog.setText("");
-        //textViewLog.append("");
+        Button buttonImportKeypair = (Button) findViewById(R.id.buttonImportKeypair);
+        Button buttonExportKeypair = (Button) findViewById(R.id.buttonExportKeypair);
+        textViewLog = (TextView) findViewById(R.id.textViewLog);
 
         buttonImportCert.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-                Intent intent = new Intent(thisActivity, FileexplorerActivity.class);
-                startActivityForResult(intent, 1);
+                openFileChooser(false, true);
+            }
+        });
+
+        buttonImportKeypair.setOnClickListener(new AdapterView.OnClickListener() {
+            public void onClick(View view) {
+                openFileChooser(false, true);
+            }
+        });
+
+        buttonExportKeypair.setOnClickListener(new AdapterView.OnClickListener() {
+            public void onClick(View view) {
+                openFileChooser(true, false);
             }
         });
     }
 
-//    public void startFilePickerActivity() {
-//        Intent intent = new Intent(thisActivity, FilePickerActivity.class);
-//        startActivityForResult(intent, 1);
-//    }
+    private void openFileChooser(boolean chooseDir, boolean showFiles){
+        Intent intent = new Intent(thisActivity, FileChooser.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(FileChooser.CHOOSE_DIR, chooseDir);
+        bundle.putSerializable(FileChooser.SHOW_FILES, showFiles);
+//                bundle.putSerializable(FileChooser.FILE_EXTENSION, "pem");
+        intent.putExtras(bundle);
+        startActivityForResult(intent, REQUEST_PATH);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -58,14 +75,16 @@ public class CertImportActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == 1 && resultCode == RESULT_OK) {
-//            String filePath = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
-//            // Do anything with file
-//        }
-//    }
+    // Listen for results.
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // See which child activity is calling us back.
+        if (requestCode == REQUEST_PATH && resultCode == RESULT_OK) {
+            String curFileName = data.getStringExtra("GetFileName");
+            String curDirName = data.getStringExtra("GetPath");
+            textViewLog.setText(curDirName + "/" + curFileName);
+        }
+    }
+
 
 }
