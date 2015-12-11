@@ -2,9 +2,12 @@ package ch.frontg8.lib.data;
 
 import android.app.ActivityManager;
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
@@ -29,6 +32,9 @@ import ch.frontg8.lib.helper.Tuple;
 import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
+import ch.frontg8.view.ContactActivity;
+import ch.frontg8.view.MainActivity;
+import ch.frontg8.view.MessageActivity;
 
 public class ConIncomingHandler extends Handler {
     private final WeakReference<DataService> mService;
@@ -121,24 +127,36 @@ public class ConIncomingHandler extends Handler {
                     Tuple<UUID, Frontg8Client.Data> decryptedMSG;
                     try {
                         decryptedMSG = MessageHelper.getDecryptedContent(message, service.ksHandler);
+                        Log.v("CIH", "Decrypted");
 
                         if (decryptedMSG._2 != null) {
                             Contact contact = service.contacts.get(decryptedMSG._1);
                             contact.addMessage(new ch.frontg8.bl.Message(decryptedMSG._2));
                             contact.incrementUnreadMessageCounter();
                             service.dataSource.insertMessage(contact, message);
+
                             // Send updates to interested parties
                             Log.d("CIH", "Notifying");
-
                             notifyContactObservers(contact, service.mContactClients);
                             notifyMessageObservers(new ch.frontg8.bl.Message(decryptedMSG._2), service.mMessageClients, decryptedMSG._1);
 
                             if (!isInForeground()) {
-                                Notification notification = service.getDefaultNotificationBuilder()
-                                        .setContentText(decryptedMSG._2.getMessageData().toStringUtf8())
-                                        .setVisibility(NotificationCompat.VISIBILITY_SECRET).build();
+                                Intent intent = new Intent(service, MessageActivity.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("contactid", decryptedMSG._1);
+                                bundle.putSerializable("contactname", contact.getName());
+                                intent.putExtras(bundle);
+                                PendingIntent pi = PendingIntent.getActivity(service, 0, intent, 0);
 
-                                service.NM.notify(2, notification);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                        | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                                Notification notification = service.getDefaultNotificationBuilder()
+                                        .setContentText(contact.getName() + ": " + decryptedMSG._2.getMessageData().toStringUtf8())
+                                        .setContentIntent(pi)
+                                        .setVisibility(NotificationCompat.VISIBILITY_PRIVATE).build();
+
+                                service.NM.notify(DataService.NotificationIds.NOT_NEW_MESSAGE, notification);
                             }
                         }
                     } catch (InvalidMessageException ignore) {

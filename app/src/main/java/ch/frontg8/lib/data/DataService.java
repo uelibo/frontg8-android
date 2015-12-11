@@ -123,13 +123,13 @@ public class DataService extends Service {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        android.support.v7.app.NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.drawable.connecting64, getResources().getString(R.string.notificationButtonConnect), pi).build();
+        //android.support.v7.app.NotificationCompat.Action action = new NotificationCompat.Action.Builder(R.drawable.connecting64, getResources().getString(R.string.notificationButtonConnect), pi).build();
         Notification notification = getDefaultNotificationBuilder()
-                .addAction(action)
+                .setContentIntent(pi)
                 .setContentText(getResources().getString(R.string.notificationDisConnected))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC).build();
 
-        NM.notify(2, notification);
+        NM.notify(NotificationIds.NOT_CONNECTION_LOST, notification);
     }
 
     android.support.v4.app.NotificationCompat.Builder getDefaultNotificationBuilder() {
@@ -165,5 +165,10 @@ public class DataService extends Service {
             }
             return true;
         }
+    }
+
+    public class NotificationIds {
+        public static final int NOT_CONNECTION_LOST = 1;
+        public static final int NOT_NEW_MESSAGE = 2;
     }
 }

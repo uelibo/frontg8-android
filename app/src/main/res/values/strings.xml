@@ -52,7 +52,7 @@
     <string name="frontg8website">frontg8 Website</string>
     <string name="title_activity_fileexplorer">FileexplorerActivity</string>
     <string name="notificationConnected">Connected</string>
-    <string name="notificationDisConnected">Not connected (pull for options)</string>
+    <string name="notificationDisConnected">Lost connection - Press to reconnect</string>
     <string name="notificationButtonConnect">Connect</string>
     <string name="titleCurrentDir">Current Dir</string>
     <string name="titleItem">item</string>
