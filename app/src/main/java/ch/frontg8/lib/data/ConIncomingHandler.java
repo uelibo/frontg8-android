@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -152,6 +153,9 @@ public class ConIncomingHandler extends Handler {
                                 Notification notification = service.getDefaultNotificationBuilder()
                                         .setContentText(contact.getName() + ": " + decryptedMSG._2.getMessageData().toStringUtf8())
                                         .setContentIntent(pi)
+                                        .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                                        .setLights(Color.YELLOW, 3000, 3000)
+                                        //.setSound(Uri.parse("uri://sadfasdfasdf.mp3"))
                                         .setVisibility(NotificationCompat.VISIBILITY_PRIVATE).build();
 
                                 service.NM.notify(DataService.NotificationIds.NOT_NEW_MESSAGE, notification);
