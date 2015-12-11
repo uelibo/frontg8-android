@@ -9,6 +9,7 @@ import android.widget.ListView;
 import java.io.File;
 import java.sql.Date;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -112,7 +113,8 @@ public class FileChooser extends ListActivity {
 
     private String getFormatedDate(File item) {
         Date lastModDate = new Date(item.lastModified());
-        DateFormat formater = DateFormat.getDateTimeInstance();
+        //DateFormat formater = DateFormat.getDateTimeInstance();
+        DateFormat formater = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         return formater.format(lastModDate);
     }
 

@@ -89,7 +89,9 @@ public class ContactActivity extends AppCompatActivity {
                             + " " + contact.hasValidPubKey());
 
                     if (scannedKey == null) {
-                        title.setText(getString(R.string.titleEditContact) + " " + contact.getName() + " (" + contact.getContactId().toString() + ")");
+                        title.setText(getString(R.string.titleEditContact) + " " + contact.getName()
+                                + " " + contact.getSurname()
+                                + " (" + contact.getContactId().toString() + ")");
                         name.setText(contact.getName());
                         surname.setText(contact.getSurname());
                         publicKey.setText(contact.getPublicKeyString());

@@ -44,7 +44,8 @@
         android:text=""
         android:hint="@string/hitPublicKey"
         android:layout_marginTop="6dp"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:textSize="12dp" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
