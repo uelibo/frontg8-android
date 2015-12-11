@@ -38,6 +38,7 @@
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_about">About</string>
     <string name="title_activity_cert_import">Certificate Import</string>
+    <string name="title_activity_fileexplorer">File Chooser</string>
     <string name="titleContactlist">Contactlist of</string>
     <string name="titleMessagelist">Message List of</string>
     <string name="titleEditContact">Edit Contact</string>
@@ -50,7 +51,6 @@
     <string name="titleUsername">Username</string>
     <string name="textAbout">Frontg8 ist ein Chatsystem, bestehend aus Server und Client. Frontg8 fokussiert sich auf die anonyme Kommunikation zwischen zwei Anwendern. Der Kommunikationsweg muss dabei nicht sicher sein und kann deshalb über das Internet erfolgen. Für die Einhaltung der Privatsphäre ist es erforderlich, dass jede Komponente vollständig unter eigener Kontrolle steht. Die Benutzer des Systems sind jeweils im Besitz eines Public-Private-Keypairs, welches sie zur gegenseitigen Identifikation und zum Erarbeiten eines gemeinsamen Schlüssels verwenden. Der Schlüsselaustausch wird nicht über den Server durchgeführt, damit der Server selbst so wenig wie möglich über die Teilnehmer erfährt. Die Anwender müssen ihre Schlüssel also über einen anderen Weg austauschen.</string>
     <string name="frontg8website">frontg8 Website</string>
-    <string name="title_activity_fileexplorer">FileexplorerActivity</string>
     <string name="notificationConnected">Connected</string>
     <string name="notificationDisConnected">Lost connection - Press to reconnect</string>
     <string name="notificationButtonConnect">Connect</string>
@@ -58,4 +58,7 @@
     <string name="titleItem">item</string>
     <string name="titleItems">items</string>
     <string name="titleParentDirectory">Parent Directory</string>
+    <string name="buttonImportCaCert">import CA Cert</string>
+    <string name="buttonImportKeypair">import Keypair</string>
+    <string name="buttonExportKeypair">export Keypair</string>
 </resources>

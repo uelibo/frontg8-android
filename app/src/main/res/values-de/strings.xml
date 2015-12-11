@@ -47,4 +47,15 @@
     <string name="titlePort">Port</string>
     <string name="titleServerSettings">Server Einstellungen</string>
     <string name="titleUsername">Benutzername</string>
+    <string name="buttonImportCaCert">CA Zertifikat importieren</string>
+    <string name="buttonImportKeypair">Schlüsselpaar importieren</string>
+    <string name="buttonExportKeypair">Schlüsselpaar exportieren</string>
+    <string name="frontg8website"></string>
+    <string name="notificationButtonConnect">Verbinden</string>
+    <string name="notificationConnected">Verbunden</string>
+    <string name="notificationDisConnected">Verbindung verloren - Drücken um zu verbinden</string>
+    <string name="titleCurrentDir">Aktuelles Verzeichnis</string>
+    <string name="titleItem">Element</string>
+    <string name="titleItems">Elemente</string>
+    <string name="titleParentDirectory">Übergeordnetes Verzeichnis</string>
 </resources>

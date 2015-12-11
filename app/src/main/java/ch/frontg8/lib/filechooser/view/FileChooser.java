@@ -102,7 +102,8 @@ public class FileChooser extends ListActivity {
             buf = fbuf.length;
         } else buf = 0;
         String num_item = String.valueOf(buf);
-        if (buf == 0) num_item = num_item + " " + getString(R.string.titleItem);
+        if (buf == 0) num_item = num_item + " " + getString(R.string.titleItems);
+        else if (buf ==1 ) num_item = num_item + " " + getString(R.string.titleItem);
         else num_item = num_item + " " + getString(R.string.titleItems);
         return new Item(currentDirectory.getName(), num_item, getFormatedDate(currentDirectory), currentDirectory.getAbsolutePath(), FileType.DIRECTORY);
     }

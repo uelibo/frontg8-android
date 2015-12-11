@@ -9,7 +9,7 @@
     <TextView android:text="" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textViewLog"
-        android:layout_below="@+id/buttonImportKeypair"
+        android:layout_below="@+id/buttonExportKeypair"
         android:layout_alignParentStart="true"
         android:layout_marginTop="30dp"
         android:layout_alignParentBottom="true"
@@ -19,7 +19,7 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="import CA Cert"
+        android:text="@string/buttonImportCaCert"
         android:id="@+id/buttonImportCert"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
@@ -28,7 +28,7 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="import Keypair"
+        android:text="@string/buttonImportKeypair"
         android:id="@+id/buttonImportKeypair"
         android:layout_below="@+id/buttonImportCert"
         android:layout_alignParentStart="true" />
@@ -37,9 +37,9 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="export Keypair"
+        android:text="@string/buttonExportKeypair"
         android:id="@+id/buttonExportKeypair"
-        android:layout_below="@+id/buttonImportCert"
-        android:layout_toEndOf="@+id/buttonImportCert" />
+        android:layout_below="@+id/buttonImportKeypair"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
