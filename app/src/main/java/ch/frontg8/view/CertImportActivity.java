@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -54,9 +55,8 @@ public class CertImportActivity extends AppCompatActivity {
         @Override
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
-                case MessageTypes.MSG_BULK_UPDATE:
-                    break;
-                case MessageTypes.MSG_UPDATE:
+                case MessageTypes.MSG_ERROR:
+                    textViewLog.append("Got Error from Data-Service");
                     break;
                 default:
                     super.handleMessage(msg);
@@ -125,23 +125,36 @@ public class CertImportActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // See which child activity is calling us back.
-        String curFileName;
-        String curDirName;
+        String path;
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case IMPORT_CERT:
-                    curFileName = data.getStringExtra("GetFileName");
-                    curDirName = data.getStringExtra("GetPath");
-                    textViewLog.setText("Import CA Cert from: " + curDirName + "/" + curFileName);
+
+                    path = data.getStringExtra("GetPath") + "/" + data.getStringExtra("GetFileName");
+                    textViewLog.setText("Import CA Cert from: " + path);
+                    try {
+                        mService.send(android.os.Message.obtain(null, MessageTypes.MSG_IMPORT_KEY, path));
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case IMPORT_KEYPAIR:
-                    curFileName = data.getStringExtra("GetFileName");
-                    curDirName = data.getStringExtra("GetPath");
-                    textViewLog.setText("Import Keypair from: " + curDirName + "/" + curFileName);
+                    path = data.getStringExtra("GetPath") + "/" + data.getStringExtra("GetFileName");
+                    textViewLog.setText("Import Keypair from: " + path);
+                    try {
+                        mService.send(android.os.Message.obtain(null, MessageTypes.MSG_EXPORT_KEY, path));
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case EXPORT_KEYPAIR:
-                    curDirName = data.getStringExtra("GetPath");
-                    textViewLog.setText("Export Keypair to: " + curDirName);
+                    path = data.getStringExtra("GetPath") + "/exported-key.pem";
+                    textViewLog.setText("Export Keypair to: " + path);
+                    try {
+                        mService.send(android.os.Message.obtain(null, MessageTypes.MSG_IMPORT_CACERT, path));
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 default:
                     textViewLog.setText("Something went wrong...");
