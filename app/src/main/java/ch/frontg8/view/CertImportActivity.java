@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
@@ -94,7 +95,7 @@ public class CertImportActivity extends AppCompatActivity {
         });
     }
 
-    private void openFileChooser(int identId, boolean chooseDir, boolean showFiles){
+    private void openFileChooser(int identId, boolean chooseDir, boolean showFiles) {
         Intent intent = new Intent(thisActivity, FileChooser.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(FileChooser.CHOOSE_DIR, chooseDir);
@@ -129,38 +130,36 @@ public class CertImportActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case IMPORT_CERT:
-
                     path = data.getStringExtra("GetPath") + "/" + data.getStringExtra("GetFileName");
                     textViewLog.setText("Import CA Cert from: " + path);
-                    try {
-                        mService.send(android.os.Message.obtain(null, MessageTypes.MSG_IMPORT_CACERT, path));
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
+                    sendMessage(MessageTypes.MSG_IMPORT_CACERT, path);
                     break;
                 case IMPORT_KEYPAIR:
                     path = data.getStringExtra("GetPath") + "/" + data.getStringExtra("GetFileName");
                     textViewLog.setText("Import Keypair from: " + path);
-                    try {
-                        mService.send(android.os.Message.obtain(null, MessageTypes.MSG_IMPORT_KEY, path));
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
+                    sendMessage(MessageTypes.MSG_IMPORT_KEY, path);
                     break;
                 case EXPORT_KEYPAIR:
                     path = data.getStringExtra("GetPath") + "/exported-key.pem";
                     textViewLog.setText("Export Keypair to: " + path);
-                    try {
-                        mService.send(android.os.Message.obtain(null, MessageTypes.MSG_EXPORT_KEY, path));
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
+                    sendMessage(MessageTypes.MSG_EXPORT_KEY, path);
                     break;
                 default:
                     textViewLog.setText("Something went wrong...");
             }
         }
     }
+
+    private void sendMessage(int messageType, String value) {
+        try {
+            Message message = Message.obtain(null, messageType, value);
+            message.replyTo = mMessenger;
+            mService.send(message);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
