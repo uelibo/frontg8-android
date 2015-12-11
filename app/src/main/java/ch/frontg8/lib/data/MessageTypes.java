@@ -42,8 +42,10 @@ public class MessageTypes {
     public static final int MSG_EXPORT_KEY = 26;
     //obj String - will import user-key from specified destination in obj
     public static final int MSG_IMPORT_KEY = 27;
+    //obj String - will import ca-cert from specified destination in obj
+    public static final int MSG_IMPORT_CACERT = 28;
     // - will connect to server, if not connected
-    public static final int MSG_CONNECT = 28;
+    public static final int MSG_CONNECT = 29;
 
 
     // Outgoing to GUI

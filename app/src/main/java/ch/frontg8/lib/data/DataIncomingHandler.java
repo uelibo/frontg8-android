@@ -90,6 +90,9 @@ public class DataIncomingHandler extends Handler {
                 case MessageTypes.MSG_IMPORT_KEY:
                     importKey(msg, service);
                     break;
+                case MessageTypes.MSG_IMPORT_CACERT:
+                    importCaCert(msg, service);
+                    break;
                 case MessageTypes.MSG_CONNECT:
                     //TODO reset notification
                     Log.d("DS","Connecting requested");
@@ -109,6 +112,11 @@ public class DataIncomingHandler extends Handler {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+    }
+
+    private void importCaCert(Message msg, DataService service) {
+        String path2 = (String) msg.obj;
+        // TODO: IMPLEMENT
     }
 
     private void importKey(Message msg, DataService service) {
