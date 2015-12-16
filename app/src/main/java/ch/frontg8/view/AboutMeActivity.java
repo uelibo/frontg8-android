@@ -24,11 +24,11 @@ import ch.frontg8.lib.crypto.KeystoreHandler;
 import ch.frontg8.lib.crypto.LibCrypto;
 
 public class AboutMeActivity extends AppCompatActivity {
-    public final static int WHITE = 0xFFFFFFFF;
-    public final static int BLACK = 0xFF000000;
-    public final static int WIDTH = 400;
-    public final static int HEIGHT = 400;
-    private String pubkey = null;
+    private final static int WHITE = 0xFFFFFFFF;
+    private final static int BLACK = 0xFF000000;
+    private final static int WIDTH = 400;
+    private final static int HEIGHT = 400;
+    private String publicKey = null;
     private boolean showAsText = false;
 
     @Override
@@ -36,26 +36,26 @@ public class AboutMeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_me);
 
-        final TextView textViewMyPubkey = (TextView) findViewById(R.id.editTextMyPubkey);
-        pubkey = new String(LibCrypto.getMyPublicKeyBytes(new KeystoreHandler(this), this));
-        textViewMyPubkey.setText(pubkey);
-        textViewMyPubkey.setVisibility(View.GONE);
+        final TextView textViewMyPublicKey = (TextView) findViewById(R.id.editTextMyPubkey);
+        publicKey = new String(LibCrypto.getMyPublicKeyBytes(new KeystoreHandler(this), this));
+        textViewMyPublicKey.setText(publicKey);
+        textViewMyPublicKey.setVisibility(View.GONE);
 
-        Button buttonCopyToClipbord = (Button) findViewById(R.id.buttonCopyToClipbord);
+        Button buttonCopyToClipboard = (Button) findViewById(R.id.buttonCopyToClipboard);
         final Button buttonShowText = (Button) findViewById(R.id.buttonShowText);
         final ImageView imageView = (ImageView) findViewById(R.id.myImage);
 
         try {
-            Bitmap bitmap = encodeAsBitmap(pubkey);
+            Bitmap bitmap = encodeAsBitmap(publicKey);
             imageView.setImageBitmap(bitmap);
         } catch (WriterException e) {
             e.printStackTrace();
         }
 
-        buttonCopyToClipbord.setOnClickListener(new AdapterView.OnClickListener() {
+        buttonCopyToClipboard.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("label", pubkey);
+                ClipData clip = ClipData.newPlainText("label", publicKey);
                 clipboard.setPrimaryClip(clip);
             }
         });
@@ -63,12 +63,12 @@ public class AboutMeActivity extends AppCompatActivity {
         buttonShowText.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
                 if (!showAsText) {
-                    textViewMyPubkey.setVisibility(View.VISIBLE);
+                    textViewMyPublicKey.setVisibility(View.VISIBLE);
                     imageView.setVisibility(View.GONE);
                     buttonShowText.setText(R.string.AboutActivity_ButtonShowAsQrCode);
                     showAsText = true;
                 } else {
-                    textViewMyPubkey.setVisibility(View.GONE);
+                    textViewMyPublicKey.setVisibility(View.GONE);
                     imageView.setVisibility(View.VISIBLE);
                     buttonShowText.setText(R.string.AboutActivity_ButtonShowAsText);
                     showAsText = false;
@@ -93,7 +93,7 @@ public class AboutMeActivity extends AppCompatActivity {
 
     }
 
-    Bitmap encodeAsBitmap(String str) throws WriterException {
+    private Bitmap encodeAsBitmap(String str) throws WriterException {
         BitMatrix result;
 
         try {

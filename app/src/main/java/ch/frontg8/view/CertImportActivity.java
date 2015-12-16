@@ -31,13 +31,13 @@ public class CertImportActivity extends AppCompatActivity {
     private static final int IMPORT_KEYPAIR = 3;
     private static final int EXPORT_KEYPAIR = 4;
     // Messenger to get Contacts
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
-    private Activity thisActivity = this;
+    private final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private final Activity thisActivity = this;
     private TextView textViewLog;
     private Messenger mService;
 
     // Connection to DataService
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
@@ -79,14 +79,14 @@ public class CertImportActivity extends AppCompatActivity {
         });
     }
 
-    private void openFileChooser(int identId, boolean chooseDir, boolean showFiles) {
+    private void openFileChooser(int intentId, boolean chooseDir, boolean showFiles) {
         Intent intent = new Intent(thisActivity, FileChooser.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(FileChooser.CHOOSE_DIR, chooseDir);
         bundle.putSerializable(FileChooser.SHOW_FILES, showFiles);
 //                bundle.putSerializable(FileChooser.FILE_EXTENSION, "pem");
         intent.putExtras(bundle);
-        startActivityForResult(intent, identId);
+        startActivityForResult(intent, intentId);
     }
 
     @Override
@@ -158,7 +158,7 @@ public class CertImportActivity extends AppCompatActivity {
     }
 
     // Handler for Messages from DataService
-    class IncomingHandler extends Handler {
+    private class IncomingHandler extends Handler {
         @Override
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {

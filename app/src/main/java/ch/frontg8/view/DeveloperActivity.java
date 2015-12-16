@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.Messenger;
 import android.os.RemoteException;
@@ -34,15 +33,14 @@ import ch.frontg8.lib.dbstore.ContactsDataSource;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class DeveloperActivity extends AppCompatActivity {
+    private final ContactsDataSource dataSource = new ContactsDataSource(this);
     // Messenger to get Contacts
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
     private Activity thisActivity;
-    private ContactsDataSource datasource = new ContactsDataSource(this);
     private TextView textViewLog;
     private Messenger mService;
 
     // Connection to DataService
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
@@ -63,25 +61,13 @@ public class DeveloperActivity extends AppCompatActivity {
 
         thisActivity = this;
 
-//        Button buttonKeyGen = (Button) findViewById(R.id.buttonKeyGen);
         Button buttonTlsTest = (Button) findViewById(R.id.buttonTlsTest);
         Button buttonShowConfig = (Button) findViewById(R.id.buttonShowConfig);
         Button buttonClearDB = (Button) findViewById(R.id.buttonClearDB);
         Button buttonLoadTestData = (Button) findViewById(R.id.buttonLoadTestData);
         Button buttonShowDB = (Button) findViewById(R.id.buttonShowDB);
 
-        datasource.open();
-
-//        buttonKeyGen.setOnClickListener(new AdapterView.OnClickListener() {
-//            public void onClick(View view) {
-//                try {
-//                    LibCrypto.generateNewKeys(new KeystoreHandler(thisActivity), thisActivity);
-//                    Toast.makeText(thisActivity, "Keys generated", Toast.LENGTH_SHORT).show();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
+        dataSource.open();
 
         buttonShowConfig.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
@@ -149,10 +135,10 @@ public class DeveloperActivity extends AppCompatActivity {
             public void onClick(View view) {
                 textViewLog = (TextView) findViewById(R.id.textViewLog);
                 textViewLog.setText("");
-                datasource.open();
-                ArrayList<Contact> contacts = datasource.getAllContacts();
+                dataSource.open();
+                ArrayList<Contact> contacts = dataSource.getAllContacts();
                 for (Contact c : contacts) {
-                    ArrayList<Frontg8Client.Encrypted> messages = datasource.getEncryptedMessagesByUUID(c.getContactId());
+                    ArrayList<Frontg8Client.Encrypted> messages = dataSource.getEncryptedMessagesByUUID(c.getContactId());
                     textViewLog.append(c.getName() + " "
                             + c.getSurname() + ", "
                             + "Key valid: " + c.hasValidPubKey() + ", "
@@ -179,7 +165,7 @@ public class DeveloperActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         unbindService(mConnection);
-        datasource.close();
+        dataSource.close();
     }
 
     @Override
@@ -191,16 +177,4 @@ public class DeveloperActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DataService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
-
-    // Handler for Messages from DataService
-    class IncomingHandler extends Handler {
-        @Override
-        public void handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-                default:
-                    super.handleMessage(msg);
-            }
-        }
-    }
-
 }

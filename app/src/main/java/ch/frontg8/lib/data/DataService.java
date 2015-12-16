@@ -35,17 +35,16 @@ import ch.frontg8.view.MainActivity;
 
 public class DataService extends Service {
 
-    protected Messenger mConMessenger;
-    protected Messenger mDataMessenger;
-    protected HashSet<Messenger> mContactClients = new HashSet<>();
-    protected HashMap<UUID, Messenger> mMessageClients = new HashMap<>();
-    protected NotificationManager NM;
-    HashMap<UUID, Contact> contacts = new HashMap<>();
+    final HashSet<Messenger> mContactClients = new HashSet<>();
+    final HashMap<UUID, Messenger> mMessageClients = new HashMap<>();
+    final HashMap<UUID, Contact> contacts = new HashMap<>();
+    final ContactsDataSource dataSource = new ContactsDataSource(this);
+    NotificationManager NM;
     Context thisContext;
     KeystoreHandler ksHandler;
-    ContactsDataSource dataSource = new ContactsDataSource(this);
     Messenger mConService;
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private Messenger mConMessenger;
+    private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
@@ -65,7 +64,7 @@ public class DataService extends Service {
             mConService = null;
         }
     };
-
+    private Messenger mDataMessenger;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -97,13 +96,6 @@ public class DataService extends Service {
     public IBinder onBind(Intent intent) {
         return mDataMessenger.getBinder();
     }
-
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
 
     @Override
     public void onDestroy() {

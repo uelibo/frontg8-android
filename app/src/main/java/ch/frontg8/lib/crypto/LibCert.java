@@ -13,7 +13,6 @@ import org.spongycastle.operator.ContentSigner;
 import org.spongycastle.operator.OperatorCreationException;
 import org.spongycastle.operator.jcajce.JcaContentSignerBuilder;
 
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.KeyPair;
@@ -28,7 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class LibCert {
+class LibCert {
     private static final String BC = BouncyCastleProvider.PROVIDER_NAME;
 
     static {
@@ -36,10 +35,10 @@ public class LibCert {
     }
 
     public static X509Certificate generateCertificate(KeyPair keyPair) throws OperatorCreationException, CertificateException {
-        PrivateKey privKey = keyPair.getPrivate();
+        PrivateKey privateKey = keyPair.getPrivate();
         PublicKey pubKey = keyPair.getPublic();
 
-        ContentSigner sigGen = new JcaContentSignerBuilder("SHA256withECDSA").setProvider(BC).build(privKey);
+        ContentSigner sigGen = new JcaContentSignerBuilder("SHA256withECDSA").setProvider(BC).build(privateKey);
         SubjectPublicKeyInfo subPubKeyInfo = new SubjectPublicKeyInfo(ASN1Sequence.getInstance(pubKey.getEncoded()));
 
         // today
@@ -67,7 +66,7 @@ public class LibCert {
         return new JcaX509CertificateConverter().setProvider(BC).getCertificate(certHolder);
     }
 
-    public static Certificate loadCertificateFromFile(String fileName, String certificateType, Context context) throws CertificateException, FileNotFoundException {
+    private static Certificate loadCertificateFromFile(String fileName, String certificateType, Context context) throws CertificateException {
 
         CertificateFactory cf = CertificateFactory.getInstance(certificateType);
 
@@ -80,7 +79,7 @@ public class LibCert {
         return cf.generateCertificate(ins);
     }
 
-    public static X509Certificate loadX509CertificateFromFile(String path, Context context) throws CertificateException, FileNotFoundException {
+    public static X509Certificate loadX509CertificateFromFile(String path, Context context) throws CertificateException {
         return (X509Certificate) loadCertificateFromFile(path, "X.509", context);
     }
 }

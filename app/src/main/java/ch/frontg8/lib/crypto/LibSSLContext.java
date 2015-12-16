@@ -17,7 +17,7 @@ public class LibSSLContext {
             cert = LibCert.loadX509CertificateFromFile(certpath, context);
             KeyStore ks = KeystoreHandler.createFromCertificate(cert);
 
-            //TODO; refactor to truststore instead of keystore
+            //TODO; refactor to trustStore instead of keystore
             String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
             tmf.init(ks);

@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -35,7 +36,7 @@ import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 import ch.frontg8.view.MessageActivity;
 
-public class ConIncomingHandler extends Handler {
+class ConIncomingHandler extends Handler {
     private final WeakReference<DataService> mService;
 
     public ConIncomingHandler(DataService service) {
@@ -91,29 +92,29 @@ public class ConIncomingHandler extends Handler {
         }
     }
 
-    public boolean isInForeground() {
+    private boolean isInForeground() {
         DataService service = mService.get();
         if (service != null) {
-            String packetname = service.getPackageName();
-            ActivityManager am = (ActivityManager) service.getSystemService(service.ACTIVITY_SERVICE);
+            String packetName = service.getPackageName();
+            ActivityManager am = (ActivityManager) service.getSystemService(Context.ACTIVITY_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 final List<ActivityManager.RunningAppProcessInfo> processInfos = am.getRunningAppProcesses();
                 ActivityManager.RunningAppProcessInfo processInfo = processInfos.get(0);
                 if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                    return (Arrays.asList(processInfo.pkgList).get(0)).contains(packetname);
+                    return (Arrays.asList(processInfo.pkgList).get(0)).contains(packetName);
                 }
             } else {
                 List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-                ComponentName componentInfo = null;
+                ComponentName componentInfo;
                 componentInfo = taskInfo.get(0).topActivity;
-                return componentInfo.getPackageName().contains(packetname);
+                return componentInfo.getPackageName().contains(packetName);
             }
         }
         return false;
     }
 
     private class Decrypting extends AsyncTask<Frontg8Client.Encrypted, UUID, Boolean> {
-        DataService service = mService.get();
+        private final DataService service = mService.get();
 
         @Override
         protected Boolean doInBackground(final Frontg8Client.Encrypted... messages) {
@@ -155,7 +156,6 @@ public class ConIncomingHandler extends Handler {
                                         .setContentIntent(pi)
                                         .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                                         .setLights(Color.YELLOW, 3000, 3000)
-                                                //.setSound(Uri.parse("uri://sadfasdfasdf.mp3"))
                                         .setVisibility(NotificationCompat.VISIBILITY_PRIVATE).build();
 
                                 service.NM.notify(DataService.NotificationIds.NOT_NEW_MESSAGE, notification);

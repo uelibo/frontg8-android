@@ -29,9 +29,9 @@ import ch.frontg8.lib.data.DataService;
 import ch.frontg8.lib.data.MessageTypes;
 
 public class ContactActivity extends AppCompatActivity {
-    static final String STATE_SCANNEDKEY = "scannedKey";
+    private static final String STATE_SCANNEDKEY = "scannedKey";
     // Messenger to get Contacts
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private final Messenger mMessenger = new Messenger(new IncomingHandler());
     private Context thisActivity;
     private UUID contactId;
     private Contact contact;
@@ -43,7 +43,7 @@ public class ContactActivity extends AppCompatActivity {
     private Messenger mService;
 
     // Connection to DataService
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
@@ -215,7 +215,7 @@ public class ContactActivity extends AppCompatActivity {
     }
 
     // Handler for Messages from DataService
-    class IncomingHandler extends Handler {
+    private class IncomingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {

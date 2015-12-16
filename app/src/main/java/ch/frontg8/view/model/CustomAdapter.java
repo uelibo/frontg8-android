@@ -6,21 +6,20 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.frontg8.bl.Filtertext;
+import ch.frontg8.bl.FilterText;
 
-abstract public class CustomAdapter<T extends Filtertext> extends BaseAdapter implements Filterable {
+abstract public class CustomAdapter<T extends FilterText> extends BaseAdapter implements Filterable {
+    final Context context;
+    private final ArrayList<T> mOriginalValues;
     ArrayList<T> arrayList;
-    ArrayList<T> mOriginalValues;
-    Context context;
 
-    public CustomAdapter(Context context, ArrayList<T> arrayList) {
+    CustomAdapter(Context context, ArrayList<T> arrayList) {
         this.arrayList = arrayList;
-        this.mOriginalValues = new ArrayList<T>(arrayList); // saves the original data in mOriginalValues
+        this.mOriginalValues = new ArrayList<>(arrayList); // saves the original data in mOriginalValues
         this.context = context;
     }
 
@@ -37,14 +36,6 @@ abstract public class CustomAdapter<T extends Filtertext> extends BaseAdapter im
     @Override
     public long getItemId(int position) {
         return position;
-    }
-
-    public void addAll(List<T> list) {
-        for (T element : list) {
-            arrayList.add(element);
-            mOriginalValues.add(element);
-        }
-        notifyDataSetChanged();
     }
 
     public void add(T element) {
@@ -64,7 +55,7 @@ abstract public class CustomAdapter<T extends Filtertext> extends BaseAdapter im
 
     @Override
     public Filter getFilter() {
-        Filter filter = new Filter() {
+        return new Filter() {
 
             @SuppressWarnings("unchecked")
             @Override
@@ -75,9 +66,9 @@ abstract public class CustomAdapter<T extends Filtertext> extends BaseAdapter im
             }
 
             @Override
-            protected Filter.FilterResults performFiltering(CharSequence constraint) {
+            protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();        // Holds the results of a filtering operation in values
-                List<T> FilteredArrList = new ArrayList<T>();
+                List<T> FilteredArrList = new ArrayList<>();
 
                 if (constraint == null || constraint.length() == 0) {
                     // set the Original result to return
@@ -98,11 +89,6 @@ abstract public class CustomAdapter<T extends Filtertext> extends BaseAdapter im
                 return results;
             }
         };
-        return filter;
-    }
-
-    private class ViewHolder {
-        TextView textView;
     }
 }
 

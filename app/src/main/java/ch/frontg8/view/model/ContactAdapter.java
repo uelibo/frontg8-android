@@ -35,22 +35,19 @@ public class ContactAdapter extends CustomAdapter<Contact> {
         }
 
         if (contact.getUnreadMessageCounter() > 0) {
-            textViewNumOfMessages.setText(" (" + contact.getUnreadMessageCounter() + ")");
+            textViewNumOfMessages.setText(String.format(" (%1$d)", contact.getUnreadMessageCounter()));
         } else {
-            textViewNumOfMessages.setText("");
+            textViewNumOfMessages.setText(null);
         }
 
         return convertView;
     }
 
-    public boolean replace(Contact contact) {
+    public void replace(Contact contact) {
         int index = arrayList.indexOf(contact);
         if (index >= 0) {
             arrayList.set(index, contact);
             notifyDataSetChanged();
-            return true;
-        } else {
-            return false;
         }
     }
 }

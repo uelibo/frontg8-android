@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="ch.frontg8"
-          xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools">
+<manifest
+    package="ch.frontg8"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -66,11 +67,11 @@
         <service
             android:name=".lib.connection.ConnectionService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
         <service
             android:name=".lib.data.DataService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <activity
             android:name=".view.AboutActivity"

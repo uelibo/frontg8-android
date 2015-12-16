@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class MySQLiteHelper extends SQLiteOpenHelper {
+class MySQLiteHelper extends SQLiteOpenHelper {
 
     public static final String COLUMN_ID = "id";
     public static final String TABLE_CONTACTS = "contacts";

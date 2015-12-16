@@ -37,15 +37,15 @@ import ch.frontg8.view.model.MessageAdapter;
 
 public class MessageActivity extends AppCompatActivity {
     // Messenger to get Contacts
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
-    private Context thisActivity = this;
+    private final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private final Context thisActivity = this;
     private MessageAdapter dataAdapter = null;
     private UUID contactId;
     private ListView listView;
     private Messenger mService;
 
     // Connection to DataService
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
@@ -195,7 +195,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     // Handler for Messages from DataService
-    class IncomingHandler extends Handler {
+    private class IncomingHandler extends Handler {
         @Override
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {

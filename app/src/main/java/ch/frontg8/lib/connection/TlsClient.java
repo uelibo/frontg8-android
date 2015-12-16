@@ -9,9 +9,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 
 public class TlsClient {
-    private String hostname;
-    private int port;
-    private SSLContext sslContext;
+    private final String hostname;
+    private final int port;
+    private final SSLContext sslContext;
     private SSLSocket socket = null;
     private int autoReconnects = 0;
 
@@ -75,7 +75,7 @@ public class TlsClient {
 
     public byte[] getBytes(int length) throws NotConnectedException {
         byte[] recv = new byte[length];
-        Log.v("TLS", "recving packet");
+        Log.v("TLS", "receiving packet");
         if (throwExceptionIfNotConnected()) try {
             socket.getInputStream().read(recv, 0, recv.length);
         } catch (IOException e1) {

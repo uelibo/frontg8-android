@@ -11,10 +11,6 @@ import java.io.FileOutputStream;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by tstauber on 03.11.15.
- */
-
 public class MyMockContext extends MockContext {
     private static final String MOCK_FILE_SUFFIX = ".test";
 

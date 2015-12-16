@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">frontg8</string>
-    <string name="action_aboutMe">Über mich</string>
-    <string name="action_clear_message_history">löschen</string>
-    <string name="action_connection_test">Verbindungstest</string>
-    <string name="action_developer">Entwickler</string>
-    <string name="action_newContact">Neuer Kontakt</string>
-    <string name="action_settings">Einstellungen</string>
-    <string name="action_about">Über</string>
-    <string name="action_importCerts">Zertifikat importieren</string>
+    <string name="MainActivity_Menu_Action_aboutMe">Über mich</string>
+    <string name="MainActivity_Menu_Action_clear_message_history">löschen</string>
+    <string name="MainActivity_Menu_Action_connection_test">Verbindungstest</string>
+    <string name="MainActivity_Menu_Action_developer">Entwickler</string>
+    <string name="MainActivity_Menu_Action_newContact">Neuer Kontakt</string>
+    <string name="MainActivity_Menu_Action_settings">Einstellungen</string>
+    <string name="MainActivity_Menu_Action_about">Über</string>
+    <string name="MainActivity_Menu_Action_importCerts">Zertifikat importieren</string>
     <string name="AboutActivity_ButtonCopyToClipboard">In Zwischenablage kopieren</string>
     <string name="AboutActivity_ButtonShowAsQrCode">QR-Code zeigen</string>
     <string name="AboutActivity_ButtonShowAsText">Text zeigen</string>
@@ -66,4 +66,5 @@
     <string name="AboutActivity_Toast_NoWebBrowser">Es wurde kein Webbrowser gefunden. Bitte installieren sie einen.</string>
     <string name="MessageActivity_SendButton">senden</string>
     <string name="ContactActivity_Contact">Kontakt</string>
+    <string name="MainActivity_Menu_Search">Search</string>
 </resources>

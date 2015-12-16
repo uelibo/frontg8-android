@@ -1,24 +1,15 @@
 package ch.frontg8.bl;
 
-import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
-public class Message implements Filtertext {
+public class Message implements FilterText {
     private Frontg8Client.Data dataMessage = null;
 
     public Message(Frontg8Client.Data dataMessage) {
         replaceMessage(dataMessage);
     }
 
-    // Simple Constructor for Prototype
-    @Deprecated
-    public Message(String messagetext) {
-        byte[] sessionId = new byte[]{};
-        int timestamp = 0;
-        this.dataMessage = MessageHelper.buildDataMessage(messagetext.getBytes(), sessionId, timestamp);
-    }
-
-    public void replaceMessage(Frontg8Client.Data dataMessage) {
+    private void replaceMessage(Frontg8Client.Data dataMessage) {
         this.dataMessage = dataMessage;
     }
 

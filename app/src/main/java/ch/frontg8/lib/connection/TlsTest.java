@@ -12,7 +12,7 @@ import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class TlsTest {
-    Activity context;
+    private final Activity context;
 
     public TlsTest(Activity context) {
         this.context = context;

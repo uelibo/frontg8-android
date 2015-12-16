@@ -4,37 +4,37 @@
       tools:context="ch.frontg8.view.MainActivity">
     <item
         android:id="@+id/action_search"
-        android:title="Search"
+        android:title="@string/MainActivity_Menu_Search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_newcontact"
         android:orderInCategory="100"
-        android:title="@string/action_newContact"
+        android:title="@string/MainActivity_Menu_Action_newContact"
         app:showAsAction="never"/>
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/MainActivity_Menu_Action_settings"
         app:showAsAction="never"/>
     <item
         android:id="@+id/action_aboutme"
         android:orderInCategory="100"
-        android:title="@string/action_aboutMe"
+        android:title="@string/MainActivity_Menu_Action_aboutMe"
         app:showAsAction="never"/>
     <item
         android:id="@+id/action_importcerts"
         android:orderInCategory="100"
-        android:title="@string/action_importCerts"
+        android:title="@string/MainActivity_Menu_Action_importCerts"
         app:showAsAction="never"/>
     <item
         android:id="@+id/action_developer"
         android:orderInCategory="100"
-        android:title="@string/action_developer"
+        android:title="@string/MainActivity_Menu_Action_developer"
         app:showAsAction="never"/>
     <item
         android:id="@+id/action_about"
         android:orderInCategory="100"
-        android:title="@string/action_about"
+        android:title="@string/MainActivity_Menu_Action_about"
         app:showAsAction="never"/>
 </menu>

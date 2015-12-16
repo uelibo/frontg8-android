@@ -120,7 +120,7 @@ public class ConnectionService extends Service {
                 case MessageTypes.MSG_CONNECT:
                     if (service.mTcpClient == null) {
                         service.connect();
-                        Log.d("CS", "Tryed to connect");
+                        Log.d("CS", "Tried to connect");
                     }
                     break;
                 default:

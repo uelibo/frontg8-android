@@ -4,14 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class Contact implements Serializable, Filtertext {
-    private UUID contactId;
+public class Contact implements Serializable, FilterText {
+    private final UUID contactId;
+    private final ArrayList<Message> messages = new ArrayList<>();
     private String name;
     private String surname;
     private String publicKeyString;
     private int unreadMessageCounter = 0;
     private boolean hasValidPubKey = false;
-    private ArrayList<Message> messages = new ArrayList<>();
 
     public Contact() {
         this(genUUID(), "", "", "", 0, false);
@@ -62,10 +62,6 @@ public class Contact implements Serializable, Filtertext {
         messages.add(msg);
     }
 
-    public void addMessages(ArrayList<Message> msgs) {
-        messages.addAll(msgs);
-    }
-
     public ArrayList<Message> getMessages() {
         return messages;
     }
@@ -90,7 +86,7 @@ public class Contact implements Serializable, Filtertext {
         return hasValidPubKey;
     }
 
-    public void setValidPubkey(boolean valid) {
+    public void setValidPublicKey(boolean valid) {
         this.hasValidPubKey = valid;
     }
 

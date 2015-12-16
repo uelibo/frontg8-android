@@ -1,5 +1,7 @@
 package ch.frontg8.lib.filechooser.bl;
 
+import android.support.annotation.NonNull;
+
 public class Item implements Comparable<Item> {
     private String name;
     private String data;
@@ -47,7 +49,7 @@ public class Item implements Comparable<Item> {
         return fileType.getPicName();
     }
 
-    public int compareTo(Item o) {
+    public int compareTo(@NonNull Item o) {
         if (this.name != null)
             return this.name.toLowerCase().compareTo(o.getName().toLowerCase());
         else

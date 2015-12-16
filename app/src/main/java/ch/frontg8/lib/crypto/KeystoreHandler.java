@@ -60,8 +60,8 @@ public class KeystoreHandler {
     private static final String SUFFIXSESSIONKEYSIGN = "sks";
     private static final String MYALIAS = MYUUID.toString() + SUFFIXPRIVATE;
     private static char[] ksPassword = "KEYSTORE PASSWORD".toCharArray(); //TODO: change to real pw
+    private static final char[] PASSWORD = ksPassword;
     private static String ksFileName;
-    private static char[] PASSWORD = ksPassword;
 
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -73,7 +73,7 @@ public class KeystoreHandler {
         try {
             ksFileName = LibConfig.getKeystoreFilePath(context);
             this.ks = loadFromFile(context);
-        } catch (KeyStoreException | IOException e) {
+        } catch (KeyStoreException e) {
             e.printStackTrace();
         }
     }
@@ -99,7 +99,7 @@ public class KeystoreHandler {
         return ks;
     }
 
-    public KeyStore loadFromFile(Context context) throws KeyStoreException, IOException {
+    private KeyStore loadFromFile(Context context) throws KeyStoreException {
         KeyStore ks = createKeystore();
         try (InputStream is = context.openFileInput(ksFileName)) {
             ks.load(is, ksPassword);
@@ -119,7 +119,7 @@ public class KeystoreHandler {
 
     // Session Key Handling
 
-    public void writeStore(Context context) throws KeyStoreException, IOException {
+    private void writeStore(Context context) throws KeyStoreException, IOException {
         try (OutputStream os = context.openFileOutput(ksFileName, Context.MODE_PRIVATE)) {
             ks.store(os, ksPassword);
         } catch (CertificateException | NoSuchAlgorithmException e) {
@@ -365,7 +365,7 @@ public class KeystoreHandler {
 
     //Delete
 
-    public boolean containsKey(String alias) {
+    private boolean containsKey(String alias) {
         boolean result = false;
         try {
             result = ks.containsAlias(alias);
@@ -375,11 +375,11 @@ public class KeystoreHandler {
         return result;
     }
 
-    public boolean containsSKS(UUID uuid) {
+    private boolean containsSKS(UUID uuid) {
         return containsKey(uuid.toString() + SUFFIXSESSIONKEYSIGN);
     }
 
-    public boolean containsSKC(UUID uuid) {
+    private boolean containsSKC(UUID uuid) {
         return containsKey(uuid.toString() + SUFFIXSESSIONKEYCRYPTO);
     }
 

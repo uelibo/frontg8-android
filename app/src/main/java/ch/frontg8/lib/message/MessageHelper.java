@@ -35,7 +35,7 @@ public class MessageHelper {
                 .build();
     }
 
-    public static byte[] buildEncryptedMessage(ByteString encryptedData) {
+    private static byte[] buildEncryptedMessage(ByteString encryptedData) {
         return addMessageHeader(Frontg8Client.Encrypted.newBuilder()
                         .setEncryptedData(encryptedData)
                         .build()
@@ -65,7 +65,7 @@ public class MessageHelper {
         return BigInteger.valueOf(size).toByteArray();
     }
 
-    public static byte[] addMessageHeader(byte[] message, int messageType) {
+    private static byte[] addMessageHeader(byte[] message, int messageType) {
         byte[] header = new byte[4];
         byte[] sizeArray = sizeToByte(message.length);
 
@@ -99,7 +99,7 @@ public class MessageHelper {
         return encrypted;
     }
 
-    public static Frontg8Client.Data getDataMessage(ByteString data) throws InvalidMessageException {
+    private static Frontg8Client.Data getDataMessage(ByteString data) throws InvalidMessageException {
         try {
             return Frontg8Client.Data.parseFrom(data);
         } catch (InvalidProtocolBufferException e) {

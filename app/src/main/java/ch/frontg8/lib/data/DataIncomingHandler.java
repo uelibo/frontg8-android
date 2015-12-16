@@ -22,7 +22,7 @@ import ch.frontg8.lib.helper.Tuple;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
-public class DataIncomingHandler extends Handler {
+class DataIncomingHandler extends Handler {
     private final WeakReference<DataService> mService;
 
     public DataIncomingHandler(DataService service) {
@@ -248,7 +248,7 @@ public class DataIncomingHandler extends Handler {
             try {
                 LibCrypto.negotiateSessionKeys(uuid3, publicKey, service.ksHandler, service.thisContext);
                 Log.d("DS", "negotiated new Key");
-                contact3.setValidPubkey(true);
+                contact3.setValidPublicKey(true);
             } catch (InvalidKeyException e3) {
                 e3.printStackTrace();
                 try {

@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import ch.frontg8.R;
 import ch.frontg8.lib.filechooser.bl.FileType;
@@ -68,8 +69,8 @@ public class FileChooser extends ListActivity {
     }
 
     private List<Item> readDirectory(File[] directoryContent) {
-        List<Item> dir = new ArrayList<Item>();
-        List<Item> fls = new ArrayList<Item>();
+        List<Item> dir = new ArrayList<>();
+        List<Item> fls = new ArrayList<>();
         for (File currentItem : directoryContent) {
             if (currentItem.isDirectory()) {
                 dir.add(createDirItem(currentItem));
@@ -115,7 +116,7 @@ public class FileChooser extends ListActivity {
     private String getFormatedDate(File item) {
         Date lastModDate = new Date(item.lastModified());
         //DateFormat formater = DateFormat.getDateTimeInstance();
-        DateFormat formater = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        DateFormat formater = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.GERMANY);
         return formater.format(lastModDate);
     }
 

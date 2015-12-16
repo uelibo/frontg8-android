@@ -35,13 +35,13 @@ import ch.frontg8.view.model.ContactAdapter;
 
 public class MainActivity extends AppCompatActivity {
     // Messenger to get Contacts
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
-    private Context thisActivity = this;
+    private final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private final Context thisActivity = this;
     private ContactAdapter dataAdapter = null;
     private Messenger mService;
 
     // Connection to DataService
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private final ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
@@ -191,13 +191,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Handler for Messages from DataService
-    class IncomingHandler extends Handler {
+    private class IncomingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MessageTypes.MSG_BULK_UPDATE:
                     ArrayList<Contact> contacts =
-                            new ArrayList<Contact>(((HashMap<UUID, Contact>) msg.obj).values());
+                            new ArrayList<>(((HashMap<UUID, Contact>) msg.obj).values());
                     for (Contact c : contacts) {
                         dataAdapter.add(c);
                         Log.d(thisActivity.getClass().getSimpleName(), "got contact " + c.getName()

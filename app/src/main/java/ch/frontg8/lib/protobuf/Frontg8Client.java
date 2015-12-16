@@ -127,6 +127,7 @@ public final class Frontg8Client {
     getDescriptor() {
         return descriptor;
     }
+
     public interface EncryptedOrBuilder
             extends com.google.protobuf.MessageOrBuilder {
 
@@ -142,6 +143,7 @@ public final class Frontg8Client {
          */
         com.google.protobuf.ByteString getEncryptedData();
     }
+
     public interface DataOrBuilder
             extends com.google.protobuf.MessageOrBuilder {
 
@@ -181,6 +183,7 @@ public final class Frontg8Client {
          */
         com.google.protobuf.ByteString getMessageData();
     }
+
     public interface ControlOrBuilder
             extends com.google.protobuf.MessageOrBuilder {
 
@@ -220,6 +223,7 @@ public final class Frontg8Client {
          */
         com.google.protobuf.ByteString getControlData();
     }
+
     public interface BlacklistOrBuilder
             extends com.google.protobuf.MessageOrBuilder {
 
@@ -271,6 +275,7 @@ public final class Frontg8Client {
          */
         com.google.protobuf.ByteString getHash();
     }
+
     public interface RevocationOrBuilder
             extends com.google.protobuf.MessageOrBuilder {
 
@@ -298,6 +303,7 @@ public final class Frontg8Client {
          */
         com.google.protobuf.ByteString getSignature();
     }
+
     public interface NotificationOrBuilder
             extends com.google.protobuf.MessageOrBuilder {
 
@@ -343,6 +349,7 @@ public final class Frontg8Client {
         ch.frontg8.lib.protobuf.Frontg8Client.EncryptedOrBuilder getBundleOrBuilder(
                 int index);
     }
+
     public interface MessageRequestOrBuilder
             extends com.google.protobuf.MessageOrBuilder {
 
@@ -719,11 +726,7 @@ public final class Frontg8Client {
             }
 
             public final boolean isInitialized() {
-                if (!hasEncryptedData()) {
-
-                    return false;
-                }
-                return true;
+                return hasEncryptedData();
             }
 
             public Builder mergeFrom(
@@ -823,6 +826,7 @@ public final class Frontg8Client {
         private com.google.protobuf.ByteString messageData_;
         private byte memoizedIsInitialized = -1;
         private int memoizedSerializedSize = -1;
+
         // Use Data.newBuilder() to construct.
         private Data(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
             super(builder);
@@ -1244,11 +1248,7 @@ public final class Frontg8Client {
 
                     return false;
                 }
-                if (!hasMessageData()) {
-
-                    return false;
-                }
-                return true;
+                return hasMessageData();
             }
 
             public Builder mergeFrom(
@@ -1419,6 +1419,7 @@ public final class Frontg8Client {
         private com.google.protobuf.ByteString controlData_;
         private byte memoizedIsInitialized = -1;
         private int memoizedSerializedSize = -1;
+
         // Use Control.newBuilder() to construct.
         private Control(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
             super(builder);
@@ -1840,11 +1841,7 @@ public final class Frontg8Client {
 
                     return false;
                 }
-                if (!hasControlData()) {
-
-                    return false;
-                }
-                return true;
+                return hasControlData();
             }
 
             public Builder mergeFrom(
@@ -2373,7 +2370,7 @@ public final class Frontg8Client {
             private final int index;
             private final int value;
 
-            private Subtype(int index, int value) {
+            Subtype(int index, int value) {
                 this.index = index;
                 this.value = value;
             }
@@ -2563,11 +2560,7 @@ public final class Frontg8Client {
             }
 
             public final boolean isInitialized() {
-                if (!hasSubType()) {
-
-                    return false;
-                }
-                return true;
+                return hasSubType();
             }
 
             public Builder mergeFrom(
@@ -2778,9 +2771,11 @@ public final class Frontg8Client {
             super(builder);
             this.unknownFields = builder.getUnknownFields();
         }
+
         private Revocation(boolean noInit) {
             this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance();
         }
+
         private Revocation(
                 com.google.protobuf.CodedInputStream input,
                 com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -3146,11 +3141,7 @@ public final class Frontg8Client {
 
                     return false;
                 }
-                if (!hasSignature()) {
-
-                    return false;
-                }
-                return true;
+                return hasSignature();
             }
 
             public Builder mergeFrom(
@@ -3290,9 +3281,11 @@ public final class Frontg8Client {
             super(builder);
             this.unknownFields = builder.getUnknownFields();
         }
+
         private Notification(boolean noInit) {
             this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance();
         }
+
         private Notification(
                 com.google.protobuf.CodedInputStream input,
                 com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -3931,7 +3924,7 @@ public final class Frontg8Client {
                     java.lang.Iterable<? extends ch.frontg8.lib.protobuf.Frontg8Client.Encrypted> values) {
                 if (bundleBuilder_ == null) {
                     ensureBundleIsMutable();
-                    super.addAll(values, bundle_);
+                    addAll(values, bundle_);
                     onChanged();
                 } else {
                     bundleBuilder_.addAllMessages(values);
@@ -4405,11 +4398,7 @@ public final class Frontg8Client {
             }
 
             public final boolean isInitialized() {
-                if (!hasHash()) {
-
-                    return false;
-                }
-                return true;
+                return hasHash();
             }
 
             public Builder mergeFrom(

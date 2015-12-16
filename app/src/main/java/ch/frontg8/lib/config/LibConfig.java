@@ -35,7 +35,7 @@ public class LibConfig {
     public static void setLastMessageHash(Context context, String hash) {
         SharedPreferences.Editor editor = getSharedPrefs(context).edit();
         editor.putString("last_message_hash", hash);
-        editor.commit();
+        editor.apply();
     }
 
 }

@@ -9,7 +9,7 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
 
     private final OnMessageReceived mMessageListener;
     private final Object lock = new Object();
-    private TlsClient tlsClient;
+    private final TlsClient tlsClient;
     private byte[] mMSG = null;
     private boolean mRun = true;
 
@@ -22,7 +22,7 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
         return ((header[0] < 0 ? 256 + header[0] : header[0]) << 8) + (header[1] < 0 ? 256 + header[1] : header[1]);
     }
 
-    public boolean isConnected() {
+    private boolean isConnected() {
         return tlsClient.isConnected();
     }
 
@@ -127,7 +127,6 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
             }
             mMessageListener.connectionLost();
             Log.d("TCP", "Connection lost");
-            ;
         }
 
         return null;
