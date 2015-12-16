@@ -36,7 +36,7 @@ public class AboutMeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_me);
 
-        final TextView textViewMyPublicKey = (TextView) findViewById(R.id.editTextMyPubkey);
+        final TextView textViewMyPublicKey = (TextView) findViewById(R.id.editTextMyPublicKey);
         publicKey = new String(LibCrypto.getMyPublicKeyBytes(new KeystoreHandler(this), this));
         textViewMyPublicKey.setText(publicKey);
         textViewMyPublicKey.setVisibility(View.GONE);

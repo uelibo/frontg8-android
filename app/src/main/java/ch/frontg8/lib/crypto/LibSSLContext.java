@@ -10,11 +10,11 @@ import javax.net.ssl.TrustManagerFactory;
 
 public class LibSSLContext {
 
-    public static SSLContext getSSLContext(String certpath, Context context) {
+    public static SSLContext getSSLContext(String certificatePath, Context context) {
         SSLContext sslContext = null;
         X509Certificate cert;
         try {
-            cert = LibCert.loadX509CertificateFromFile(certpath, context);
+            cert = LibCert.loadX509CertificateFromFile(certificatePath, context);
             KeyStore ks = KeystoreHandler.createFromCertificate(cert);
 
             //TODO; refactor to trustStore instead of keystore

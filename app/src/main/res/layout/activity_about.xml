@@ -14,7 +14,8 @@
         android:layout_height="100dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/logo_icon"/>
+        android:src="@drawable/logo_icon"
+        android:contentDescription="@string/Images_frontg8Logo"/>
 
     <TextView
         android:id="@+id/textViewAbout"

@@ -13,19 +13,19 @@ public class LibConfig {
     }
 
     public static String getKeystoreFilePath(Context context) {
-        return getSharedPrefs(context).getString("edittext_preference_keyfilepath", "frontg8keystore.ks");
+        return getSharedPrefs(context).getString("editText_preference_keyFilepath", "frontg8keystore.ks");
     }
 
     public static String getServerName(Context context) {
-        return getSharedPrefs(context).getString("edittext_preference_hostname", "server.frontg8.ch");
+        return getSharedPrefs(context).getString("editText_preference_hostname", "server.frontg8.ch");
     }
 
     public static int getServerPort(Context context) {
-        return Integer.parseInt(getSharedPrefs(context).getString("edittext_preference_port", "40001"));
+        return Integer.parseInt(getSharedPrefs(context).getString("editText_preference_port", "40001"));
     }
 
     public static String getUsername(Context context) {
-        return getSharedPrefs(context).getString("edittext_preference_username", "paul");
+        return getSharedPrefs(context).getString("editText_preference_username", "paul");
     }
 
     public static byte[] getLastMessageHash(Context context) {

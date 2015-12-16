@@ -97,27 +97,27 @@ public class FileChooser extends ListActivity {
     }
 
     private Item createDirItem(File currentDirectory) {
-        File[] fbuf = currentDirectory.listFiles();
+        File[] fileBuffer = currentDirectory.listFiles();
         int buf = 0;
-        if (fbuf != null) {
-            buf = fbuf.length;
+        if (fileBuffer != null) {
+            buf = fileBuffer.length;
         } else buf = 0;
         String num_item = String.valueOf(buf);
         if (buf == 0) num_item = num_item + " " + getString(R.string.titleItems);
         else if (buf == 1) num_item = num_item + " " + getString(R.string.titleItem);
         else num_item = num_item + " " + getString(R.string.titleItems);
-        return new Item(currentDirectory.getName(), num_item, getFormatedDate(currentDirectory), currentDirectory.getAbsolutePath(), FileType.DIRECTORY);
+        return new Item(currentDirectory.getName(), num_item, getFormattedDate(currentDirectory), currentDirectory.getAbsolutePath(), FileType.DIRECTORY);
     }
 
     private Item createFileItem(File currentFile) {
-        return new Item(currentFile.getName(), String.valueOf(currentFile.length()) + " Byte", getFormatedDate(currentFile), currentFile.getAbsolutePath(), FileType.FILE);
+        return new Item(currentFile.getName(), String.valueOf(currentFile.length()) + " Byte", getFormattedDate(currentFile), currentFile.getAbsolutePath(), FileType.FILE);
     }
 
-    private String getFormatedDate(File item) {
+    private String getFormattedDate(File item) {
         Date lastModDate = new Date(item.lastModified());
-        //DateFormat formater = DateFormat.getDateTimeInstance();
-        DateFormat formater = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.GERMANY);
-        return formater.format(lastModDate);
+        //DateFormat formatter = DateFormat.getDateTimeInstance();
+        DateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.GERMANY);
+        return formatter.format(lastModDate);
     }
 
     private void onFileClick(Item o) {

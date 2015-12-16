@@ -45,12 +45,12 @@ public class ContactsDataSource {
         return this.createContact(contact.getContactId(), contact.getName(), contact.getSurname(), contact.getPublicKeyString(), contact.getUnreadMessageCounter(), contact.hasValidPubKey());
     }
 
-    private Contact createContact(UUID contactId, String name, String surname, String publickey, int unreadMessageCounter, boolean validPubKey) {
+    private Contact createContact(UUID contactId, String name, String surname, String publicKey, int unreadMessageCounter, boolean validPubKey) {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_UUID, contactId.toString());
         values.put(MySQLiteHelper.COLUMN_NAME, name);
         values.put(MySQLiteHelper.COLUMN_SURNAME, surname);
-        values.put(MySQLiteHelper.COLUMN_PUBLICKEY, publickey);
+        values.put(MySQLiteHelper.COLUMN_PUBLICKEY, publicKey);
         values.put(MySQLiteHelper.COLUMN_UNREADMSG, unreadMessageCounter);
         int validKey = validPubKey ? 1 : 0;
         values.put(MySQLiteHelper.COLUMN_VALIDKEY, validKey);

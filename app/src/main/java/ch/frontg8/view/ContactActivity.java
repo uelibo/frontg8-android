@@ -101,7 +101,7 @@ public class ContactActivity extends AppCompatActivity {
             surname.setText(contact.getSurname());
             publicKey.setText(contact.getPublicKeyString());
         } else {
-            contactId = (UUID) bundle.getSerializable("contactid");
+            contactId = (UUID) bundle.getSerializable("contactId");
         }
 
         saveButton.setOnClickListener(new AdapterView.OnClickListener() {

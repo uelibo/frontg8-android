@@ -75,8 +75,8 @@ public class MessageActivity extends AppCompatActivity {
 
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
-        contactId = (UUID) bundle.getSerializable("contactid");
-        String contactName = (String) bundle.getSerializable("contactname");
+        contactId = (UUID) bundle.getSerializable("contactId");
+        String contactName = (String) bundle.getSerializable("contactName");
 
         TextView title = (TextView) findViewById(R.id.textViewTitle);
         if (contactName != null) {

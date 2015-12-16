@@ -175,17 +175,6 @@ public class LibCrypto {
         return cipher;
     }
 
-    public static byte[] kdf3SHA256(byte[] sk, byte[] otherInfo) {
-        int PAMT = 256;
-        int d = KEYSIZE / HASHBLOCKSIZE;
-        ByteBuffer T = ByteBuffer.wrap(new byte[KEYSIZE * 4]);
-        for (int counter = 0; counter <= d - 1; counter++) {
-            ByteBuffer C = ByteBuffer.allocate(PAMT).putInt(counter);
-            T.put(getSHA256Hash(C.put(sk).put(otherInfo).array()));
-        }
-        return T.array();
-    }
-
 
     // HMAC Helpers
 
@@ -239,8 +228,6 @@ public class LibCrypto {
         gen2.init(new KDFParameters(sksBytes, new byte[]{}));
         byte[] derivedSks = new byte[KEYSIZE];
         gen2.generateBytes(derivedSks, 0, KEYSIZE);
-
-        kdf3SHA256(sksBytes, new byte[]{});
 
         SecretKey skc = new SecretKeySpec(derivedSkc, 0, skcBytes.length, "AES");
         SecretKey sks = new SecretKeySpec(derivedSks, 0, sksBytes.length, "AES");

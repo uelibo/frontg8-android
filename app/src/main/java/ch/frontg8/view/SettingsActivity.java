@@ -41,9 +41,9 @@ public class SettingsActivity extends AppCompatActivity {
 
         private void updateDescription() {
             ArrayList<String> fields = new ArrayList<>();
-            fields.add("edittext_preference_username");
-            fields.add("edittext_preference_hostname");
-            fields.add("edittext_preference_port");
+            fields.add("editText_preference_username");
+            fields.add("editText_preference_hostname");
+            fields.add("editText_preference_port");
 
             for (String field : fields) {
                 EditTextPreference preference_field = (EditTextPreference) this.getPreferenceManager().findPreference(field);

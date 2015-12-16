@@ -70,5 +70,6 @@
     <string name="MessageActivity_SendButton">send</string>
     <string name="ContactActivity_Contact">Contact</string>
     <string name="MainActivity_Menu_Search">Search</string>
+    <string name="Images_frontg8Logo">frontg8 logo</string>
 
 </resources>

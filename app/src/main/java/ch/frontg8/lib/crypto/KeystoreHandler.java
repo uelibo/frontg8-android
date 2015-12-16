@@ -103,7 +103,7 @@ public class KeystoreHandler {
         KeyStore ks = createKeystore();
         try (InputStream is = context.openFileInput(ksFileName)) {
             ks.load(is, ksPassword);
-        } catch (FileNotFoundException fnfe) {
+        } catch (FileNotFoundException e) {
             try {
                 genAndSetMyKeys(context);
                 writeStore(context);

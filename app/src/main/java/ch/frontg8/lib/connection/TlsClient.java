@@ -74,10 +74,10 @@ public class TlsClient {
     }
 
     public byte[] getBytes(int length) throws NotConnectedException {
-        byte[] recv = new byte[length];
+        byte[] received = new byte[length];
         Log.v("TLS", "receiving packet");
         if (throwExceptionIfNotConnected()) try {
-            socket.getInputStream().read(recv, 0, recv.length);
+            socket.getInputStream().read(received, 0, received.length);
         } catch (IOException e1) {
             //TODO reconnect socket
             try {
@@ -88,7 +88,7 @@ public class TlsClient {
             Log.e("TLS", "socket.getInputStream().read >> IOException", e1);
         }
         boolean socketOk = false;
-        for (byte b : recv) {
+        for (byte b : received) {
             if (b != 0x00) {
                 socketOk = true;
                 break;
@@ -109,7 +109,7 @@ public class TlsClient {
         } else {
             autoReconnects = 0;
         }
-        return recv;
+        return received;
     }
 
 //

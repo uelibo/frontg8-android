@@ -98,8 +98,8 @@ class ConIncomingHandler extends Handler {
             String packetName = service.getPackageName();
             ActivityManager am = (ActivityManager) service.getSystemService(Context.ACTIVITY_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                final List<ActivityManager.RunningAppProcessInfo> processInfos = am.getRunningAppProcesses();
-                ActivityManager.RunningAppProcessInfo processInfo = processInfos.get(0);
+                final List<ActivityManager.RunningAppProcessInfo> processInformation = am.getRunningAppProcesses();
+                ActivityManager.RunningAppProcessInfo processInfo = processInformation.get(0);
                 if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
                     return (Arrays.asList(processInfo.pkgList).get(0)).contains(packetName);
                 }
@@ -143,8 +143,8 @@ class ConIncomingHandler extends Handler {
                             if (!isInForeground()) {
                                 Intent intent = new Intent(service, MessageActivity.class);
                                 Bundle bundle = new Bundle();
-                                bundle.putSerializable("contactid", decryptedMSG._1);
-                                bundle.putSerializable("contactname", contact.getName());
+                                bundle.putSerializable("contactId", decryptedMSG._1);
+                                bundle.putSerializable("contactName", contact.getName());
                                 intent.putExtras(bundle);
                                 PendingIntent pi = PendingIntent.getActivity(service, 0, intent, 0);
 

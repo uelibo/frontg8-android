@@ -46,7 +46,7 @@ public class MyMockContext extends MockContext {
             @Override
             public String getString(String key, String defValue) {
                 switch (key) {
-                    case "edittext_preference_keyfilepath":
+                    case "editText_preference_keyFilepath":
                         return "frontg8keystore.ks";
                     default:
                         return "bla";

@@ -172,8 +172,8 @@ public class MainActivity extends AppCompatActivity {
     private void openMessageActivityOfContact(Contact contact) {
         Intent intent = new Intent(thisActivity, MessageActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable("contactid", contact.getContactId());
-        bundle.putSerializable("contactname", contact.getName());
+        bundle.putSerializable("contactId", contact.getContactId());
+        bundle.putSerializable("contactName", contact.getName());
         intent.putExtras(bundle);
         startActivity(intent);
     }
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
         Contact contact = (Contact) parent.getItemAtPosition(position);
         Intent intent = new Intent(thisActivity, ContactActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable("contactid", contact.getContactId());
+        bundle.putSerializable("contactId", contact.getContactId());
         intent.putExtras(bundle);
         startActivity(intent);
     }
