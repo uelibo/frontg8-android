@@ -3,15 +3,11 @@ package ch.frontg8.lib.connection;
 import android.app.Activity;
 
 import java.util.List;
-import java.util.UUID;
 
 import javax.net.ssl.SSLContext;
 
 import ch.frontg8.lib.config.LibConfig;
-import ch.frontg8.lib.crypto.KeystoreHandler;
 import ch.frontg8.lib.crypto.LibSSLContext;
-import ch.frontg8.lib.helper.Tuple;
-import ch.frontg8.lib.message.InvalidMessageException;
 import ch.frontg8.lib.message.MessageHelper;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 

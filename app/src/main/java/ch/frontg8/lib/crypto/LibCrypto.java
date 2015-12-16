@@ -8,7 +8,6 @@ import org.spongycastle.crypto.generators.KDF2BytesGenerator;
 import org.spongycastle.crypto.macs.HMac;
 import org.spongycastle.crypto.params.KDFParameters;
 import org.spongycastle.crypto.params.KeyParameter;
-import org.spongycastle.jcajce.provider.digest.SHA256;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.util.Arrays;
 import org.spongycastle.util.encoders.Base64;
@@ -22,7 +21,6 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
@@ -34,23 +32,18 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import ch.frontg8.bl.Message;
 import ch.frontg8.lib.helper.Tuple;
-import ch.frontg8.lib.message.InvalidMessageException;
-import ch.frontg8.lib.message.MessageHelper;
-import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class LibCrypto {
     private static final String BC = BouncyCastleProvider.PROVIDER_NAME;
-
-    static {
-        Security.addProvider(new BouncyCastleProvider());
-    }
-
     //All in bytes
     private static final int KEYSIZE = 32;
     private static final int IVSIZE = 16;
     private static final int HASHBLOCKSIZE = 8;
+
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
 
     // Encryption / Decryption
 
@@ -127,20 +120,6 @@ public class LibCrypto {
         return new Tuple<>(uuid, decodedBytes);
     }
 
-    public static ArrayList<Message> decryptMSGs(UUID uuid, ArrayList<Frontg8Client.Encrypted> messages, KeystoreHandler ksHandler) {
-        ArrayList<Message> results = new ArrayList<>();
-        for (Frontg8Client.Encrypted enc : messages) {
-            if (enc != null) {
-                try {
-                    results.add(new Message(MessageHelper.getDataMessage(decryptMSG(enc.getEncryptedData().toByteArray(), uuid, ksHandler)._2)));
-                } catch (InvalidMessageException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return results;
-    }
-
 
     // Crypto Helpers
 
@@ -199,7 +178,7 @@ public class LibCrypto {
     public static byte[] kdf3SHA256(byte[] sk, byte[] otherInfo) {
         int PAMT = 256;
         int d = KEYSIZE / HASHBLOCKSIZE;
-        ByteBuffer T = ByteBuffer.wrap(new byte[KEYSIZE*4]);
+        ByteBuffer T = ByteBuffer.wrap(new byte[KEYSIZE * 4]);
         for (int counter = 0; counter <= d - 1; counter++) {
             ByteBuffer C = ByteBuffer.allocate(PAMT).putInt(counter);
             T.put(getSHA256Hash(C.put(sk).put(otherInfo).array()));
@@ -253,13 +232,13 @@ public class LibCrypto {
         KDF2BytesGenerator gen1 = new KDF2BytesGenerator(digest1);
         gen1.init(new KDFParameters(skcBytes, new byte[]{}));
         byte[] derivedSkc = new byte[KEYSIZE];
-        gen1.generateBytes(derivedSkc,0,KEYSIZE);
+        gen1.generateBytes(derivedSkc, 0, KEYSIZE);
 
         SHA256Digest digest2 = new SHA256Digest();
         KDF2BytesGenerator gen2 = new KDF2BytesGenerator(digest2);
         gen2.init(new KDFParameters(sksBytes, new byte[]{}));
         byte[] derivedSks = new byte[KEYSIZE];
-        gen2.generateBytes(derivedSks,0,KEYSIZE);
+        gen2.generateBytes(derivedSks, 0, KEYSIZE);
 
         kdf3SHA256(sksBytes, new byte[]{});
 

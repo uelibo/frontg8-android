@@ -29,6 +29,9 @@ import ch.frontg8.lib.data.DataService;
 import ch.frontg8.lib.data.MessageTypes;
 
 public class ContactActivity extends AppCompatActivity {
+    static final String STATE_SCANNEDKEY = "scannedKey";
+    // Messenger to get Contacts
+    final Messenger mMessenger = new Messenger(new IncomingHandler());
     private Context thisActivity;
     private UUID contactId;
     private Contact contact;
@@ -37,9 +40,6 @@ public class ContactActivity extends AppCompatActivity {
     private TextView name;
     private TextView surname;
     private TextView publicKey;
-    static final String STATE_SCANNEDKEY = "scannedKey";
-    // Messenger to get Contacts
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
     private Messenger mService;
 
     // Connection to DataService
@@ -74,33 +74,6 @@ public class ContactActivity extends AppCompatActivity {
     };
 
     public ContactActivity() {
-    }
-
-    // Handler for Messages from DataService
-    class IncomingHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MessageTypes.MSG_UPDATE:
-                    contact = (Contact) msg.obj;
-
-                    Log.d("Debug", "got contact " + contact.getName()
-                            + " " + contact.getSurname()
-                            + " " + contact.hasValidPubKey());
-
-                    if (scannedKey == null) {
-                        title.setText(getString(R.string.titleEditContact) + " " + contact.getName()
-                                + " " + contact.getSurname()
-                                + " (" + contact.getContactId().toString() + ")");
-                        name.setText(contact.getName());
-                        surname.setText(contact.getSurname());
-                        publicKey.setText(contact.getPublicKeyString());
-                    }
-                    break;
-                default:
-                    super.handleMessage(msg);
-            }
-        }
     }
 
     @Override
@@ -192,7 +165,6 @@ public class ContactActivity extends AppCompatActivity {
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -240,6 +212,33 @@ public class ContactActivity extends AppCompatActivity {
 
         // Restore state members from saved instance
         scannedKey = savedInstanceState.getString(STATE_SCANNEDKEY);
+    }
+
+    // Handler for Messages from DataService
+    class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MessageTypes.MSG_UPDATE:
+                    contact = (Contact) msg.obj;
+
+                    Log.d("Debug", "got contact " + contact.getName()
+                            + " " + contact.getSurname()
+                            + " " + contact.hasValidPubKey());
+
+                    if (scannedKey == null) {
+                        title.setText(getString(R.string.titleEditContact) + " " + contact.getName()
+                                + " " + contact.getSurname()
+                                + " (" + contact.getContactId().toString() + ")");
+                        name.setText(contact.getName());
+                        surname.setText(contact.getSurname());
+                        publicKey.setText(contact.getPublicKeyString());
+                    }
+                    break;
+                default:
+                    super.handleMessage(msg);
+            }
+        }
     }
 
 

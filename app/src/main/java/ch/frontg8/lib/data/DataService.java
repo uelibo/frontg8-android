@@ -35,19 +35,15 @@ import ch.frontg8.view.MainActivity;
 
 public class DataService extends Service {
 
-    HashMap<UUID, Contact> contacts = new HashMap<>();
-    Context thisContext;
-    KeystoreHandler ksHandler;
-    ContactsDataSource dataSource = new ContactsDataSource(this);
-
     protected Messenger mConMessenger;
     protected Messenger mDataMessenger;
     protected HashSet<Messenger> mContactClients = new HashSet<>();
     protected HashMap<UUID, Messenger> mMessageClients = new HashMap<>();
-
     protected NotificationManager NM;
-
-
+    HashMap<UUID, Contact> contacts = new HashMap<>();
+    Context thisContext;
+    KeystoreHandler ksHandler;
+    ContactsDataSource dataSource = new ContactsDataSource(this);
     Messenger mConService;
     private ServiceConnection mConnection = new ServiceConnection() {
 

@@ -155,7 +155,7 @@ public class ConIncomingHandler extends Handler {
                                         .setContentIntent(pi)
                                         .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                                         .setLights(Color.YELLOW, 3000, 3000)
-                                        //.setSound(Uri.parse("uri://sadfasdfasdf.mp3"))
+                                                //.setSound(Uri.parse("uri://sadfasdfasdf.mp3"))
                                         .setVisibility(NotificationCompat.VISIBILITY_PRIVATE).build();
 
                                 service.NM.notify(DataService.NotificationIds.NOT_NEW_MESSAGE, notification);

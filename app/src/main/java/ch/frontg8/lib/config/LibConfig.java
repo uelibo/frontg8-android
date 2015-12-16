@@ -12,15 +12,15 @@ public class LibConfig {
         return context.getSharedPreferences(context.getString(R.string.preferences), Context.MODE_PRIVATE);
     }
 
-    public static String getKeystoreFilePath(Context context){
+    public static String getKeystoreFilePath(Context context) {
         return getSharedPrefs(context).getString("edittext_preference_keyfilepath", "frontg8keystore.ks");
     }
 
-    public static String getServerName(Context context){
+    public static String getServerName(Context context) {
         return getSharedPrefs(context).getString("edittext_preference_hostname", "server.frontg8.ch");
     }
 
-    public static int getServerPort(Context context){
+    public static int getServerPort(Context context) {
         return Integer.parseInt(getSharedPrefs(context).getString("edittext_preference_port", "40001"));
     }
 

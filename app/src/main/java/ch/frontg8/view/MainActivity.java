@@ -34,11 +34,10 @@ import ch.frontg8.lib.data.MessageTypes;
 import ch.frontg8.view.model.ContactAdapter;
 
 public class MainActivity extends AppCompatActivity {
-    private Context thisActivity = this;
-    private ContactAdapter dataAdapter = null;
-
     // Messenger to get Contacts
     final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private Context thisActivity = this;
+    private ContactAdapter dataAdapter = null;
     private Messenger mService;
 
     // Connection to DataService
@@ -67,31 +66,6 @@ public class MainActivity extends AppCompatActivity {
             mService = null;
         }
     };
-
-    // Handler for Messages from DataService
-    class IncomingHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MessageTypes.MSG_BULK_UPDATE:
-                    ArrayList<Contact> contacts =
-                            new ArrayList<Contact>(((HashMap<UUID, Contact>) msg.obj).values());
-                    for (Contact c : contacts) {
-                        dataAdapter.add(c);
-                        Log.d(thisActivity.getClass().getSimpleName(), "got contact " + c.getName()
-                                + " " + c.getSurname()
-                                + " " + c.hasValidPubKey());
-                    }
-                    break;
-                case MessageTypes.MSG_UPDATE:
-                    Contact contact = (Contact) msg.obj;
-                    dataAdapter.replace(contact);
-                    break;
-                default:
-                    super.handleMessage(msg);
-            }
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DataService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
-
 
     @Override
     protected void onPause() {
@@ -215,6 +188,31 @@ public class MainActivity extends AppCompatActivity {
         bundle.putSerializable("contactid", contact.getContactId());
         intent.putExtras(bundle);
         startActivity(intent);
+    }
+
+    // Handler for Messages from DataService
+    class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MessageTypes.MSG_BULK_UPDATE:
+                    ArrayList<Contact> contacts =
+                            new ArrayList<Contact>(((HashMap<UUID, Contact>) msg.obj).values());
+                    for (Contact c : contacts) {
+                        dataAdapter.add(c);
+                        Log.d(thisActivity.getClass().getSimpleName(), "got contact " + c.getName()
+                                + " " + c.getSurname()
+                                + " " + c.hasValidPubKey());
+                    }
+                    break;
+                case MessageTypes.MSG_UPDATE:
+                    Contact contact = (Contact) msg.obj;
+                    dataAdapter.replace(contact);
+                    break;
+                default:
+                    super.handleMessage(msg);
+            }
+        }
     }
 
 }

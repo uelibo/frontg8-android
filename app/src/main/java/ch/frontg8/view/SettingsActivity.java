@@ -39,7 +39,7 @@ public class SettingsActivity extends AppCompatActivity {
             updateDescription();
         }
 
-        private void updateDescription(){
+        private void updateDescription() {
             ArrayList<String> fields = new ArrayList<>();
             fields.add("edittext_preference_username");
             fields.add("edittext_preference_hostname");

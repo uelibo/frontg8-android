@@ -26,15 +26,14 @@ import ch.frontg8.lib.data.MessageTypes;
 import ch.frontg8.lib.filechooser.view.FileChooser;
 
 public class CertImportActivity extends AppCompatActivity {
-    private Activity thisActivity = this;
     private static final int REQUEST_PATH = 1;
     private static final int IMPORT_CERT = 2;
     private static final int IMPORT_KEYPAIR = 3;
     private static final int EXPORT_KEYPAIR = 4;
-    private TextView textViewLog;
-
     // Messenger to get Contacts
     final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private Activity thisActivity = this;
+    private TextView textViewLog;
     private Messenger mService;
 
     // Connection to DataService
@@ -50,21 +49,6 @@ public class CertImportActivity extends AppCompatActivity {
             mService = null;
         }
     };
-
-    // Handler for Messages from DataService
-    class IncomingHandler extends Handler {
-        @Override
-        public void handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-                case MessageTypes.MSG_ERROR:
-                    textViewLog.append("Got Error from Data-Service");
-                    break;
-                default:
-                    super.handleMessage(msg);
-            }
-        }
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,6 +158,20 @@ public class CertImportActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         unbindService(mConnection);
+    }
+
+    // Handler for Messages from DataService
+    class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case MessageTypes.MSG_ERROR:
+                    textViewLog.append("Got Error from Data-Service");
+                    break;
+                default:
+                    super.handleMessage(msg);
+            }
+        }
     }
 
 

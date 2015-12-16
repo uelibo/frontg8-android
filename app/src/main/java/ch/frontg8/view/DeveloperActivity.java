@@ -12,7 +12,6 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,11 +34,11 @@ import ch.frontg8.lib.dbstore.ContactsDataSource;
 import ch.frontg8.lib.protobuf.Frontg8Client;
 
 public class DeveloperActivity extends AppCompatActivity {
+    // Messenger to get Contacts
+    final Messenger mMessenger = new Messenger(new IncomingHandler());
     private Activity thisActivity;
     private ContactsDataSource datasource = new ContactsDataSource(this);
     private TextView textViewLog;
-    // Messenger to get Contacts
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
     private Messenger mService;
 
     // Connection to DataService
@@ -56,17 +55,6 @@ public class DeveloperActivity extends AppCompatActivity {
         }
 
     };
-
-    // Handler for Messages from DataService
-    class IncomingHandler extends Handler {
-        @Override
-        public void handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-                default:
-                    super.handleMessage(msg);
-            }
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +90,7 @@ public class DeveloperActivity extends AppCompatActivity {
                 textViewLog.append("Username: " + LibConfig.getUsername(thisActivity) + "\n");
                 textViewLog.append("Servername: " + LibConfig.getServerName(thisActivity) + "\n");
                 textViewLog.append("Serverport: " + LibConfig.getServerPort(thisActivity) + "\n");
-                textViewLog.append("Lastmessage-Hash: " + new String (LibConfig.getLastMessageHash(thisActivity)) + "\n");
+                textViewLog.append("Lastmessage-Hash: " + new String(LibConfig.getLastMessageHash(thisActivity)) + "\n");
             }
         });
 
@@ -205,6 +193,17 @@ public class DeveloperActivity extends AppCompatActivity {
         // bind to DataService
         Intent intent = new Intent(this, DataService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    // Handler for Messages from DataService
+    class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                default:
+                    super.handleMessage(msg);
+            }
+        }
     }
 
 }

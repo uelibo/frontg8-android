@@ -8,8 +8,8 @@ import android.widget.TextView;
 import ch.frontg8.R;
 
 public class Logger {
-    private Activity context=null;
-    private String activityName ="noActivity";
+    private Activity context = null;
+    private String activityName = "noActivity";
 
     public Logger() {
     }
@@ -21,7 +21,7 @@ public class Logger {
 
     @NonNull
     public void TRACE(final String log) {
-        if ( log == null ) {
+        if (log == null) {
             return;
         }
         if (context == null) {
@@ -39,6 +39,6 @@ public class Logger {
     }
 
     public void e(String s) {
-        Log.e(activityName,s);
+        Log.e(activityName, s);
     }
 }

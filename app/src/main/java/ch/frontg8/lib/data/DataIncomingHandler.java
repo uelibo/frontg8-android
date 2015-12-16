@@ -94,9 +94,11 @@ public class DataIncomingHandler extends Handler {
                     importCaCert(msg, service);
                     break;
                 case MessageTypes.MSG_CONNECT:
-                    //TODO reset notification
                     Log.d("DS", "Connecting requested");
                     connect(service);
+                    break;
+                case MessageTypes.MSG_RECONNECT:
+                    //TODO implement
                     break;
                 default:
                     super.handleMessage(msg);

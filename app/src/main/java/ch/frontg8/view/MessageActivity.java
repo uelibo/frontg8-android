@@ -36,14 +36,13 @@ import ch.frontg8.lib.protobuf.Frontg8Client;
 import ch.frontg8.view.model.MessageAdapter;
 
 public class MessageActivity extends AppCompatActivity {
+    // Messenger to get Contacts
+    final Messenger mMessenger = new Messenger(new IncomingHandler());
     private Context thisActivity = this;
     private MessageAdapter dataAdapter = null;
     private UUID contactId;
     private String contactName;
     private ListView listView;
-
-    // Messenger to get Contacts
-    final Messenger mMessenger = new Messenger(new IncomingHandler());
     private Messenger mService;
 
     // Connection to DataService
@@ -69,32 +68,6 @@ public class MessageActivity extends AppCompatActivity {
             mService = null;
         }
     };
-
-    // Handler for Messages from DataService
-    class IncomingHandler extends Handler {
-        @Override
-        public void handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-                case MessageTypes.MSG_BULK_UPDATE:
-                    dataAdapter.clear();
-                    ArrayList<Message> messages = (ArrayList<Message>) msg.obj;
-                    for (Message m : messages) {
-                        Log.d(thisActivity.getClass().getSimpleName(), "got message " + m.getMessage());
-                        dataAdapter.add(m);
-                    }
-                    scrollMyListViewToBottom();
-                    break;
-                case MessageTypes.MSG_UPDATE:
-                    Message m = (Message) msg.obj;
-                    Log.d(thisActivity.getClass().getSimpleName(), "got message (update): " + m.getMessage());
-                    dataAdapter.add(m);
-                    scrollMyListViewToBottom();
-                    break;
-                default:
-                    super.handleMessage(msg);
-            }
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -218,6 +191,32 @@ public class MessageActivity extends AppCompatActivity {
 //                listView.smoothScrollToPosition(listView.getCount());
             }
         });
+    }
+
+    // Handler for Messages from DataService
+    class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case MessageTypes.MSG_BULK_UPDATE:
+                    dataAdapter.clear();
+                    ArrayList<Message> messages = (ArrayList<Message>) msg.obj;
+                    for (Message m : messages) {
+                        Log.d(thisActivity.getClass().getSimpleName(), "got message " + m.getMessage());
+                        dataAdapter.add(m);
+                    }
+                    scrollMyListViewToBottom();
+                    break;
+                case MessageTypes.MSG_UPDATE:
+                    Message m = (Message) msg.obj;
+                    Log.d(thisActivity.getClass().getSimpleName(), "got message (update): " + m.getMessage());
+                    dataAdapter.add(m);
+                    scrollMyListViewToBottom();
+                    break;
+                default:
+                    super.handleMessage(msg);
+            }
+        }
     }
 
 }

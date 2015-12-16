@@ -31,7 +31,7 @@ public class ConnectionService extends Service {
     }
 
     private void connect() {
-        Log.d("CS","Connecting");
+        Log.d("CS", "Connecting");
         mTcpClient = buildTCPClient();
         mTcpClient.execute();
         requestMessages();
@@ -80,6 +80,13 @@ public class ConnectionService extends Service {
         return mMessenger.getBinder();
     }
 
+    @Override
+    public void onDestroy() {
+        Log.d("CService", "Destroy");
+        super.onDestroy();
+        mTcpClient.stopClient();
+        mTcpClient = null;
+    }
 
     static class IncomingHandler extends Handler {
         private final WeakReference<ConnectionService> mService;
@@ -103,7 +110,7 @@ public class ConnectionService extends Service {
                         service.mTcpClient.sendMessage((byte[]) msg.obj);
                     } else {
                         service.connect();
-                        if (service.mTcpClient != null){
+                        if (service.mTcpClient != null) {
                             service.mTcpClient.sendMessage((byte[]) msg.obj);
                         } else {
                             service.sendConnectionLost();
@@ -113,21 +120,13 @@ public class ConnectionService extends Service {
                 case MessageTypes.MSG_CONNECT:
                     if (service.mTcpClient == null) {
                         service.connect();
-                        Log.d("CS","Tryed to connect");
+                        Log.d("CS", "Tryed to connect");
                     }
                     break;
                 default:
                     super.handleMessage(msg);
             }
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        Log.d("CService", "Destroy");
-        super.onDestroy();
-        mTcpClient.stopClient();
-        mTcpClient = null;
     }
 
     public static class MessageTypes {

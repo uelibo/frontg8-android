@@ -7,10 +7,7 @@ import android.util.Log;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "frontg8.db";
-    private static final int DATABASE_VERSION = 8;
     public static final String COLUMN_ID = "id";
-
     public static final String TABLE_CONTACTS = "contacts";
     public static final String COLUMN_UUID = "contactId";
     public static final String COLUMN_NAME = "name";
@@ -18,12 +15,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_PUBLICKEY = "publickey";
     public static final String COLUMN_UNREADMSG = "unreadMessageCounter";
     public static final String COLUMN_VALIDKEY = "validKey";
-
     public static final String TABLE_MESSAGES = "messages";
     public static final String COLUMN_CONTACTUUID = "contactuuid";
     public static final String COLUMN_MESSAGETEXT = "messagetext";
     public static final String COLUMN_MESSAGEBLOB = "messageblob";
-
+    private static final String DATABASE_NAME = "frontg8.db";
+    private static final int DATABASE_VERSION = 8;
     private static final String DATABASE_CREATE_CONTACTS = "create table "
             + TABLE_CONTACTS + "(" + COLUMN_ID
             + " integer primary key autoincrement, "

@@ -8,7 +8,7 @@ public class Item implements Comparable<Item> {
     private FileType fileType;
 
     public Item(FileType fileType) {
-        this("","","","", fileType);
+        this("", "", "", "", fileType);
         if (fileType == FileType.DIR_CURRENT) {
             this.name = ".";
             this.data = "(Current Directory)";
@@ -39,7 +39,9 @@ public class Item implements Comparable<Item> {
         return path;
     }
 
-    public FileType getFileType() { return fileType; }
+    public FileType getFileType() {
+        return fileType;
+    }
 
     public String getImage() {
         return fileType.getPicName();

@@ -11,8 +11,6 @@ import java.io.FileOutputStream;
 import java.util.Map;
 import java.util.Set;
 
-import ch.frontg8.R;
-
 /**
  * Created by tstauber on 03.11.15.
  */

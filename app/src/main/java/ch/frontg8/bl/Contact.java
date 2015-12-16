@@ -26,12 +26,12 @@ public class Contact implements Serializable, Filtertext {
         this.hasValidPubKey = hasValidPubKey;
     }
 
-    public UUID getContactId() {
-        return contactId;
-    }
-
     private static UUID genUUID() {
         return java.util.UUID.randomUUID();
+    }
+
+    public UUID getContactId() {
+        return contactId;
     }
 
     public String getName() {

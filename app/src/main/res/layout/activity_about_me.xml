@@ -1,53 +1,57 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="ch.frontg8.view.AboutMeActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                tools:context="ch.frontg8.view.AboutMeActivity">
 
-    <TextView android:text="@string/titleMyPubkey" android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textTitle" />
+        android:text="@string/titleMyPubkey"/>
 
     <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/editTextMyPubkey"
-        android:layout_alignParentStart="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttonCopyToClipbord"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/textTitle"
-        android:text=""
-        android:gravity="top|left"
         android:editable="false"
-        android:textIsSelectable="true"
-        android:layout_above="@+id/buttonCopyToClipbord" />
+        android:gravity="top|left"
+        android:text=""
+        android:textIsSelectable="true"/>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/buttonCopyToClipbord"
         android:id="@+id/buttonCopyToClipbord"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/buttonShowAsText"
-        android:id="@+id/buttonShowText"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/buttonCopyToClipbord" />
+        android:layout_alignParentStart="true"
+        android:text="@string/buttonCopyToClipbord"/>
+
+    <Button
+        android:id="@+id/buttonShowText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/buttonCopyToClipbord"
+        android:text="@string/buttonShowAsText"/>
 
 
     <ImageView
         android:id="@+id/myImage"
-        android:scaleType="fitStart"
-        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/editTextMyPubkey"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/textTitle"
-        android:layout_alignBottom="@+id/editTextMyPubkey" />
+        android:layout_marginTop="5dp"
+        android:scaleType="fitStart"/>
 
 </RelativeLayout>

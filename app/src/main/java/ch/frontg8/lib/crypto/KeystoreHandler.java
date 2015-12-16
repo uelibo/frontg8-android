@@ -53,15 +53,14 @@ import ch.frontg8.lib.config.LibConfig;
 
 public class KeystoreHandler {
     private static final String PN = BouncyCastleProvider.PROVIDER_NAME;
-    private static char[] ksPassword = "KEYSTORE PASSWORD".toCharArray(); //TODO: change to real pw
-    private static String ksFileName;
     private static final UUID MYUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
-
     private static final int SUFFIXLENGTH = 3;
     private static final String SUFFIXPRIVATE = "pri";
     private static final String SUFFIXSESSIONKEYCRYPTO = "skc";
     private static final String SUFFIXSESSIONKEYSIGN = "sks";
     private static final String MYALIAS = MYUUID.toString() + SUFFIXPRIVATE;
+    private static char[] ksPassword = "KEYSTORE PASSWORD".toCharArray(); //TODO: change to real pw
+    private static String ksFileName;
     private static char[] PASSWORD = ksPassword;
 
     static {
@@ -76,6 +75,17 @@ public class KeystoreHandler {
             this.ks = loadFromFile(context);
         } catch (KeyStoreException | IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static KeyStore createFromCertificate(Certificate certificate) throws KeyStoreException {
+        try {
+            KeyStore ks = KeyStore.getInstance("BKS", Security.getProvider(PN));
+            ks.load(null);
+            ks.setCertificateEntry("ca", certificate);
+            return ks;
+        } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
+            throw new Error(e.getMessage());
         }
     }
 
@@ -107,6 +117,8 @@ public class KeystoreHandler {
     }
 
 
+    // Session Key Handling
+
     public void writeStore(Context context) throws KeyStoreException, IOException {
         try (OutputStream os = context.openFileOutput(ksFileName, Context.MODE_PRIVATE)) {
             ks.store(os, ksPassword);
@@ -114,9 +126,6 @@ public class KeystoreHandler {
             e.printStackTrace();
         }
     }
-
-
-    // Session Key Handling
 
     public SecretKey getSKC(UUID uuid) throws KeyNotFoundException {
         return (SecretKey) getKey(uuid, SUFFIXSESSIONKEYCRYPTO);
@@ -153,6 +162,9 @@ public class KeystoreHandler {
         }
     }
 
+
+    // My Key Handling
+
     public byte[] negotiateSessionKeys(PublicKey publicKey, Context context) throws InvalidKeyException {
         PrivateKey privateKey = getMyPrivateKey(context);
         byte[] sessionKey = new byte[]{};
@@ -166,9 +178,6 @@ public class KeystoreHandler {
         }
         return sessionKey;
     }
-
-
-    // My Key Handling
 
     private void setMyKey(KeyPair keyPair, Context context) {
         X509Certificate certificate;
@@ -227,10 +236,12 @@ public class KeystoreHandler {
         }
     }
 
-
     private Key getKey(UUID uuid, String suffix) throws KeyNotFoundException {
         return getKey(uuid.toString(), suffix);
     }
+
+
+    // Get key helpers
 
     private Key getKey(String uuid, String suffix) throws KeyNotFoundException {
         String alias = uuid + suffix;
@@ -244,9 +255,6 @@ public class KeystoreHandler {
             throw new KeyNotFoundException(alias);
         }
     }
-
-
-    // Get key helpers
 
     public HashMap<String, SecretKey[]> getBothKeyMap() {
         HashMap<String, SecretKey[]> bothAliasMap = new HashMap<>();
@@ -271,12 +279,12 @@ public class KeystoreHandler {
         return Collections.list(ks.aliases());
     }
 
+    // Others
+
     private SecretKey createSecretKey(Key key) {
         byte[] keyBytes = key.getEncoded();
         return new SecretKeySpec(keyBytes, 0, keyBytes.length, "AES");
     }
-
-    // Others
 
     public void resetOther() {
         for (String s : getBothKeyMap().keySet()) {
@@ -342,6 +350,7 @@ public class KeystoreHandler {
         }
     }
 
+    // Static Methods
 
     @Override
     public String toString() {
@@ -350,19 +359,6 @@ public class KeystoreHandler {
         } catch (KeyStoreException e) {
             e.printStackTrace();
             return "";
-        }
-    }
-
-    // Static Methods
-
-    public static KeyStore createFromCertificate(Certificate certificate) throws KeyStoreException {
-        try {
-            KeyStore ks = KeyStore.getInstance("BKS", Security.getProvider(PN));
-            ks.load(null);
-            ks.setCertificateEntry("ca", certificate);
-            return ks;
-        } catch (IOException | NoSuchAlgorithmException | CertificateException e) {
-            throw new Error(e.getMessage());
         }
     }
 

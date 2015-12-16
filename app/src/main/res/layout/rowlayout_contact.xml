@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:id="@+id/rowlayout_contact"
-    android:padding="6dip" >
+<RelativeLayout android:id="@+id/rowlayout_contact"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="6dip">
 
     <TextView
         android:id="@+id/textView"
@@ -12,30 +12,30 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:focusable="false"
         android:clickable="false"
-        android:focusableInTouchMode="false" />
+        android:focusable="false"
+        android:focusableInTouchMode="false"/>
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Contact"
-        android:textSize="10dp"
-        android:textColor="@color/blue"
         android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/textView" />
+        android:layout_toEndOf="@+id/textView"
+        android:text="Contact"
+        android:textColor="@color/blue"
+        android:textSize="10dp"/>
 
     <Button
         android:id="@+id/buttonMessage"
-        android:text="@string/buttonTextEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:focusable="false"
         android:clickable="true"
+        android:focusable="false"
         android:focusableInTouchMode="false"
-        android:onClick="myContactButtonHandler" />
+        android:onClick="myContactButtonHandler"
+        android:text="@string/buttonTextEdit"/>
 
 </RelativeLayout>

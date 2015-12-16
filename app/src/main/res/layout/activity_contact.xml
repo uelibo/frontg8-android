@@ -1,77 +1,82 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context="ch.frontg8.view.ContactActivity">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                tools:context="ch.frontg8.view.ContactActivity">
 
-    <TextView android:text="@string/editcontact" android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textViewTitle" />
-
-    <EditText
+    <TextView
+        android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text=""
-        android:hint="@string/hintName"
-        android:ems="10"
+        android:text="@string/editcontact"/>
+
+    <EditText
         android:id="@+id/editPersonName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/editPersonSurname"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/textViewTitle"
-        android:layout_alignParentStart="true"
         android:layout_marginTop="15dp"
-        android:layout_alignEnd="@+id/editPersonSurname" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text=""
-        android:hint="@string/hintSurname"
         android:ems="10"
-        android:id="@+id/editPersonSurname"
-        android:layout_below="@+id/editPersonName"
-        android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/editPublickey" />
+        android:hint="@string/hintName"
+        android:inputType="textPersonName"
+        android:text=""/>
 
     <EditText
+        android:id="@+id/editPersonSurname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editPublickey"
-        android:layout_below="@+id/editPersonSurname"
+        android:layout_alignEnd="@+id/editPublickey"
         android:layout_alignParentStart="true"
-        android:ems="7"
-        android:text=""
-        android:hint="@string/hitPublicKey"
-        android:layout_marginTop="6dp"
+        android:layout_below="@+id/editPersonName"
+        android:ems="10"
+        android:hint="@string/hintSurname"
+        android:inputType="textPersonName"
+        android:text=""/>
+
+    <EditText
+        android:id="@+id/editPublickey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:textSize="12dp" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/editPersonSurname"
+        android:layout_marginTop="6dp"
+        android:ems="7"
+        android:hint="@string/hitPublicKey"
+        android:text=""
+        android:textSize="12dp"/>
 
     <Button
+        android:id="@+id/buttonLoadKey"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/buttonTextScanQrCode"
-        android:id="@+id/buttonLoadKey"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/editPublickey"
-        android:layout_alignParentStart="true" />
+        android:text="@string/buttonTextScanQrCode"/>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/buttonTextDelete"
         android:id="@+id/buttonDelete"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/buttonLoadKey"
-        android:layout_alignParentStart="true" />
-
-    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/buttonTextSave"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/buttonLoadKey"
+        android:layout_marginTop="10dp"
+        android:text="@string/buttonTextDelete"/>
+
+    <Button
         android:id="@+id/buttonSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignTop="@+id/buttonDelete"
-        android:layout_toEndOf="@+id/buttonDelete" />
+        android:layout_toEndOf="@+id/buttonDelete"
+        android:text="@string/buttonTextSave"/>
 
 
 </RelativeLayout>

@@ -8,14 +8,18 @@ import javax.net.ssl.SSLContext;
 public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
 
     private final OnMessageReceived mMessageListener;
-    private TlsClient tlsClient;
     private final Object lock = new Object();
+    private TlsClient tlsClient;
     private byte[] mMSG = null;
     private boolean mRun = true;
 
     public TcpClient(OnMessageReceived listener, String serverName, int serverPort, SSLContext sslContext) {
         mMessageListener = listener;
         this.tlsClient = new TlsClient(serverName, serverPort, sslContext);
+    }
+
+    private static int getLengthFromHeader(byte[] header) {
+        return ((header[0] < 0 ? 256 + header[0] : header[0]) << 8) + (header[1] < 0 ? 256 + header[1] : header[1]);
     }
 
     public boolean isConnected() {
@@ -28,10 +32,6 @@ public class TcpClient extends AsyncTask<byte[], byte[], TcpClient> {
             mMSG = message;
             lock.notifyAll();
         }
-    }
-
-    private static int getLengthFromHeader(byte[] header) {
-        return ((header[0] < 0 ? 256 + header[0] : header[0]) << 8) + (header[1] < 0 ? 256 + header[1] : header[1]);
     }
 
     @Override
