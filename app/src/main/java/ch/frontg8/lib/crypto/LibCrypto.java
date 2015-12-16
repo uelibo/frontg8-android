@@ -4,12 +4,16 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import org.spongycastle.crypto.digests.SHA256Digest;
+import org.spongycastle.crypto.generators.KDF2BytesGenerator;
 import org.spongycastle.crypto.macs.HMac;
+import org.spongycastle.crypto.params.KDFParameters;
 import org.spongycastle.crypto.params.KeyParameter;
+import org.spongycastle.jcajce.provider.digest.SHA256;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.util.Arrays;
 import org.spongycastle.util.encoders.Base64;
 
+import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
@@ -43,8 +47,10 @@ public class LibCrypto {
         Security.addProvider(new BouncyCastleProvider());
     }
 
+    //All in bytes
     private static final int KEYSIZE = 32;
     private static final int IVSIZE = 16;
+    private static final int HASHBLOCKSIZE = 8;
 
     // Encryption / Decryption
 
@@ -190,6 +196,17 @@ public class LibCrypto {
         return cipher;
     }
 
+    public static byte[] kdf3SHA256(byte[] sk, byte[] otherInfo) {
+        int PAMT = 256;
+        int d = KEYSIZE / HASHBLOCKSIZE;
+        ByteBuffer T = ByteBuffer.wrap(new byte[KEYSIZE*4]);
+        for (int counter = 0; counter <= d - 1; counter++) {
+            ByteBuffer C = ByteBuffer.allocate(PAMT).putInt(counter);
+            T.put(getSHA256Hash(C.put(sk).put(otherInfo).array()));
+        }
+        return T.array();
+    }
+
 
     // HMAC Helpers
 
@@ -231,8 +248,23 @@ public class LibCrypto {
         byte[] skcBytes = Arrays.copyOfRange(sessionKey, 0, KEYSIZE);
         byte[] sksBytes = Arrays.copyOfRange(sessionKey, sessionKey.length - KEYSIZE, sessionKey.length);
 
-        SecretKey skc = new SecretKeySpec(skcBytes, 0, skcBytes.length, "AES");
-        SecretKey sks = new SecretKeySpec(sksBytes, 0, sksBytes.length, "AES");
+
+        SHA256Digest digest1 = new SHA256Digest();
+        KDF2BytesGenerator gen1 = new KDF2BytesGenerator(digest1);
+        gen1.init(new KDFParameters(skcBytes, new byte[]{}));
+        byte[] derivedSkc = new byte[KEYSIZE];
+        gen1.generateBytes(derivedSkc,0,KEYSIZE);
+
+        SHA256Digest digest2 = new SHA256Digest();
+        KDF2BytesGenerator gen2 = new KDF2BytesGenerator(digest2);
+        gen2.init(new KDFParameters(sksBytes, new byte[]{}));
+        byte[] derivedSks = new byte[KEYSIZE];
+        gen2.generateBytes(derivedSks,0,KEYSIZE);
+
+        kdf3SHA256(sksBytes, new byte[]{});
+
+        SecretKey skc = new SecretKeySpec(derivedSkc, 0, skcBytes.length, "AES");
+        SecretKey sks = new SecretKeySpec(derivedSks, 0, sksBytes.length, "AES");
 
         ksHandler.removeSessionKeys(uuid);
         ksHandler.setSKC(uuid, skc, context);
