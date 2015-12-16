@@ -86,7 +86,7 @@ public class DeveloperActivity extends AppCompatActivity {
         buttonShowConfig.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
                 textViewLog = (TextView) findViewById(R.id.textViewLog);
-                textViewLog.setText("");
+                textViewLog.setText(null);
                 textViewLog.append("Username: " + LibConfig.getUsername(thisActivity) + "\n");
                 textViewLog.append("Servername: " + LibConfig.getServerName(thisActivity) + "\n");
                 textViewLog.append("Serverport: " + LibConfig.getServerPort(thisActivity) + "\n");
@@ -101,7 +101,7 @@ public class DeveloperActivity extends AppCompatActivity {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-                Toast.makeText(thisActivity, "all data deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(thisActivity, "All data deleted", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -126,14 +126,14 @@ public class DeveloperActivity extends AppCompatActivity {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-                Toast.makeText(thisActivity, "demo data inserted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(thisActivity, "Demo data inserted", Toast.LENGTH_SHORT).show();
             }
         });
 
         buttonTlsTest.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
                 textViewLog = (TextView) findViewById(R.id.textViewLog);
-                textViewLog.setText("");
+                textViewLog.setText(null);
                 textViewLog.setMovementMethod(new ScrollingMovementMethod());
                 new Thread(new Runnable() {
                     @Override
@@ -172,10 +172,7 @@ public class DeveloperActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -99,11 +99,8 @@ public class CertImportActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
 
-        return super.onOptionsItemSelected(item);
     }
 
     // Listen for results.
@@ -115,21 +112,21 @@ public class CertImportActivity extends AppCompatActivity {
             switch (requestCode) {
                 case IMPORT_CERT:
                     path = data.getStringExtra("GetPath") + "/" + data.getStringExtra("GetFileName");
-                    textViewLog.setText("Import CA Cert from: " + path);
+                    textViewLog.setText(getString(R.string.CertImportActivity_ImportCertFrom, path));
                     sendMessage(MessageTypes.MSG_IMPORT_CACERT, path);
                     break;
                 case IMPORT_KEYPAIR:
                     path = data.getStringExtra("GetPath") + "/" + data.getStringExtra("GetFileName");
-                    textViewLog.setText("Import Keypair from: " + path);
+                    textViewLog.setText(getString(R.string.CertImportActivity_ImportKeyFrom, path));
                     sendMessage(MessageTypes.MSG_IMPORT_KEY, path);
                     break;
                 case EXPORT_KEYPAIR:
                     path = data.getStringExtra("GetPath") + "/exported-key.pem";
-                    textViewLog.setText("Export Keypair to: " + path);
+                    textViewLog.setText(getString(R.string.CertImportActivity_ExportKeyTo, path));
                     sendMessage(MessageTypes.MSG_EXPORT_KEY, path);
                     break;
                 default:
-                    textViewLog.setText("Something went wrong...");
+                    textViewLog.setText(R.string.CertImportActivity_Error);
             }
         }
     }

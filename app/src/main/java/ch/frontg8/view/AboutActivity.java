@@ -22,18 +22,17 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
 
         //ImageView image = (ImageView) findViewById(R.id.imageView);
-        TextView textfield = (TextView) findViewById(R.id.textViewAbout);
-        textfield.setText("");
+        TextView textField = (TextView) findViewById(R.id.textViewAbout);
+        textField.setText(null);
 
-        PackageInfo pInfo = null;
+        PackageInfo pInfo;
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            textfield.append("frontg8 Version " + pInfo.versionName + " (" + pInfo.versionCode + ")");
+            textField.append(getString(R.string.AboutActivity_Version, pInfo.versionName, pInfo.versionCode));
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        textfield.append("\n\n" + getString(R.string.textAbout));
-
+        textField.append(getString(R.string.AboutActivity_TextAbout));
     }
 
 
@@ -53,8 +52,7 @@ public class AboutActivity extends AppCompatActivity {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://frontg8.ch"));
                     startActivity(browserIntent);
                 } catch (ActivityNotFoundException e) {
-                    Toast.makeText(this, "No application can handle this request."
-                            + " Please install a webbrowser", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.AboutActivity_Toast_NoWebBrowser, Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
                 return true;

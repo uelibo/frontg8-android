@@ -192,7 +192,7 @@ public class ContactActivity extends AppCompatActivity {
                 publicKey.setText(scannedKey);
             }
             if (resultCode == RESULT_CANCELED) {
-                //handle cancel
+                //TODO handle cancel
             }
         }
     }
@@ -222,14 +222,12 @@ public class ContactActivity extends AppCompatActivity {
                 case MessageTypes.MSG_UPDATE:
                     contact = (Contact) msg.obj;
 
-                    Log.d("Debug", "got contact " + contact.getName()
+                    Log.d("CA", "got contact " + contact.getName()
                             + " " + contact.getSurname()
                             + " " + contact.hasValidPubKey());
 
                     if (scannedKey == null) {
-                        title.setText(getString(R.string.titleEditContact) + " " + contact.getName()
-                                + " " + contact.getSurname()
-                                + " (" + contact.getContactId().toString() + ")");
+                        title.setText(getString(R.string.ContactActivity_TitleEditContact, contact.getName(), contact.getSurname(), contact.getContactId().toString()));
                         name.setText(contact.getName());
                         surname.setText(contact.getSurname());
                         publicKey.setText(contact.getPublicKeyString());

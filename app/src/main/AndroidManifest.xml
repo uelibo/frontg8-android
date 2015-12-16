@@ -90,7 +90,7 @@
         </activity>
         <activity
             android:name=".lib.filechooser.view.FileChooser"
-            android:label="@string/title_activity_fileexplorer">
+            android:label="@string/title_activity_fileExplorer">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".view.CertImportActivity"/>

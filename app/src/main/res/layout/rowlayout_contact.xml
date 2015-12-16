@@ -10,7 +10,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:clickable="false"
         android:focusable="false"
@@ -22,9 +22,9 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/textView"
-        android:text="Contact"
+        android:text="@string/ContactActivity_Contact"
         android:textColor="@color/blue"
-        android:textSize="10dp"/>
+        android:textSize="12sp"/>
 
     <Button
         android:id="@+id/buttonMessage"
@@ -36,6 +36,6 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:onClick="myContactButtonHandler"
-        android:text="@string/buttonTextEdit"/>
+        android:text="@string/ContactActivity_ButtonTextEdit"/>
 
 </RelativeLayout>

@@ -12,7 +12,7 @@
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/titleMessagelist"/>
+        android:text="@string/MessageActivity_TitleMessageList"/>
 
     <ListView
         android:id="@+id/listView"
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:text="send"/>
+        android:text="@string/MessageActivity_SendButton"/>
 
     <EditText
         android:id="@+id/editTextSend"

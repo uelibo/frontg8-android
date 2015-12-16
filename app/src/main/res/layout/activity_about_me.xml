@@ -12,7 +12,7 @@
         android:id="@+id/textTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/titleMyPubkey"/>
+        android:text="@string/AboutActivity_TitleMyPubkey"/>
 
     <EditText
         android:id="@+id/editTextMyPubkey"
@@ -22,8 +22,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/textTitle"
-        android:editable="false"
-        android:gravity="top|left"
+        android:inputType="none"
+        android:gravity="top|start"
         android:text=""
         android:textIsSelectable="true"/>
 
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:text="@string/buttonCopyToClipbord"/>
+        android:text="@string/AboutActivity_ButtonCopyToClipboard"/>
 
     <Button
         android:id="@+id/buttonShowText"
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_toEndOf="@+id/buttonCopyToClipbord"
-        android:text="@string/buttonShowAsText"/>
+        android:text="@string/AboutActivity_ButtonShowAsText"/>
 
 
     <ImageView

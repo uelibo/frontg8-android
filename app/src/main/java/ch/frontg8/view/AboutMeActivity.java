@@ -62,15 +62,15 @@ public class AboutMeActivity extends AppCompatActivity {
 
         buttonShowText.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
-                if (showAsText == false) {
+                if (!showAsText) {
                     textViewMyPubkey.setVisibility(View.VISIBLE);
                     imageView.setVisibility(View.GONE);
-                    buttonShowText.setText(R.string.buttonShowAsQrCode);
+                    buttonShowText.setText(R.string.AboutActivity_ButtonShowAsQrCode);
                     showAsText = true;
                 } else {
                     textViewMyPubkey.setVisibility(View.GONE);
                     imageView.setVisibility(View.VISIBLE);
-                    buttonShowText.setText(R.string.buttonShowAsText);
+                    buttonShowText.setText(R.string.AboutActivity_ButtonShowAsText);
                     showAsText = false;
                 }
             }
@@ -89,11 +89,8 @@ public class AboutMeActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
 
-        return super.onOptionsItemSelected(item);
     }
 
     Bitmap encodeAsBitmap(String str) throws WriterException {

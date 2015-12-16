@@ -41,7 +41,6 @@ public class MessageActivity extends AppCompatActivity {
     private Context thisActivity = this;
     private MessageAdapter dataAdapter = null;
     private UUID contactId;
-    private String contactName;
     private ListView listView;
     private Messenger mService;
 
@@ -77,11 +76,11 @@ public class MessageActivity extends AppCompatActivity {
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
         contactId = (UUID) bundle.getSerializable("contactid");
-        contactName = (String) bundle.getSerializable("contactname");
+        String contactName = (String) bundle.getSerializable("contactname");
 
         TextView title = (TextView) findViewById(R.id.textViewTitle);
         if (contactName != null) {
-            title.append(" " + contactName);
+            title.append(contactName);
         }
 
         dataAdapter = new MessageAdapter(this, new ArrayList<Message>());
@@ -153,7 +152,7 @@ public class MessageActivity extends AppCompatActivity {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-                Toast.makeText(thisActivity, R.string.messageMessagesDeleted, Toast.LENGTH_SHORT).show();
+                Toast.makeText(thisActivity, R.string.MessageActivity_MessageMessagesDeleted, Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -173,11 +172,13 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        try {
-            mService.send(android.os.Message.obtain(null, MessageTypes.MSG_UNREGISTER_FOR_MESSAGES, contactId));
-            mService.send(android.os.Message.obtain(null, MessageTypes.MSG_RESET_UNREAD, contactId));
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        if (mService != null) {
+            try {
+                mService.send(android.os.Message.obtain(null, MessageTypes.MSG_UNREGISTER_FOR_MESSAGES, contactId));
+                mService.send(android.os.Message.obtain(null, MessageTypes.MSG_RESET_UNREAD, contactId));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
         unbindService(mConnection);
     }
