@@ -12,7 +12,6 @@ import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.util.Arrays;
 import org.spongycastle.util.encoders.Base64;
 
-import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
@@ -39,7 +38,6 @@ public class LibCrypto {
     //All in bytes
     private static final int KEYSIZE = 32;
     private static final int IVSIZE = 16;
-    private static final int HASHBLOCKSIZE = 8;
 
     static {
         Security.addProvider(new BouncyCastleProvider());

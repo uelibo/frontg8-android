@@ -237,6 +237,7 @@ class DataIncomingHandler extends Handler {
         UUID uuid2 = contact2.getContactId();
         service.dataSource.deleteContact(contact2);
         service.contacts.remove(uuid2);
+        service.ksHandler.removeSessionKeys(uuid2);
         sendToContactSubscribers(service, contact2);
     }
 

@@ -20,6 +20,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
+
 import ch.frontg8.R;
 import ch.frontg8.lib.data.DataService;
 import ch.frontg8.lib.data.MessageTypes;
@@ -31,7 +33,7 @@ public class CertImportActivity extends AppCompatActivity {
     private static final int IMPORT_KEYPAIR = 3;
     private static final int EXPORT_KEYPAIR = 4;
     // Messenger to get Contacts
-    private final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private final Messenger mMessenger = new Messenger(new IncomingHandler(this));
     private final Activity thisActivity = this;
     private TextView textViewLog;
     private Messenger mService;
@@ -158,15 +160,23 @@ public class CertImportActivity extends AppCompatActivity {
     }
 
     // Handler for Messages from DataService
-    private class IncomingHandler extends Handler {
+    private static class IncomingHandler extends Handler {
+        WeakReference<CertImportActivity> activity;
+
+        public IncomingHandler(CertImportActivity activity) {
+            this.activity = new WeakReference<>(activity);
+        }
+
         @Override
         public void handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-                case MessageTypes.MSG_ERROR:
-                    textViewLog.append("Got Error from Data-Service");
-                    break;
-                default:
-                    super.handleMessage(msg);
+            if (activity.get() != null) {
+                switch (msg.what) {
+                    case MessageTypes.MSG_ERROR:
+                        activity.get().textViewLog.append("Got Error from Data-Service");
+                        break;
+                    default:
+                        super.handleMessage(msg);
+                }
             }
         }
     }

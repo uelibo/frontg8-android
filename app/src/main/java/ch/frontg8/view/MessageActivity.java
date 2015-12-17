@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -37,7 +38,7 @@ import ch.frontg8.view.model.MessageAdapter;
 
 public class MessageActivity extends AppCompatActivity {
     // Messenger to get Contacts
-    private final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private final Messenger mMessenger = new Messenger(new IncomingHandler(this));
     private final Context thisActivity = this;
     private MessageAdapter dataAdapter = null;
     private UUID contactId;
@@ -195,27 +196,37 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     // Handler for Messages from DataService
-    private class IncomingHandler extends Handler {
+    private static class IncomingHandler extends Handler {
+        WeakReference<MessageActivity> messageActivity;
+
+        public IncomingHandler(MessageActivity activity) {
+            messageActivity = new WeakReference<>(activity);
+        }
+
         @Override
         public void handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-                case MessageTypes.MSG_BULK_UPDATE:
-                    dataAdapter.clear();
-                    ArrayList<Message> messages = (ArrayList<Message>) msg.obj;
-                    for (Message m : messages) {
-                        Log.d(thisActivity.getClass().getSimpleName(), "got message " + m.getMessage());
-                        dataAdapter.add(m);
-                    }
-                    scrollMyListViewToBottom();
-                    break;
-                case MessageTypes.MSG_UPDATE:
-                    Message m = (Message) msg.obj;
-                    Log.d(thisActivity.getClass().getSimpleName(), "got message (update): " + m.getMessage());
-                    dataAdapter.add(m);
-                    scrollMyListViewToBottom();
-                    break;
-                default:
-                    super.handleMessage(msg);
+            MessageActivity activity = messageActivity.get();
+            if (activity != null) {
+                switch (msg.what) {
+                    case MessageTypes.MSG_BULK_UPDATE:
+                        activity.dataAdapter.clear();
+                        ArrayList<Message> messages = (ArrayList<Message>) msg.obj;
+                        for (Message m : messages) {
+                            Log.d(activity.getClass().getSimpleName(), "got message " + m.getMessage());
+                            activity.dataAdapter.add(m);
+                        }
+                        activity.scrollMyListViewToBottom();
+                        break;
+                    case MessageTypes.MSG_UPDATE:
+                        Message m = (Message) msg.obj;
+                        Log.d(activity.getClass().getSimpleName(), "got message (update): " + m.getMessage());
+                        activity.dataAdapter.add(m);
+                        activity.scrollMyListViewToBottom();
+                        break;
+                    default:
+                        super.handleMessage(msg);
+
+                }
             }
         }
     }

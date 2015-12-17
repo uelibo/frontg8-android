@@ -68,4 +68,5 @@
     <string name="ContactActivity_Contact">Kontakt</string>
     <string name="MainActivity_Menu_Search">Search</string>
     <string name="Images_frontg8Logo">frontg8 logo</string>
+    <string name="AboutActivity_TextAbout">Frontg8 ist ein Chatsystem, bestehend aus Server und Client. Frontg8 fokussiert sich auf die anonyme Kommunikation zwischen zwei Anwendern. Der Kommunikationsweg muss dabei nicht sicher sein und kann deshalb über das Internet erfolgen. Für die Einhaltung der Privatsphäre ist es erforderlich, dass jede Komponente vollständig unter eigener Kontrolle steht. Die Benutzer des Systems sind jeweils im Besitz eines Public-Private-Keypairs, welches sie zur gegenseitigen Identifikation und zum Erarbeiten eines gemeinsamen Schlüssels verwenden. Der Schlüsselaustausch wird nicht über den Server durchgeführt, damit der Server selbst so wenig wie möglich über die Teilnehmer erfährt. Die Anwender müssen ihre Schlüssel also über einen anderen Weg austauschen.</string>
 </resources>

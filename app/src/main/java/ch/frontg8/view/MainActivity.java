@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -35,7 +36,7 @@ import ch.frontg8.view.model.ContactAdapter;
 
 public class MainActivity extends AppCompatActivity {
     // Messenger to get Contacts
-    private final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private final Messenger mMessenger = new Messenger(new IncomingHandler(this));
     private final Context thisActivity = this;
     private ContactAdapter dataAdapter = null;
     private Messenger mService;
@@ -191,26 +192,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Handler for Messages from DataService
-    private class IncomingHandler extends Handler {
+    private static class IncomingHandler extends Handler {
+        WeakReference<MainActivity> mainActivity;
+
+        public IncomingHandler(MainActivity activity) {
+            mainActivity = new WeakReference<>(activity);
+        }
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MessageTypes.MSG_BULK_UPDATE:
-                    ArrayList<Contact> contacts =
-                            new ArrayList<>(((HashMap<UUID, Contact>) msg.obj).values());
-                    for (Contact c : contacts) {
-                        dataAdapter.add(c);
-                        Log.d(thisActivity.getClass().getSimpleName(), "got contact " + c.getName()
-                                + " " + c.getSurname()
-                                + " " + c.hasValidPubKey());
-                    }
-                    break;
-                case MessageTypes.MSG_UPDATE:
-                    Contact contact = (Contact) msg.obj;
-                    dataAdapter.replace(contact);
-                    break;
-                default:
-                    super.handleMessage(msg);
+            MainActivity activity = mainActivity.get();
+            if ( activity != null) {
+                switch (msg.what) {
+                    case MessageTypes.MSG_BULK_UPDATE:
+                        ArrayList<Contact> contacts =
+                                new ArrayList<>(((HashMap<UUID, Contact>) msg.obj).values());
+                        for (Contact c : contacts) {
+                            activity.dataAdapter.add(c);
+                            Log.d(activity.thisActivity.getClass().getSimpleName(), "got contact " + c.getName()
+                                    + " " + c.getSurname()
+                                    + " " + c.hasValidPubKey());
+                        }
+                        break;
+                    case MessageTypes.MSG_UPDATE:
+                        Contact contact = (Contact) msg.obj;
+                        activity.dataAdapter.replace(contact);
+                        break;
+                    default:
+                        super.handleMessage(msg);
+                }
             }
         }
     }

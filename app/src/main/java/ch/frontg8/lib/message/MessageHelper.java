@@ -54,12 +54,6 @@ public class MessageHelper {
         }
     }
 
-    public static byte[] putInDataEncryptAndPutInEncrypted(byte[] plainData, byte[] sessionId,
-                                                           int timestamp, UUID uuid, KeystoreHandler ksHandler) {
-        Frontg8Client.Data dataMSG = buildDataMessage(plainData, sessionId, timestamp);
-        return encryptAndPutInEncrypted(dataMSG, uuid, ksHandler);
-    }
-
 
     private static byte[] sizeToByte(int size) {
         return BigInteger.valueOf(size).toByteArray();

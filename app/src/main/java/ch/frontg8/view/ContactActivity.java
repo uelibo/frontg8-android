@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 import ch.frontg8.R;
@@ -31,7 +32,7 @@ import ch.frontg8.lib.data.MessageTypes;
 public class ContactActivity extends AppCompatActivity {
     private static final String STATE_SCANNEDKEY = "scannedKey";
     // Messenger to get Contacts
-    private final Messenger mMessenger = new Messenger(new IncomingHandler());
+    private final Messenger mMessenger = new Messenger(new IncomingHandler(this));
     private Context thisActivity;
     private UUID contactId;
     private Contact contact;
@@ -215,26 +216,35 @@ public class ContactActivity extends AppCompatActivity {
     }
 
     // Handler for Messages from DataService
-    private class IncomingHandler extends Handler {
+    private static class IncomingHandler extends Handler {
+        WeakReference<ContactActivity> contactActivity;
+
+        public IncomingHandler(ContactActivity activity) {
+            contactActivity = new WeakReference<>(activity);
+        }
+
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MessageTypes.MSG_UPDATE:
-                    contact = (Contact) msg.obj;
+            ContactActivity activity = contactActivity.get();
+            if (activity != null) {
+                switch (msg.what) {
+                    case MessageTypes.MSG_UPDATE:
+                        activity.contact = (Contact) msg.obj;
 
-                    Log.d("CA", "got contact " + contact.getName()
-                            + " " + contact.getSurname()
-                            + " " + contact.hasValidPubKey());
+                        Log.d("CA", "got contact " + activity.contact.getName()
+                                + " " + activity.contact.getSurname()
+                                + " " + activity.contact.hasValidPubKey());
 
-                    if (scannedKey == null) {
-                        title.setText(getString(R.string.ContactActivity_TitleEditContact, contact.getName(), contact.getSurname(), contact.getContactId().toString()));
-                        name.setText(contact.getName());
-                        surname.setText(contact.getSurname());
-                        publicKey.setText(contact.getPublicKeyString());
-                    }
-                    break;
-                default:
-                    super.handleMessage(msg);
+                        if (activity.scannedKey == null) {
+                            activity.title.setText(activity.getString(R.string.ContactActivity_TitleEditContact, activity.contact.getName(), activity.contact.getSurname(), activity.contact.getContactId().toString()));
+                            activity.name.setText(activity.contact.getName());
+                            activity.surname.setText(activity.contact.getSurname());
+                            activity.publicKey.setText(activity.contact.getPublicKeyString());
+                        }
+                        break;
+                    default:
+                        super.handleMessage(msg);
+                }
             }
         }
     }

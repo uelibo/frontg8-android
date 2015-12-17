@@ -5,9 +5,7 @@ import android.test.mock.MockContext;
 import org.junit.Assert;
 import org.junit.Test;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
-import org.spongycastle.util.Arrays;
 import org.spongycastle.util.encoders.Base64;
-import org.spongycastle.util.encoders.Hex;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
