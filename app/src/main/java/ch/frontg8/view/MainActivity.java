@@ -198,10 +198,11 @@ public class MainActivity extends AppCompatActivity {
         public IncomingHandler(MainActivity activity) {
             mainActivity = new WeakReference<>(activity);
         }
+
         @Override
         public void handleMessage(Message msg) {
             MainActivity activity = mainActivity.get();
-            if ( activity != null) {
+            if (activity != null) {
                 switch (msg.what) {
                     case MessageTypes.MSG_BULK_UPDATE:
                         ArrayList<Contact> contacts =
