@@ -1,7 +1,9 @@
 package ch.frontg8.lib.crypto;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import org.spongycastle.crypto.digests.SHA256Digest;
 import org.spongycastle.crypto.generators.KDF2BytesGenerator;
@@ -20,6 +22,7 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
@@ -244,10 +247,9 @@ public class LibCrypto {
         }
     }
 
-    public static void generateNewKeys(@NonNull KeystoreHandler ksHandler, Context context) {
-        ksHandler.genAndSetMyKeys(context);
+    public static void generateNewKeys(@NonNull KeystoreHandler ksHandler, @NonNull ArrayList<Tuple<UUID, String>> keys, Context context) {
+        new Generating(ksHandler, keys, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, true);
     }
-
 
     // Session Key Handling
     public static boolean containsSKSandSKC(@NonNull UUID uuid, @NonNull KeystoreHandler ksHandler) {
@@ -263,6 +265,33 @@ public class LibCrypto {
             return md.digest();
         } catch (NoSuchAlgorithmException e) {
             throw new Error();
+        }
+    }
+
+    private static class Generating extends AsyncTask<Boolean, UUID, Boolean> {
+        KeystoreHandler ksHandler;
+        Context context;
+        ArrayList<Tuple<UUID, String>> keys;
+
+        public Generating(KeystoreHandler ksHandler, ArrayList<Tuple<UUID, String>> keys, Context context) {
+            this.ksHandler = ksHandler;
+            this.context = context;
+            this.keys = keys;
+        }
+
+        @Override
+        protected Boolean doInBackground(Boolean... ignore) {
+            Log.d("LC", "Generating keys now");
+            ksHandler.genAndSetMyKeys(context);
+
+            for (Tuple<UUID, String> tuple : keys) {
+                try {
+                    negotiateSessionKeys(tuple._1, tuple._2, ksHandler, context);
+                } catch (InvalidKeyException e) {
+                    e.printStackTrace();
+                }
+            }
+            return true;
         }
     }
 }

@@ -73,10 +73,15 @@ class DataIncomingHandler extends Handler {
                     respondToMSG(msg, Message.obtain(null, MessageTypes.MSG_UPDATE, LibCrypto.getMyPublicKeyBytes(service.ksHandler, service.thisContext)));
                     break;
                 case MessageTypes.MSG_CHANGE_PW:
+                    //TODO store password somewhere
                     service.ksHandler.changePassword((String) msg.obj, service.thisContext);
                     break;
                 case MessageTypes.MSG_GEN_NEW_KEYS:
-                    LibCrypto.generateNewKeys(service.ksHandler, service.thisContext);
+                    ArrayList<Tuple<UUID, String>> list = new ArrayList<>();
+                    for (UUID u : service.contacts.keySet()) {
+                        list.add(new Tuple<>(u, service.contacts.get(u).getPublicKeyString()));
+                    }
+                    LibCrypto.generateNewKeys(service.ksHandler, list, service.thisContext);
                     break;
                 case MessageTypes.MSG_DEL_ALL_MSG:
                     deleteAllMessages(msg, service);

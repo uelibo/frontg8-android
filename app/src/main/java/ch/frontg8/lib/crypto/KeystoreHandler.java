@@ -201,6 +201,7 @@ public class KeystoreHandler {
         } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | NoSuchProviderException e) {
             e.printStackTrace();
         }
+
     }
 
     public PublicKey getMyPublicKey(Context context) {

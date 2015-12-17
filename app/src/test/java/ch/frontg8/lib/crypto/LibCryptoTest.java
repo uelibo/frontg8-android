@@ -14,8 +14,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.spec.ECGenParameterSpec;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
+
+import ch.frontg8.lib.helper.Tuple;
 
 import static org.junit.Assert.assertNotEquals;
 
@@ -33,16 +36,16 @@ public class LibCryptoTest {
     @Test
     public void testContainsSKSandSKC() throws Exception {
         UUID uuid1 = UUID.randomUUID();
-        LibCrypto.generateNewKeys(ksh, mc);
+        LibCrypto.generateNewKeys(ksh, new ArrayList<Tuple<UUID, String>>(), mc);
         LibCrypto.negotiateSessionKeys(uuid1, genKeyPair().getPublic(), ksh, mc);
         Assert.assertTrue(LibCrypto.containsSKSandSKC(uuid1, ksh));
     }
 
     @Test
     public void testGenECDHKeys() throws Exception {
-        LibCrypto.generateNewKeys(ksh, mc);
+        LibCrypto.generateNewKeys(ksh, new ArrayList<Tuple<UUID, String>>(), mc);
         PublicKey pk1 = LibCrypto.getMyPublicKey(ksh, mc);
-        LibCrypto.generateNewKeys(ksh, mc);
+        LibCrypto.generateNewKeys(ksh, new ArrayList<Tuple<UUID, String>>(), mc);
         PublicKey pk2 = LibCrypto.getMyPublicKey(ksh, mc);
         assertNotEquals(pk1, pk2);
     }
@@ -53,7 +56,7 @@ public class LibCryptoTest {
         UUID uuid2 = UUID.randomUUID();
         UUID uuid3 = UUID.randomUUID();
 
-        LibCrypto.generateNewKeys(ksh, mc);
+        LibCrypto.generateNewKeys(ksh, new ArrayList<Tuple<UUID, String>>(), mc);
 
         LibCrypto.negotiateSessionKeys(uuid1, genKeyPair().getPublic(), ksh, mc);
         LibCrypto.negotiateSessionKeys(uuid2, genKeyPair().getPublic(), ksh, mc);
@@ -68,7 +71,7 @@ public class LibCryptoTest {
     public void testEncryptDecrypt() throws Exception {
         UUID uuid1 = UUID.randomUUID();
 
-        LibCrypto.generateNewKeys(ksh, mc);
+        LibCrypto.generateNewKeys(ksh, new ArrayList<Tuple<UUID, String>>(), mc);
 
         byte[] plaintext = new byte[1024];
         new Random().nextBytes(plaintext);
