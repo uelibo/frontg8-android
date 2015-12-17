@@ -38,4 +38,7 @@ public class LibConfig {
         editor.apply();
     }
 
+    public static String getCertPath(Context context) {
+        return getSharedPrefs(context).getString("certificate_path", "rootCertificate");
+    }
 }

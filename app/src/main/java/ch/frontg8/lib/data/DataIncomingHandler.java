@@ -1,5 +1,6 @@
 package ch.frontg8.lib.data;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
@@ -7,7 +8,10 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.security.InvalidKeyException;
 import java.util.ArrayList;
@@ -98,10 +102,20 @@ class DataIncomingHandler extends Handler {
                     connect(service);
                     break;
                 case MessageTypes.MSG_RECONNECT:
-                    //TODO implement
+                    reconnect(service);
                     break;
                 default:
                     super.handleMessage(msg);
+            }
+        }
+    }
+
+    private void reconnect(DataService service) {
+        if (service.mConService != null) {
+            try {
+                service.mConService.send(Message.obtain(null, ConnectionService.MessageTypes.MSG_RECONNECT));
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -118,7 +132,22 @@ class DataIncomingHandler extends Handler {
 
     private void importCaCert(Message msg, DataService service) {
         String path2 = (String) msg.obj;
-        // TODO: IMPLEMENT
+        try (InputStream in = new FileInputStream(path2);
+             OutputStream out = service.openFileOutput(LibConfig.getCertPath(service), Context.MODE_PRIVATE)) {
+
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+        } catch (IOException e) {
+            try {
+                msg.replyTo.send(Message.obtain(null, MessageTypes.MSG_ERROR, e));
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }
+        reconnect(service);
     }
 
     private void importKey(Message msg, DataService service) {

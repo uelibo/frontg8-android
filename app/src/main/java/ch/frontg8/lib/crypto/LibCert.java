@@ -13,6 +13,7 @@ import org.spongycastle.operator.ContentSigner;
 import org.spongycastle.operator.OperatorCreationException;
 import org.spongycastle.operator.jcajce.JcaContentSignerBuilder;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.KeyPair;
@@ -67,16 +68,16 @@ class LibCert {
     }
 
     private static Certificate loadCertificateFromFile(String fileName, String certificateType, Context context) throws CertificateException {
-
         CertificateFactory cf = CertificateFactory.getInstance(certificateType);
+        if (fileName.equals("root")) {
+            return cf.generateCertificate(context.getResources().openRawResource(context.getResources().getIdentifier("raw/" + fileName, "raw", context.getPackageName())));
+        }
 
-
-        InputStream ins = context.getResources().openRawResource(context.getResources().getIdentifier("raw/" + fileName, "raw", context.getPackageName()));
-//        InputStream ins = context.openFileInput(path);
-
-//        caInput = new BufferedInputStream(ins);
-
-        return cf.generateCertificate(ins);
+        try (InputStream ins = context.openFileInput(fileName)) {
+            return cf.generateCertificate(ins);
+        } catch (IOException e) {
+            return cf.generateCertificate(context.getResources().openRawResource(context.getResources().getIdentifier("raw/root", "raw", context.getPackageName())));
+        }
     }
 
     public static X509Certificate loadX509CertificateFromFile(String path, Context context) throws CertificateException {

@@ -63,7 +63,7 @@ public class ConnectionService extends Service {
                 mTcpClient = null;
                 sendConnectionLost();
             }
-        }, LibConfig.getServerName(this), LibConfig.getServerPort(this), LibSSLContext.getSSLContext("root", this));
+        }, LibConfig.getServerName(this), LibConfig.getServerPort(this), LibSSLContext.getSSLContext(LibConfig.getCertPath(this), this));
     }
 
     private void sendConnectionLost() {
@@ -123,6 +123,12 @@ public class ConnectionService extends Service {
                         Log.d("CS", "Tried to connect");
                     }
                     break;
+                case MessageTypes.MSG_RECONNECT:
+                    if (service.mTcpClient != null) {
+                        service.mTcpClient.stopClient();
+                        service.mTcpClient = null;
+                    }
+                    service.connect();
                 default:
                     super.handleMessage(msg);
             }
@@ -135,6 +141,7 @@ public class ConnectionService extends Service {
         public static final int MSG_MSG = 3;
         public static final int MSG_CONNECTION_LOST = 4;
         public static final int MSG_CONNECT = 5;
+        public static final int MSG_RECONNECT = 6;
     }
 }
 
