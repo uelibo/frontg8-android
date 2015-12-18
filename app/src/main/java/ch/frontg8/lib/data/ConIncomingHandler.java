@@ -87,7 +87,7 @@ class ConIncomingHandler extends Handler {
             if (messenger != null) {
                 messenger.send(Message.obtain(null, MessageTypes.MSG_UPDATE, data));
             }
-        } catch (RemoteException e) {
+        } catch (RemoteException ignore) {
             messengers.remove(uuid);
         }
     }

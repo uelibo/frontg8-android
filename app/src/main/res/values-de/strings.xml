@@ -38,7 +38,7 @@
     <string name="title_activity_about">Über diese App</string>
     <string name="title_activity_cert_import">Zertifikat Import</string>
     <string name="MainActivity_TitleContactList">Kontaktliste von</string>
-    <string name="MessageActivity_TitleMessageList">Nachrichtenliste von</string>
+    <string name="MessageActivity_TitleMessageList">"Nachrichtenliste von "</string>
     <string name="ContactActivity_TitleEditContact">Kontakt ändern  %1$s %2$s (%3$s)</string>
     <string name="titleHostname">Hostname</string>
     <string name="AboutActivity_TitleMyPubkey">Mein Publickey</string>

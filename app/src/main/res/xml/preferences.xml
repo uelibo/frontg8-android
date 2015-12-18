@@ -4,7 +4,7 @@
         <EditTextPreference
             android:defaultValue="John"
             android:dialogTitle="@string/dialogPleaseEnterUsername"
-            android:key="edittext_preference_username"
+            android:key="editText_preference_username"
             android:summary="Your username"
             android:title="@string/titleUsername"/>
     </PreferenceCategory>
@@ -12,13 +12,13 @@
         <EditTextPreference
             android:defaultValue="server.frontg8.ch"
             android:dialogTitle="@string/dialogPleaseEnterHostname"
-            android:key="edittext_preference_hostname"
+            android:key="editText_preference_hostname"
             android:summary="Hostname to connect to"
             android:title="@string/titleHostname"/>
         <EditTextPreference
             android:defaultValue="40001"
             android:dialogTitle="@string/dialogPleaseEnterPort"
-            android:key="edittext_preference_port"
+            android:key="editText_preference_port"
             android:maxLength="5"
             android:numeric="integer"
             android:summary="Port to connect to"

@@ -40,7 +40,7 @@
     <string name="title_activity_cert_import">Certificate Import</string>
     <string name="title_activity_fileExplorer">File Chooser</string>
     <string name="MainActivity_TitleContactList">Contact list of</string>
-    <string name="MessageActivity_TitleMessageList">Message List of </string>
+    <string name="MessageActivity_TitleMessageList">"Message List of "</string>
     <string name="ContactActivity_TitleEditContact">Edit Contact %1$s %2$s (%3$s)</string>
     <string name="titleHostname">Hostname</string>
     <string name="AboutActivity_TitleMyPubkey">My public key</string>
