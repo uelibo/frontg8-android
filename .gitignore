@@ -6,3 +6,4 @@
 .idea/
 app/app.iml
 app/*.test
+app/app-release.apk
