@@ -53,6 +53,7 @@ public class TlsClient {
     private void tlsHandshake() throws NotConnectedException {
         if (throwExceptionIfNotConnected()) {
             try {
+                socket.setSoTimeout(10000);
                 socket.startHandshake();
             } catch (IOException e) {
                 throw new NotConnectedException("Could not complete Handshake");
