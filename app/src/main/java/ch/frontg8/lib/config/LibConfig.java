@@ -25,7 +25,7 @@ public class LibConfig {
     }
 
     public static String getUsername(Context context) {
-        return getSharedPrefs(context).getString("editText_preference_username", "paul");
+        return getSharedPrefs(context).getString("editText_preference_username", "John");
     }
 
     public static byte[] getLastMessageHash(Context context) {
