@@ -1,16 +1,20 @@
 package ch.frontg8.view;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -32,11 +36,18 @@ public class CertImportActivity extends AppCompatActivity {
     private static final int IMPORT_CERT = 2;
     private static final int IMPORT_KEYPAIR = 3;
     private static final int EXPORT_KEYPAIR = 4;
+    private static final int MY_PERMISSIONS_STORAGE_READ = 8;
+    private static final int MY_PERMISSIONS_STORAGE_WRITE = 9;
+
     // Messenger to get Contacts
     private final Messenger mMessenger = new Messenger(new IncomingHandler(this));
     private final Activity thisActivity = this;
     private TextView textViewLog;
     private Messenger mService;
+
+    Button buttonImportCert;
+    Button buttonImportKeypair;
+    Button buttonExportKeypair;
 
     // Connection to DataService
     private final ServiceConnection mConnection = new ServiceConnection() {
@@ -57,10 +68,12 @@ public class CertImportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cert_import);
 
-        Button buttonImportCert = (Button) findViewById(R.id.buttonImportCert);
-        Button buttonImportKeypair = (Button) findViewById(R.id.buttonImportKeypair);
-        Button buttonExportKeypair = (Button) findViewById(R.id.buttonExportKeypair);
+        buttonImportCert = (Button) findViewById(R.id.buttonImportCert);
+        buttonImportKeypair = (Button) findViewById(R.id.buttonImportKeypair);
+        buttonExportKeypair = (Button) findViewById(R.id.buttonExportKeypair);
         textViewLog = (TextView) findViewById(R.id.textViewLog);
+
+        disableButtons();
 
         buttonImportCert.setOnClickListener(new AdapterView.OnClickListener() {
             public void onClick(View view) {
@@ -79,6 +92,21 @@ public class CertImportActivity extends AppCompatActivity {
                 openFileChooser(EXPORT_KEYPAIR, true, false);
             }
         });
+
+        verifyStoragePermissions();
+    }
+
+    private void disableButtons() {
+        buttonImportCert.setEnabled(false);
+        buttonImportKeypair.setEnabled(false);
+        buttonExportKeypair.setEnabled(false);
+        textViewLog.setText("no permissions to read/write files");
+    }
+
+    private void enableButtons() {
+        buttonImportCert.setEnabled(true);
+        buttonImportKeypair.setEnabled(true);
+        buttonExportKeypair.setEnabled(true);
     }
 
     private void openFileChooser(int intentId, boolean chooseDir, boolean showFiles) {
@@ -181,5 +209,46 @@ public class CertImportActivity extends AppCompatActivity {
         }
     }
 
+    // Check for Permissions
+    // http://developer.android.com/training/permissions/requesting.html
+    public void verifyStoragePermissions() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                textViewLog.append("\nyou need to accept read/write access to import/export certificates");
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_STORAGE_WRITE);
+//                ActivityCompat.requestPermissions(this,
+//                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+//                        MY_PERMISSIONS_STORAGE_READ);
+            }
+        } else {
+            enableButtons();
+            textViewLog.setText("");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_STORAGE_WRITE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay!
+                    enableButtons();
+                    textViewLog.setText("");
+                } else {
+                    // permission denied, boo!
+                    textViewLog.append("\nno permissions :(");
+                }
+                return;
+            }
+        }
+    }
 
 }

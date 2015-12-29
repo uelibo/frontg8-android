@@ -1,12 +1,9 @@
 package ch.frontg8.lib.filechooser.view;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.ListView;
 
@@ -44,20 +41,6 @@ public class FileChooser extends ListActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
-    
-    public static void verifyStoragePermissions(Activity activity) {
-        // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(
-                    activity,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
-            );
-        }
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,8 +53,6 @@ public class FileChooser extends ListActivity {
             showFiles = (boolean) bundle.getSerializable(SHOW_FILES);
 //            fileExtension = (String) bundle.getSerializable(FILE_EXTENSION);
         }
-
-        verifyStoragePermissions(this);
 
         String extStore = System.getenv("EXTERNAL_STORAGE");
         currentDir = new File(extStore);
