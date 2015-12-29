@@ -53,7 +53,8 @@ public class TlsClient {
     private void tlsHandshake() throws NotConnectedException {
         if (throwExceptionIfNotConnected()) {
             try {
-                socket.setSoTimeout(10000);
+                // socket.setSoTimeout(10000);
+                socket.setKeepAlive(true);
                 socket.setEnabledCipherSuites(new String[] {"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"});
                 socket.setEnabledProtocols(new String[] {"TLSv1.2"});
                 socket.startHandshake();
